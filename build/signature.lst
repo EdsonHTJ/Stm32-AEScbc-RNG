@@ -1,0 +1,2230 @@
+ARM GAS  /tmp/cc8Z9J2L.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"signature.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.wc_SignatureDerEncode,"ax",%progbits
+  18              		.align	1
+  19              		.arch armv7e-m
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	wc_SignatureDerEncode:
+  26              	.LVL0:
+  27              	.LFB136:
+  28              		.file 1 "Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c"
+   1:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** /* signature.c
+   2:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****  *
+   3:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****  * Copyright (C) 2006-2020 wolfSSL Inc.
+   4:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****  *
+   5:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****  * This file is part of wolfSSL.
+   6:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****  *
+   7:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****  * wolfSSL is free software; you can redistribute it and/or modify
+   8:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****  * it under the terms of the GNU General Public License as published by
+   9:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****  * the Free Software Foundation; either version 2 of the License, or
+  10:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****  * (at your option) any later version.
+  11:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****  *
+  12:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****  * wolfSSL is distributed in the hope that it will be useful,
+  13:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+  14:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  15:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****  * GNU General Public License for more details.
+  16:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****  *
+  17:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****  * You should have received a copy of the GNU General Public License
+  18:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****  * along with this program; if not, write to the Free Software
+  19:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335, USA
+  20:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****  */
+  21:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+  22:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+  23:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #ifdef HAVE_CONFIG_H
+  24:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     #include <config.h>
+  25:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #endif
+  26:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+  27:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #include <wolfssl/wolfcrypt/settings.h>
+  28:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #include <wolfssl/wolfcrypt/signature.h>
+  29:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #include <wolfssl/wolfcrypt/error-crypt.h>
+  30:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #include <wolfssl/wolfcrypt/logging.h>
+ARM GAS  /tmp/cc8Z9J2L.s 			page 2
+
+
+  31:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #ifndef NO_ASN
+  32:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #include <wolfssl/wolfcrypt/asn.h>
+  33:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #endif
+  34:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #ifdef HAVE_ECC
+  35:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #include <wolfssl/wolfcrypt/ecc.h>
+  36:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #endif
+  37:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #ifndef NO_RSA
+  38:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #include <wolfssl/wolfcrypt/rsa.h>
+  39:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #endif
+  40:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+  41:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** /* If ECC and RSA are disabled then disable signature wrapper */
+  42:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #if (!defined(HAVE_ECC) || (defined(HAVE_ECC) && !defined(HAVE_ECC_SIGN) \
+  43:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     && !defined(HAVE_ECC_VERIFY))) && defined(NO_RSA)
+  44:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     #undef NO_SIG_WRAPPER
+  45:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     #define NO_SIG_WRAPPER
+  46:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #endif
+  47:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+  48:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** /* Signature wrapper disabled check */
+  49:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #ifndef NO_SIG_WRAPPER
+  50:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+  51:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #if !defined(NO_RSA) && !defined(NO_ASN)
+  52:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** static int wc_SignatureDerEncode(enum wc_HashType hash_type, byte* hash_data,
+  53:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     word32 hash_len, word32* hash_enc_len)
+  54:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** {
+  29              		.loc 1 54 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33              		.loc 1 54 1 is_stmt 0 view .LVU1
+  34 0000 70B5     		push	{r4, r5, r6, lr}
+  35              	.LCFI0:
+  36              		.cfi_def_cfa_offset 16
+  37              		.cfi_offset 4, -16
+  38              		.cfi_offset 5, -12
+  39              		.cfi_offset 6, -8
+  40              		.cfi_offset 14, -4
+  41 0002 0C46     		mov	r4, r1
+  42 0004 1546     		mov	r5, r2
+  43 0006 1E46     		mov	r6, r3
+  55:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     int ret, oid;
+  44              		.loc 1 55 5 is_stmt 1 view .LVU2
+  56:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+  57:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     ret = wc_HashGetOID(hash_type);
+  45              		.loc 1 57 5 view .LVU3
+  46              		.loc 1 57 11 is_stmt 0 view .LVU4
+  47 0008 FFF7FEFF 		bl	wc_HashGetOID
+  48              	.LVL1:
+  58:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     if (ret < 0) {
+  49              		.loc 1 58 5 is_stmt 1 view .LVU5
+  50              		.loc 1 58 8 is_stmt 0 view .LVU6
+  51 000c 0028     		cmp	r0, #0
+  52              		.loc 1 58 8 view .LVU7
+  53 000e 09DB     		blt	.L1
+  59:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         return ret;
+  60:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+  61:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     oid = ret;
+  54              		.loc 1 61 5 is_stmt 1 view .LVU8
+ARM GAS  /tmp/cc8Z9J2L.s 			page 3
+
+
+  55              	.LVL2:
+  62:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+  63:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     ret = wc_EncodeSignature(hash_data, hash_data, hash_len, oid);
+  56              		.loc 1 63 5 view .LVU9
+  57              		.loc 1 63 11 is_stmt 0 view .LVU10
+  58 0010 0346     		mov	r3, r0
+  59 0012 2A46     		mov	r2, r5
+  60 0014 2146     		mov	r1, r4
+  61 0016 2046     		mov	r0, r4
+  62              	.LVL3:
+  63              		.loc 1 63 11 view .LVU11
+  64 0018 FFF7FEFF 		bl	wc_EncodeSignature
+  65              	.LVL4:
+  64:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     if (ret > 0) {
+  66              		.loc 1 64 5 is_stmt 1 view .LVU12
+  67              		.loc 1 64 8 is_stmt 0 view .LVU13
+  68 001c 0028     		cmp	r0, #0
+  69              		.loc 1 64 8 view .LVU14
+  70 001e 01DD     		ble	.L1
+  65:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         *hash_enc_len = ret;
+  71              		.loc 1 65 9 is_stmt 1 view .LVU15
+  72              		.loc 1 65 23 is_stmt 0 view .LVU16
+  73 0020 3060     		str	r0, [r6]
+  66:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         ret = 0;
+  74              		.loc 1 66 9 is_stmt 1 view .LVU17
+  75              	.LVL5:
+  76              		.loc 1 66 13 is_stmt 0 view .LVU18
+  77 0022 0020     		movs	r0, #0
+  78              	.LVL6:
+  79              	.L1:
+  67:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+  68:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+  69:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     return ret;
+  70:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** }
+  80              		.loc 1 70 1 view .LVU19
+  81 0024 70BD     		pop	{r4, r5, r6, pc}
+  82              		.loc 1 70 1 view .LVU20
+  83              		.cfi_endproc
+  84              	.LFE136:
+  86              		.section	.text.wc_SignatureGetSize,"ax",%progbits
+  87              		.align	1
+  88              		.global	wc_SignatureGetSize
+  89              		.syntax unified
+  90              		.thumb
+  91              		.thumb_func
+  92              		.fpu fpv4-sp-d16
+  94              	wc_SignatureGetSize:
+  95              	.LVL7:
+  96              	.LFB137:
+  71:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #endif /* !NO_RSA && !NO_ASN */
+  72:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+  73:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** int wc_SignatureGetSize(enum wc_SignatureType sig_type,
+  74:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     const void* key, word32 key_len)
+  75:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** {
+  97              		.loc 1 75 1 is_stmt 1 view -0
+  98              		.cfi_startproc
+  99              		@ args = 0, pretend = 0, frame = 0
+ARM GAS  /tmp/cc8Z9J2L.s 			page 4
+
+
+ 100              		@ frame_needed = 0, uses_anonymous_args = 0
+ 101              		.loc 1 75 1 is_stmt 0 view .LVU22
+ 102 0000 08B5     		push	{r3, lr}
+ 103              	.LCFI1:
+ 104              		.cfi_def_cfa_offset 8
+ 105              		.cfi_offset 3, -8
+ 106              		.cfi_offset 14, -4
+ 107 0002 0346     		mov	r3, r0
+ 108 0004 0846     		mov	r0, r1
+ 109              	.LVL8:
+  76:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     int sig_len = BAD_FUNC_ARG;
+ 110              		.loc 1 76 5 is_stmt 1 view .LVU23
+  77:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+  78:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     /* Suppress possible unused args if all signature types are disabled */
+  79:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     (void)key;
+ 111              		.loc 1 79 5 view .LVU24
+  80:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     (void)key_len;
+ 112              		.loc 1 80 5 view .LVU25
+  81:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+  82:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     switch(sig_type) {
+ 113              		.loc 1 82 5 view .LVU26
+ 114 0006 012B     		cmp	r3, #1
+ 115 0008 0CD0     		beq	.L5
+ 116 000a 59B2     		sxtb	r1, r3
+ 117              	.LVL9:
+ 118              		.loc 1 82 5 is_stmt 0 view .LVU27
+ 119 000c 81B1     		cbz	r1, .L8
+ 120 000e 023B     		subs	r3, r3, #2
+ 121 0010 DBB2     		uxtb	r3, r3
+ 122 0012 012B     		cmp	r3, #1
+ 123 0014 0FD8     		bhi	.L14
+  83:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         case WC_SIGNATURE_TYPE_ECC:
+  84:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #ifdef HAVE_ECC
+  85:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             /* Sanity check that void* key is at least ecc_key in size */
+  86:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             if (key_len >= sizeof(ecc_key)) {
+  87:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 sig_len = wc_ecc_sig_size((ecc_key*)key);
+  88:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             }
+  89:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             else {
+  90:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 WOLFSSL_MSG("wc_SignatureGetSize: Invalid ECC key size");
+  91:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             }
+  92:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #else
+  93:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             sig_len = SIG_TYPE_E;
+  94:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #endif
+  95:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             break;
+  96:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+  97:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         case WC_SIGNATURE_TYPE_RSA_W_ENC:
+  98:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         case WC_SIGNATURE_TYPE_RSA:
+  99:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #ifndef NO_RSA
+ 100:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             /* Sanity check that void* key is at least RsaKey in size */
+ 101:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             if (key_len >= sizeof(RsaKey)) {
+ 124              		.loc 1 101 13 is_stmt 1 view .LVU28
+ 125              		.loc 1 101 16 is_stmt 0 view .LVU29
+ 126 0016 41F69B03 		movw	r3, #6299
+ 127 001a 9A42     		cmp	r2, r3
+ 128 001c 11D9     		bls	.L11
+ 102:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 sig_len = wc_RsaEncryptSize((RsaKey*)key);
+ 129              		.loc 1 102 17 is_stmt 1 view .LVU30
+ARM GAS  /tmp/cc8Z9J2L.s 			page 5
+
+
+ 130              		.loc 1 102 27 is_stmt 0 view .LVU31
+ 131 001e FFF7FEFF 		bl	wc_RsaEncryptSize
+ 132              	.LVL10:
+ 133              		.loc 1 102 27 view .LVU32
+ 134 0022 0AE0     		b	.L4
+ 135              	.LVL11:
+ 136              	.L5:
+  86:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 sig_len = wc_ecc_sig_size((ecc_key*)key);
+ 137              		.loc 1 86 13 is_stmt 1 view .LVU33
+  86:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 sig_len = wc_ecc_sig_size((ecc_key*)key);
+ 138              		.loc 1 86 16 is_stmt 0 view .LVU34
+ 139 0024 B2F5856F 		cmp	r2, #1064
+ 140 0028 08D3     		bcc	.L10
+  87:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             }
+ 141              		.loc 1 87 17 is_stmt 1 view .LVU35
+  87:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             }
+ 142              		.loc 1 87 27 is_stmt 0 view .LVU36
+ 143 002a FFF7FEFF 		bl	wc_ecc_sig_size
+ 144              	.LVL12:
+  87:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             }
+ 145              		.loc 1 87 27 view .LVU37
+ 146 002e 04E0     		b	.L4
+ 147              	.LVL13:
+ 148              	.L8:
+  82:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         case WC_SIGNATURE_TYPE_ECC:
+ 149              		.loc 1 82 5 view .LVU38
+ 150 0030 6FF0AC00 		mvn	r0, #172
+ 151              	.LVL14:
+  82:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         case WC_SIGNATURE_TYPE_ECC:
+ 152              		.loc 1 82 5 view .LVU39
+ 153 0034 01E0     		b	.L4
+ 154              	.LVL15:
+ 155              	.L14:
+  82:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         case WC_SIGNATURE_TYPE_ECC:
+ 156              		.loc 1 82 5 view .LVU40
+ 157 0036 6FF0AC00 		mvn	r0, #172
+ 158              	.LVL16:
+ 159              	.L4:
+ 103:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             }
+ 104:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             else {
+ 105:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 WOLFSSL_MSG("wc_SignatureGetSize: Invalid RsaKey key size");
+ 106:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             }
+ 107:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #else
+ 108:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             sig_len = SIG_TYPE_E;
+ 109:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #endif
+ 110:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             break;
+ 111:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 112:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         case WC_SIGNATURE_TYPE_NONE:
+ 113:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         default:
+ 114:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             sig_len = BAD_FUNC_ARG;
+ 115:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             break;
+ 116:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 117:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     return sig_len;
+ 118:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** }
+ 160              		.loc 1 118 1 view .LVU41
+ 161 003a 08BD     		pop	{r3, pc}
+ 162              	.LVL17:
+ARM GAS  /tmp/cc8Z9J2L.s 			page 6
+
+
+ 163              	.L10:
+  76:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 164              		.loc 1 76 9 view .LVU42
+ 165 003c 6FF0AC00 		mvn	r0, #172
+ 166              	.LVL18:
+  76:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 167              		.loc 1 76 9 view .LVU43
+ 168 0040 FBE7     		b	.L4
+ 169              	.LVL19:
+ 170              	.L11:
+  76:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 171              		.loc 1 76 9 view .LVU44
+ 172 0042 6FF0AC00 		mvn	r0, #172
+ 173              	.LVL20:
+ 117:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** }
+ 174              		.loc 1 117 5 is_stmt 1 view .LVU45
+ 117:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** }
+ 175              		.loc 1 117 12 is_stmt 0 view .LVU46
+ 176 0046 F8E7     		b	.L4
+ 177              		.cfi_endproc
+ 178              	.LFE137:
+ 180              		.section	.text.wc_SignatureVerifyHash,"ax",%progbits
+ 181              		.align	1
+ 182              		.global	wc_SignatureVerifyHash
+ 183              		.syntax unified
+ 184              		.thumb
+ 185              		.thumb_func
+ 186              		.fpu fpv4-sp-d16
+ 188              	wc_SignatureVerifyHash:
+ 189              	.LVL21:
+ 190              	.LFB138:
+ 119:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 120:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** int wc_SignatureVerifyHash(
+ 121:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     enum wc_HashType hash_type, enum wc_SignatureType sig_type,
+ 122:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     const byte* hash_data, word32 hash_len,
+ 123:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     const byte* sig, word32 sig_len,
+ 124:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     const void* key, word32 key_len)
+ 125:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** {
+ 191              		.loc 1 125 1 is_stmt 1 view -0
+ 192              		.cfi_startproc
+ 193              		@ args = 16, pretend = 0, frame = 8
+ 194              		@ frame_needed = 0, uses_anonymous_args = 0
+ 195              		.loc 1 125 1 is_stmt 0 view .LVU48
+ 196 0000 2DE9F04F 		push	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
+ 197              	.LCFI2:
+ 198              		.cfi_def_cfa_offset 36
+ 199              		.cfi_offset 4, -36
+ 200              		.cfi_offset 5, -32
+ 201              		.cfi_offset 6, -28
+ 202              		.cfi_offset 7, -24
+ 203              		.cfi_offset 8, -20
+ 204              		.cfi_offset 9, -16
+ 205              		.cfi_offset 10, -12
+ 206              		.cfi_offset 11, -8
+ 207              		.cfi_offset 14, -4
+ 208 0004 85B0     		sub	sp, sp, #20
+ 209              	.LCFI3:
+ARM GAS  /tmp/cc8Z9J2L.s 			page 7
+
+
+ 210              		.cfi_def_cfa_offset 56
+ 211 0006 1E46     		mov	r6, r3
+ 212 0008 DDF83890 		ldr	r9, [sp, #56]
+ 213 000c 0F9F     		ldr	r7, [sp, #60]
+ 214 000e DDF84080 		ldr	r8, [sp, #64]
+ 215 0012 119B     		ldr	r3, [sp, #68]
+ 216              	.LVL22:
+ 126:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     int ret;
+ 217              		.loc 1 126 5 is_stmt 1 view .LVU49
+ 127:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 128:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     /* Check arguments */
+ 129:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     if (hash_data == NULL || hash_len == 0 ||
+ 218              		.loc 1 129 5 view .LVU50
+ 219              		.loc 1 129 8 is_stmt 0 view .LVU51
+ 220 0014 002A     		cmp	r2, #0
+ 221 0016 7ED0     		beq	.L26
+ 222 0018 0446     		mov	r4, r0
+ 223 001a 0D46     		mov	r5, r1
+ 224 001c 9246     		mov	r10, r2
+ 225              		.loc 1 129 27 discriminator 1 view .LVU52
+ 226 001e 002E     		cmp	r6, #0
+ 227 0020 7CD0     		beq	.L27
+ 228              		.loc 1 129 44 discriminator 2 view .LVU53
+ 229 0022 B9F1000F 		cmp	r9, #0
+ 230 0026 7CD0     		beq	.L28
+ 130:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         sig == NULL || sig_len == 0 ||
+ 231              		.loc 1 130 21 view .LVU54
+ 232 0028 002F     		cmp	r7, #0
+ 233 002a 7DD0     		beq	.L29
+ 234              		.loc 1 130 37 discriminator 1 view .LVU55
+ 235 002c B8F1000F 		cmp	r8, #0
+ 236 0030 7DD0     		beq	.L30
+ 131:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         key == NULL || key_len == 0) {
+ 237              		.loc 1 131 21 view .LVU56
+ 238 0032 002B     		cmp	r3, #0
+ 239 0034 7ED0     		beq	.L31
+ 132:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         return BAD_FUNC_ARG;
+ 133:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 134:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 135:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     /* Validate signature len (1 to max is okay) */
+ 136:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     if ((int)sig_len > wc_SignatureGetSize(sig_type, key, key_len)) {
+ 240              		.loc 1 136 5 is_stmt 1 view .LVU57
+ 241              		.loc 1 136 24 is_stmt 0 view .LVU58
+ 242 0036 1A46     		mov	r2, r3
+ 243              	.LVL23:
+ 244              		.loc 1 136 24 view .LVU59
+ 245 0038 4146     		mov	r1, r8
+ 246              	.LVL24:
+ 247              		.loc 1 136 24 view .LVU60
+ 248 003a 2846     		mov	r0, r5
+ 249              	.LVL25:
+ 250              		.loc 1 136 24 view .LVU61
+ 251 003c FFF7FEFF 		bl	wc_SignatureGetSize
+ 252              	.LVL26:
+ 253              		.loc 1 136 8 view .LVU62
+ 254 0040 B842     		cmp	r0, r7
+ 255 0042 7ADB     		blt	.L32
+ARM GAS  /tmp/cc8Z9J2L.s 			page 8
+
+
+ 137:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         WOLFSSL_MSG("wc_SignatureVerify: Invalid sig type/len");
+ 138:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         return BAD_FUNC_ARG;
+ 139:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 140:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 141:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     /* Validate hash size */
+ 142:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     ret = wc_HashGetDigestSize(hash_type);
+ 256              		.loc 1 142 5 is_stmt 1 view .LVU63
+ 257              		.loc 1 142 11 is_stmt 0 view .LVU64
+ 258 0044 2046     		mov	r0, r4
+ 259 0046 FFF7FEFF 		bl	wc_HashGetDigestSize
+ 260              	.LVL27:
+ 143:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     if (ret < 0) {
+ 261              		.loc 1 143 5 is_stmt 1 view .LVU65
+ 262              		.loc 1 143 8 is_stmt 0 view .LVU66
+ 263 004a 041E     		subs	r4, r0, #0
+ 264 004c 7DDB     		blt	.L15
+ 144:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         WOLFSSL_MSG("wc_SignatureVerify: Invalid hash type/len");
+ 145:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         return ret;
+ 146:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 147:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     ret = 0;
+ 265              		.loc 1 147 5 is_stmt 1 view .LVU67
+ 266              	.LVL28:
+ 148:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 149:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     /* Verify signature using hash */
+ 150:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     switch (sig_type) {
+ 267              		.loc 1 150 5 view .LVU68
+ 268 004e 012D     		cmp	r5, #1
+ 269 0050 1BD0     		beq	.L17
+ 270 0052 6BB2     		sxtb	r3, r5
+ 271 0054 002B     		cmp	r3, #0
+ 272 0056 73D0     		beq	.L33
+ 273 0058 023D     		subs	r5, r5, #2
+ 274 005a EDB2     		uxtb	r5, r5
+ 275 005c 012D     		cmp	r5, #1
+ 276 005e 72D8     		bhi	.L43
+ 277              	.LBB2:
+ 151:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         case WC_SIGNATURE_TYPE_ECC:
+ 152:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         {
+ 153:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #if defined(HAVE_ECC) && defined(HAVE_ECC_VERIFY)
+ 154:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             int is_valid_sig = 0;
+ 155:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 156:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             /* Perform verification of signature using provided ECC key */
+ 157:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             do {
+ 158:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             #ifdef WOLFSSL_ASYNC_CRYPT
+ 159:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 ret = wc_AsyncWait(ret, &((ecc_key*)key)->asyncDev,
+ 160:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                     WC_ASYNC_FLAG_CALL_AGAIN);
+ 161:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             #endif
+ 162:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             if (ret >= 0)
+ 163:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 ret = wc_ecc_verify_hash(sig, sig_len, hash_data, hash_len,
+ 164:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                     &is_valid_sig, (ecc_key*)key);
+ 165:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             } while (ret == WC_PENDING_E);
+ 166:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             if (ret != 0 || is_valid_sig != 1) {
+ 167:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 ret = SIG_VERIFY_E;
+ 168:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             }
+ 169:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #else
+ 170:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             ret = SIG_TYPE_E;
+ 171:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #endif
+ARM GAS  /tmp/cc8Z9J2L.s 			page 9
+
+
+ 172:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             break;
+ 173:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         }
+ 174:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 175:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         case WC_SIGNATURE_TYPE_RSA_W_ENC:
+ 176:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         case WC_SIGNATURE_TYPE_RSA:
+ 177:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         {
+ 178:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #ifndef NO_RSA
+ 179:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     #ifdef WOLFSSL_CRYPTOCELL
+ 180:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         if (sig_type == WC_SIGNATURE_TYPE_RSA_W_ENC) {
+ 181:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             ret = cc310_RsaSSL_Verify(hash_data, hash_len, (byte*)sig, key,
+ 182:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                                               cc310_hashModeRSA(hash_type, 0));
+ 183:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         }
+ 184:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         else {
+ 185:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             ret = cc310_RsaSSL_Verify(hash_data, hash_len, (byte*)sig, key,
+ 186:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                                               cc310_hashModeRSA(hash_type, 1));
+ 187:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         }
+ 188:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     #else
+ 189:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 190:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             word32 plain_len = hash_len;
+ 278              		.loc 1 190 13 view .LVU69
+ 279              	.LVL29:
+ 191:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         #if defined(WOLFSSL_SMALL_STACK) && !defined(WOLFSSL_NO_MALLOC)
+ 192:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             byte *plain_data;
+ 280              		.loc 1 192 13 view .LVU70
+ 193:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         #else
+ 194:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             byte  plain_data[MAX_ENCODED_SIG_SZ];
+ 195:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         #endif
+ 196:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 197:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             /* Make sure the plain text output is at least key size */
+ 198:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             if (plain_len < sig_len) {
+ 281              		.loc 1 198 13 view .LVU71
+ 282              		.loc 1 198 16 is_stmt 0 view .LVU72
+ 283 0060 BE42     		cmp	r6, r7
+ 284 0062 30D3     		bcc	.L37
+ 190:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         #if defined(WOLFSSL_SMALL_STACK) && !defined(WOLFSSL_NO_MALLOC)
+ 285              		.loc 1 190 20 view .LVU73
+ 286 0064 B346     		mov	fp, r6
+ 287              	.L22:
+ 288              	.LVL30:
+ 199:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 plain_len = sig_len;
+ 200:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             }
+ 201:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         #if defined(WOLFSSL_SMALL_STACK) && !defined(WOLFSSL_NO_MALLOC)
+ 202:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             plain_data = (byte*)XMALLOC(plain_len, NULL, DYNAMIC_TYPE_TMP_BUFFER);
+ 289              		.loc 1 202 13 is_stmt 1 view .LVU74
+ 290              		.loc 1 202 33 is_stmt 0 view .LVU75
+ 291 0066 5846     		mov	r0, fp
+ 292 0068 FFF7FEFF 		bl	pvPortMalloc
+ 293              	.LVL31:
+ 203:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             if (plain_data)
+ 294              		.loc 1 203 13 is_stmt 1 view .LVU76
+ 295              		.loc 1 203 16 is_stmt 0 view .LVU77
+ 296 006c 0546     		mov	r5, r0
+ 297 006e 0028     		cmp	r0, #0
+ 298 0070 6FD0     		beq	.L38
+ 299              	.LBB3:
+ 204:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         #else
+ 205:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             if (plain_len <= sizeof(plain_data))
+ARM GAS  /tmp/cc8Z9J2L.s 			page 10
+
+
+ 206:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         #endif
+ 207:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             {
+ 208:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             	byte* plain_ptr = NULL;
+ 300              		.loc 1 208 14 is_stmt 1 view .LVU78
+ 301              		.loc 1 208 20 is_stmt 0 view .LVU79
+ 302 0072 0024     		movs	r4, #0
+ 303 0074 0394     		str	r4, [sp, #12]
+ 209:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             	XMEMSET(plain_data, 0, plain_len);
+ 304              		.loc 1 209 14 is_stmt 1 view .LVU80
+ 305 0076 5A46     		mov	r2, fp
+ 306 0078 2146     		mov	r1, r4
+ 307 007a FFF7FEFF 		bl	memset
+ 308              	.LVL32:
+ 210:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             	XMEMCPY(plain_data, sig, sig_len);
+ 309              		.loc 1 210 14 view .LVU81
+ 310 007e 3A46     		mov	r2, r7
+ 311 0080 4946     		mov	r1, r9
+ 312 0082 2846     		mov	r0, r5
+ 313 0084 FFF7FEFF 		bl	memcpy
+ 314              	.LVL33:
+ 315 0088 22E0     		b	.L24
+ 316              	.LVL34:
+ 317              	.L17:
+ 318              		.loc 1 210 14 is_stmt 0 view .LVU82
+ 319              	.LBE3:
+ 320              	.LBE2:
+ 321              	.LBB6:
+ 154:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 322              		.loc 1 154 13 is_stmt 1 view .LVU83
+ 154:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 323              		.loc 1 154 17 is_stmt 0 view .LVU84
+ 324 008a 0024     		movs	r4, #0
+ 325 008c 0394     		str	r4, [sp, #12]
+ 326 008e 02E0     		b	.L20
+ 327              	.LVL35:
+ 328              	.L19:
+ 165:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             if (ret != 0 || is_valid_sig != 1) {
+ 329              		.loc 1 165 21 is_stmt 1 view .LVU85
+ 165:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             if (ret != 0 || is_valid_sig != 1) {
+ 330              		.loc 1 165 13 is_stmt 0 view .LVU86
+ 331 0090 14F16C0F 		cmn	r4, #108
+ 332 0094 0DD1     		bne	.L44
+ 333              	.LVL36:
+ 334              	.L20:
+ 157:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             #ifdef WOLFSSL_ASYNC_CRYPT
+ 335              		.loc 1 157 13 is_stmt 1 view .LVU87
+ 162:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 ret = wc_ecc_verify_hash(sig, sig_len, hash_data, hash_len,
+ 336              		.loc 1 162 13 view .LVU88
+ 162:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 ret = wc_ecc_verify_hash(sig, sig_len, hash_data, hash_len,
+ 337              		.loc 1 162 16 is_stmt 0 view .LVU89
+ 338 0096 002C     		cmp	r4, #0
+ 339 0098 FADB     		blt	.L19
+ 163:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                     &is_valid_sig, (ecc_key*)key);
+ 340              		.loc 1 163 17 is_stmt 1 view .LVU90
+ 163:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                     &is_valid_sig, (ecc_key*)key);
+ 341              		.loc 1 163 23 is_stmt 0 view .LVU91
+ 342 009a CDF80480 		str	r8, [sp, #4]
+ARM GAS  /tmp/cc8Z9J2L.s 			page 11
+
+
+ 343 009e 03AB     		add	r3, sp, #12
+ 344 00a0 0093     		str	r3, [sp]
+ 345 00a2 3346     		mov	r3, r6
+ 346 00a4 5246     		mov	r2, r10
+ 347 00a6 3946     		mov	r1, r7
+ 348 00a8 4846     		mov	r0, r9
+ 349 00aa FFF7FEFF 		bl	wc_ecc_verify_hash
+ 350              	.LVL37:
+ 351 00ae 0446     		mov	r4, r0
+ 352              	.LVL38:
+ 163:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                     &is_valid_sig, (ecc_key*)key);
+ 353              		.loc 1 163 23 view .LVU92
+ 354 00b0 EEE7     		b	.L19
+ 355              	.LVL39:
+ 356              	.L44:
+ 166:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 ret = SIG_VERIFY_E;
+ 357              		.loc 1 166 13 is_stmt 1 view .LVU93
+ 166:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 ret = SIG_VERIFY_E;
+ 358              		.loc 1 166 16 is_stmt 0 view .LVU94
+ 359 00b2 2CB9     		cbnz	r4, .L35
+ 166:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 ret = SIG_VERIFY_E;
+ 360              		.loc 1 166 42 discriminator 1 view .LVU95
+ 361 00b4 039B     		ldr	r3, [sp, #12]
+ 166:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 ret = SIG_VERIFY_E;
+ 362              		.loc 1 166 26 discriminator 1 view .LVU96
+ 363 00b6 012B     		cmp	r3, #1
+ 364 00b8 47D0     		beq	.L15
+ 167:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             }
+ 365              		.loc 1 167 21 view .LVU97
+ 366 00ba 6FF0E404 		mvn	r4, #228
+ 367              	.LVL40:
+ 172:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         }
+ 368              		.loc 1 172 13 is_stmt 1 view .LVU98
+ 369 00be 44E0     		b	.L15
+ 370              	.LVL41:
+ 371              	.L35:
+ 167:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             }
+ 372              		.loc 1 167 21 is_stmt 0 view .LVU99
+ 373 00c0 6FF0E404 		mvn	r4, #228
+ 374              	.LVL42:
+ 167:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             }
+ 375              		.loc 1 167 21 view .LVU100
+ 376 00c4 41E0     		b	.L15
+ 377              	.LVL43:
+ 378              	.L37:
+ 167:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             }
+ 379              		.loc 1 167 21 view .LVU101
+ 380              	.LBE6:
+ 381              	.LBB7:
+ 199:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             }
+ 382              		.loc 1 199 27 view .LVU102
+ 383 00c6 BB46     		mov	fp, r7
+ 384 00c8 CDE7     		b	.L22
+ 385              	.LVL44:
+ 386              	.L23:
+ 387              	.LBB4:
+ 211:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 /* Perform verification of signature using provided RSA key */
+ARM GAS  /tmp/cc8Z9J2L.s 			page 12
+
+
+ 212:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 do {
+ 213:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 #ifdef WOLFSSL_ASYNC_CRYPT
+ 214:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                     ret = wc_AsyncWait(ret, &((RsaKey*)key)->asyncDev,
+ 215:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                         WC_ASYNC_FLAG_CALL_AGAIN);
+ 216:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 #endif
+ 217:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 if (ret >= 0)
+ 218:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 	ret = wc_RsaSSL_VerifyInline(plain_data, sig_len, &plain_ptr, (RsaKey*)key);
+ 219:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 } while (ret == WC_PENDING_E);
+ 388              		.loc 1 219 25 is_stmt 1 view .LVU103
+ 389              		.loc 1 219 17 is_stmt 0 view .LVU104
+ 390 00ca 14F16C0F 		cmn	r4, #108
+ 391 00ce 09D1     		bne	.L45
+ 392              	.LVL45:
+ 393              	.L24:
+ 212:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 #ifdef WOLFSSL_ASYNC_CRYPT
+ 394              		.loc 1 212 17 is_stmt 1 view .LVU105
+ 217:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 	ret = wc_RsaSSL_VerifyInline(plain_data, sig_len, &plain_ptr, (RsaKey*)key);
+ 395              		.loc 1 217 17 view .LVU106
+ 217:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 	ret = wc_RsaSSL_VerifyInline(plain_data, sig_len, &plain_ptr, (RsaKey*)key);
+ 396              		.loc 1 217 20 is_stmt 0 view .LVU107
+ 397 00d0 002C     		cmp	r4, #0
+ 398 00d2 FADB     		blt	.L23
+ 218:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 } while (ret == WC_PENDING_E);
+ 399              		.loc 1 218 18 is_stmt 1 view .LVU108
+ 218:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 } while (ret == WC_PENDING_E);
+ 400              		.loc 1 218 24 is_stmt 0 view .LVU109
+ 401 00d4 4346     		mov	r3, r8
+ 402 00d6 03AA     		add	r2, sp, #12
+ 403 00d8 3946     		mov	r1, r7
+ 404 00da 2846     		mov	r0, r5
+ 405 00dc FFF7FEFF 		bl	wc_RsaSSL_VerifyInline
+ 406              	.LVL46:
+ 407 00e0 0446     		mov	r4, r0
+ 408              	.LVL47:
+ 218:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 } while (ret == WC_PENDING_E);
+ 409              		.loc 1 218 24 view .LVU110
+ 410 00e2 F2E7     		b	.L23
+ 411              	.LVL48:
+ 412              	.L45:
+ 220:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 if (ret >= 0 && plain_ptr) {
+ 413              		.loc 1 220 17 is_stmt 1 view .LVU111
+ 414              		.loc 1 220 20 is_stmt 0 view .LVU112
+ 415 00e4 002C     		cmp	r4, #0
+ 416 00e6 05DB     		blt	.L25
+ 417              		.loc 1 220 30 discriminator 1 view .LVU113
+ 418 00e8 0398     		ldr	r0, [sp, #12]
+ 419 00ea 18B1     		cbz	r0, .L25
+ 221:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                     if ((word32)ret == hash_len &&
+ 420              		.loc 1 221 21 is_stmt 1 view .LVU114
+ 421              		.loc 1 221 24 is_stmt 0 view .LVU115
+ 422 00ec A642     		cmp	r6, r4
+ 423 00ee 08D0     		beq	.L46
+ 222:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                             XMEMCMP(plain_ptr, hash_data, hash_len) == 0) {
+ 223:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                         ret = 0; /* Success */
+ 224:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                     }
+ 225:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                     else {
+ 226:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                         ret = SIG_VERIFY_E;
+ARM GAS  /tmp/cc8Z9J2L.s 			page 13
+
+
+ 424              		.loc 1 226 29 view .LVU116
+ 425 00f0 6FF0E404 		mvn	r4, #228
+ 426              	.LVL49:
+ 427              	.L25:
+ 227:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                     }
+ 228:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 }
+ 229:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             #if defined(WOLFSSL_SMALL_STACK) && !defined(WOLFSSL_NO_MALLOC)
+ 230:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 XFREE(plain_data, NULL, DYNAMIC_TYPE_TMP_BUFFER);
+ 428              		.loc 1 230 17 is_stmt 1 view .LVU117
+ 429 00f4 2846     		mov	r0, r5
+ 430 00f6 FFF7FEFF 		bl	vPortFree
+ 431              	.LVL50:
+ 432              		.loc 1 230 17 is_stmt 0 view .LVU118
+ 433              	.LBE4:
+ 231:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             #endif
+ 232:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             }
+ 233:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             else {
+ 234:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 ret = MEMORY_E;
+ 235:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             }
+ 236:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     #endif /* WOLFSSL_CRYPTOCELL */
+ 237:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             if (ret != 0) {
+ 434              		.loc 1 237 13 is_stmt 1 view .LVU119
+ 435              		.loc 1 237 16 is_stmt 0 view .LVU120
+ 436 00fa 34B3     		cbz	r4, .L15
+ 238:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 WOLFSSL_MSG("RSA Signature Verify difference!");
+ 239:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 ret = SIG_VERIFY_E;
+ 437              		.loc 1 239 21 view .LVU121
+ 438 00fc 6FF0E404 		mvn	r4, #228
+ 439              	.LVL51:
+ 440              		.loc 1 239 21 view .LVU122
+ 441 0100 23E0     		b	.L15
+ 442              	.LVL52:
+ 443              	.L46:
+ 444              	.LBB5:
+ 222:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                         ret = 0; /* Success */
+ 445              		.loc 1 222 29 discriminator 1 view .LVU123
+ 446 0102 3246     		mov	r2, r6
+ 447 0104 5146     		mov	r1, r10
+ 448 0106 FFF7FEFF 		bl	memcmp
+ 449              	.LVL53:
+ 221:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                             XMEMCMP(plain_ptr, hash_data, hash_len) == 0) {
+ 450              		.loc 1 221 49 discriminator 1 view .LVU124
+ 451 010a 0446     		mov	r4, r0
+ 452              	.LVL54:
+ 221:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                             XMEMCMP(plain_ptr, hash_data, hash_len) == 0) {
+ 453              		.loc 1 221 49 discriminator 1 view .LVU125
+ 454 010c 0028     		cmp	r0, #0
+ 455 010e F1D0     		beq	.L25
+ 226:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                     }
+ 456              		.loc 1 226 29 view .LVU126
+ 457 0110 6FF0E404 		mvn	r4, #228
+ 458 0114 EEE7     		b	.L25
+ 459              	.LVL55:
+ 460              	.L26:
+ 226:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                     }
+ 461              		.loc 1 226 29 view .LVU127
+ 462              	.LBE5:
+ARM GAS  /tmp/cc8Z9J2L.s 			page 14
+
+
+ 463              	.LBE7:
+ 132:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 464              		.loc 1 132 16 view .LVU128
+ 465 0116 6FF0AC04 		mvn	r4, #172
+ 466 011a 16E0     		b	.L15
+ 467              	.L27:
+ 132:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 468              		.loc 1 132 16 view .LVU129
+ 469 011c 6FF0AC04 		mvn	r4, #172
+ 470 0120 13E0     		b	.L15
+ 471              	.L28:
+ 472 0122 6FF0AC04 		mvn	r4, #172
+ 473 0126 10E0     		b	.L15
+ 474              	.L29:
+ 475 0128 6FF0AC04 		mvn	r4, #172
+ 476 012c 0DE0     		b	.L15
+ 477              	.L30:
+ 478 012e 6FF0AC04 		mvn	r4, #172
+ 479 0132 0AE0     		b	.L15
+ 480              	.L31:
+ 481 0134 6FF0AC04 		mvn	r4, #172
+ 482 0138 07E0     		b	.L15
+ 483              	.LVL56:
+ 484              	.L32:
+ 138:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 485              		.loc 1 138 16 view .LVU130
+ 486 013a 6FF0AC04 		mvn	r4, #172
+ 487 013e 04E0     		b	.L15
+ 488              	.LVL57:
+ 489              	.L33:
+ 150:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         case WC_SIGNATURE_TYPE_ECC:
+ 490              		.loc 1 150 5 view .LVU131
+ 491 0140 6FF0AC04 		mvn	r4, #172
+ 492 0144 01E0     		b	.L15
+ 493              	.L43:
+ 494 0146 6FF0AC04 		mvn	r4, #172
+ 495              	.LVL58:
+ 496              	.L15:
+ 240:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             }
+ 241:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #else
+ 242:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             ret = SIG_TYPE_E;
+ 243:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #endif
+ 244:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             break;
+ 245:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         }
+ 246:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 247:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         case WC_SIGNATURE_TYPE_NONE:
+ 248:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         default:
+ 249:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             ret = BAD_FUNC_ARG;
+ 250:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             break;
+ 251:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 252:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 253:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     return ret;
+ 254:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** }
+ 497              		.loc 1 254 1 view .LVU132
+ 498 014a 2046     		mov	r0, r4
+ 499 014c 05B0     		add	sp, sp, #20
+ 500              	.LCFI4:
+ARM GAS  /tmp/cc8Z9J2L.s 			page 15
+
+
+ 501              		.cfi_remember_state
+ 502              		.cfi_def_cfa_offset 36
+ 503              		@ sp needed
+ 504 014e BDE8F08F 		pop	{r4, r5, r6, r7, r8, r9, r10, fp, pc}
+ 505              	.LVL59:
+ 506              	.L38:
+ 507              	.LCFI5:
+ 508              		.cfi_restore_state
+ 509              	.LBB8:
+ 239:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             }
+ 510              		.loc 1 239 21 view .LVU133
+ 511 0152 6FF0E404 		mvn	r4, #228
+ 512 0156 F8E7     		b	.L15
+ 513              	.LBE8:
+ 514              		.cfi_endproc
+ 515              	.LFE138:
+ 517              		.section	.text.wc_SignatureVerify,"ax",%progbits
+ 518              		.align	1
+ 519              		.global	wc_SignatureVerify
+ 520              		.syntax unified
+ 521              		.thumb
+ 522              		.thumb_func
+ 523              		.fpu fpv4-sp-d16
+ 525              	wc_SignatureVerify:
+ 526              	.LVL60:
+ 527              	.LFB139:
+ 255:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 256:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** int wc_SignatureVerify(
+ 257:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     enum wc_HashType hash_type, enum wc_SignatureType sig_type,
+ 258:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     const byte* data, word32 data_len,
+ 259:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     const byte* sig, word32 sig_len,
+ 260:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     const void* key, word32 key_len)
+ 261:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** {
+ 528              		.loc 1 261 1 is_stmt 1 view -0
+ 529              		.cfi_startproc
+ 530              		@ args = 16, pretend = 0, frame = 8
+ 531              		@ frame_needed = 0, uses_anonymous_args = 0
+ 532              		.loc 1 261 1 is_stmt 0 view .LVU135
+ 533 0000 2DE9F04F 		push	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
+ 534              	.LCFI6:
+ 535              		.cfi_def_cfa_offset 36
+ 536              		.cfi_offset 4, -36
+ 537              		.cfi_offset 5, -32
+ 538              		.cfi_offset 6, -28
+ 539              		.cfi_offset 7, -24
+ 540              		.cfi_offset 8, -20
+ 541              		.cfi_offset 9, -16
+ 542              		.cfi_offset 10, -12
+ 543              		.cfi_offset 11, -8
+ 544              		.cfi_offset 14, -4
+ 545 0004 87B0     		sub	sp, sp, #28
+ 546              	.LCFI7:
+ 547              		.cfi_def_cfa_offset 64
+ 548 0006 119F     		ldr	r7, [sp, #68]
+ 262:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     int ret;
+ 549              		.loc 1 262 5 is_stmt 1 view .LVU136
+ 263:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     word32 hash_len, hash_enc_len;
+ARM GAS  /tmp/cc8Z9J2L.s 			page 16
+
+
+ 550              		.loc 1 263 5 view .LVU137
+ 264:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #if defined(WOLFSSL_SMALL_STACK) || defined(NO_ASN)
+ 265:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     byte *hash_data;
+ 551              		.loc 1 265 5 view .LVU138
+ 266:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #else
+ 267:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     byte hash_data[MAX_DER_DIGEST_SZ];
+ 268:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #endif
+ 269:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 270:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     /* Check arguments */
+ 271:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     if (data == NULL || data_len == 0 ||
+ 552              		.loc 1 271 5 view .LVU139
+ 553              		.loc 1 271 8 is_stmt 0 view .LVU140
+ 554 0008 002A     		cmp	r2, #0
+ 555 000a 54D0     		beq	.L52
+ 556 000c 0646     		mov	r6, r0
+ 557 000e 0D46     		mov	r5, r1
+ 558 0010 9846     		mov	r8, r3
+ 559 0012 9346     		mov	fp, r2
+ 560              		.loc 1 271 22 discriminator 1 view .LVU141
+ 561 0014 002B     		cmp	r3, #0
+ 562 0016 51D0     		beq	.L53
+ 563              		.loc 1 271 39 discriminator 2 view .LVU142
+ 564 0018 109B     		ldr	r3, [sp, #64]
+ 565              	.LVL61:
+ 566              		.loc 1 271 39 discriminator 2 view .LVU143
+ 567 001a 002B     		cmp	r3, #0
+ 568 001c 51D0     		beq	.L54
+ 272:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         sig == NULL || sig_len == 0 ||
+ 569              		.loc 1 272 21 view .LVU144
+ 570 001e 002F     		cmp	r7, #0
+ 571 0020 52D0     		beq	.L55
+ 572              		.loc 1 272 37 discriminator 1 view .LVU145
+ 573 0022 129B     		ldr	r3, [sp, #72]
+ 574 0024 002B     		cmp	r3, #0
+ 575 0026 52D0     		beq	.L56
+ 273:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         key == NULL || key_len == 0) {
+ 576              		.loc 1 273 21 view .LVU146
+ 577 0028 139B     		ldr	r3, [sp, #76]
+ 578 002a 002B     		cmp	r3, #0
+ 579 002c 52D0     		beq	.L57
+ 274:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         return BAD_FUNC_ARG;
+ 275:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 276:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 277:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     /* Validate signature len (1 to max is okay) */
+ 278:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     if ((int)sig_len > wc_SignatureGetSize(sig_type, key, key_len)) {
+ 580              		.loc 1 278 5 is_stmt 1 view .LVU147
+ 581              		.loc 1 278 24 is_stmt 0 view .LVU148
+ 582 002e 1A46     		mov	r2, r3
+ 583              	.LVL62:
+ 584              		.loc 1 278 24 view .LVU149
+ 585 0030 1299     		ldr	r1, [sp, #72]
+ 586              	.LVL63:
+ 587              		.loc 1 278 24 view .LVU150
+ 588 0032 2846     		mov	r0, r5
+ 589              	.LVL64:
+ 590              		.loc 1 278 24 view .LVU151
+ 591 0034 FFF7FEFF 		bl	wc_SignatureGetSize
+ARM GAS  /tmp/cc8Z9J2L.s 			page 17
+
+
+ 592              	.LVL65:
+ 593              		.loc 1 278 8 view .LVU152
+ 594 0038 B842     		cmp	r0, r7
+ 595 003a 4EDB     		blt	.L58
+ 279:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         WOLFSSL_MSG("wc_SignatureVerify: Invalid sig type/len");
+ 280:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         return BAD_FUNC_ARG;
+ 281:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 282:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 283:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     /* Validate hash size */
+ 284:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     ret = wc_HashGetDigestSize(hash_type);
+ 596              		.loc 1 284 5 is_stmt 1 view .LVU153
+ 597              		.loc 1 284 11 is_stmt 0 view .LVU154
+ 598 003c 3046     		mov	r0, r6
+ 599 003e FFF7FEFF 		bl	wc_HashGetDigestSize
+ 600              	.LVL66:
+ 285:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     if (ret < 0) {
+ 601              		.loc 1 285 5 is_stmt 1 view .LVU155
+ 602              		.loc 1 285 8 is_stmt 0 view .LVU156
+ 603 0042 041E     		subs	r4, r0, #0
+ 604 0044 19DB     		blt	.L47
+ 286:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         WOLFSSL_MSG("wc_SignatureVerify: Invalid hash type/len");
+ 287:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         return ret;
+ 288:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 289:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     hash_enc_len = hash_len = ret;
+ 605              		.loc 1 289 5 is_stmt 1 view .LVU157
+ 606              		.loc 1 289 29 is_stmt 0 view .LVU158
+ 607 0046 A146     		mov	r9, r4
+ 608              	.LVL67:
+ 609              		.loc 1 289 18 view .LVU159
+ 610 0048 0594     		str	r4, [sp, #20]
+ 290:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 291:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #ifndef NO_RSA
+ 292:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     if (sig_type == WC_SIGNATURE_TYPE_RSA_W_ENC) {
+ 611              		.loc 1 292 5 is_stmt 1 view .LVU160
+ 612              		.loc 1 292 8 is_stmt 0 view .LVU161
+ 613 004a 032D     		cmp	r5, #3
+ 614 004c 19D0     		beq	.L61
+ 615              	.L49:
+ 293:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         /* For RSA with ASN.1 encoding include room */
+ 294:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         hash_enc_len += MAX_DER_DIGEST_ASN_SZ;
+ 295:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 296:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #endif
+ 297:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 298:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #if defined(WOLFSSL_SMALL_STACK) || defined(NO_ASN)
+ 299:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     /* Allocate temporary buffer for hash data */
+ 300:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     hash_data = (byte*)XMALLOC(hash_enc_len, NULL, DYNAMIC_TYPE_TMP_BUFFER);
+ 616              		.loc 1 300 5 is_stmt 1 view .LVU162
+ 617              		.loc 1 300 24 is_stmt 0 view .LVU163
+ 618 004e 0598     		ldr	r0, [sp, #20]
+ 619              	.LVL68:
+ 620              		.loc 1 300 24 view .LVU164
+ 621 0050 FFF7FEFF 		bl	pvPortMalloc
+ 622              	.LVL69:
+ 301:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     if (hash_data == NULL) {
+ 623              		.loc 1 301 5 is_stmt 1 view .LVU165
+ 624              		.loc 1 301 8 is_stmt 0 view .LVU166
+ 625 0054 8246     		mov	r10, r0
+ARM GAS  /tmp/cc8Z9J2L.s 			page 18
+
+
+ 626 0056 0028     		cmp	r0, #0
+ 627 0058 42D0     		beq	.L59
+ 302:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         return MEMORY_E;
+ 303:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 304:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #endif
+ 305:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 306:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     /* Perform hash of data */
+ 307:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     ret = wc_Hash(hash_type, data, data_len, hash_data, hash_len);
+ 628              		.loc 1 307 5 is_stmt 1 view .LVU167
+ 629              		.loc 1 307 11 is_stmt 0 view .LVU168
+ 630 005a CDF80090 		str	r9, [sp]
+ 631 005e 0346     		mov	r3, r0
+ 632 0060 4246     		mov	r2, r8
+ 633 0062 5946     		mov	r1, fp
+ 634 0064 3046     		mov	r0, r6
+ 635              	.LVL70:
+ 636              		.loc 1 307 11 view .LVU169
+ 637 0066 FFF7FEFF 		bl	wc_Hash
+ 638              	.LVL71:
+ 308:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     if (ret == 0) {
+ 639              		.loc 1 308 5 is_stmt 1 view .LVU170
+ 640              		.loc 1 308 8 is_stmt 0 view .LVU171
+ 641 006a 0446     		mov	r4, r0
+ 642 006c 10B9     		cbnz	r0, .L50
+ 309:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         /* Handle RSA with DER encoding */
+ 310:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         if (sig_type == WC_SIGNATURE_TYPE_RSA_W_ENC) {
+ 643              		.loc 1 310 9 is_stmt 1 view .LVU172
+ 644              		.loc 1 310 12 is_stmt 0 view .LVU173
+ 645 006e 032D     		cmp	r5, #3
+ 646 0070 0AD0     		beq	.L62
+ 647              	.L51:
+ 311:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         #if defined(NO_RSA) || defined(NO_ASN)
+ 312:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             ret = SIG_TYPE_E;
+ 313:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         #else
+ 314:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             ret = wc_SignatureDerEncode(hash_type, hash_data, hash_len,
+ 315:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 &hash_enc_len);
+ 316:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         #endif
+ 317:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         }
+ 318:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 319:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         if (ret == 0) {
+ 648              		.loc 1 319 9 is_stmt 1 view .LVU174
+ 649              		.loc 1 319 12 is_stmt 0 view .LVU175
+ 650 0072 8CB1     		cbz	r4, .L63
+ 651              	.L50:
+ 320:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             /* Verify signature using hash */
+ 321:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             ret = wc_SignatureVerifyHash(hash_type, sig_type,
+ 322:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 hash_data, hash_enc_len, sig, sig_len, key, key_len);
+ 323:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         }
+ 324:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 325:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 326:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #if defined(WOLFSSL_SMALL_STACK) || defined(NO_ASN)
+ 327:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     XFREE(hash_data, NULL, DYNAMIC_TYPE_TMP_BUFFER);
+ 652              		.loc 1 327 5 is_stmt 1 view .LVU176
+ 653 0074 5046     		mov	r0, r10
+ 654              	.LVL72:
+ 655              		.loc 1 327 5 is_stmt 0 view .LVU177
+ 656 0076 FFF7FEFF 		bl	vPortFree
+ARM GAS  /tmp/cc8Z9J2L.s 			page 19
+
+
+ 657              	.LVL73:
+ 328:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #endif
+ 329:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 330:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     return ret;
+ 658              		.loc 1 330 5 is_stmt 1 view .LVU178
+ 659              	.L47:
+ 331:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** }
+ 660              		.loc 1 331 1 is_stmt 0 view .LVU179
+ 661 007a 2046     		mov	r0, r4
+ 662 007c 07B0     		add	sp, sp, #28
+ 663              	.LCFI8:
+ 664              		.cfi_remember_state
+ 665              		.cfi_def_cfa_offset 36
+ 666              		@ sp needed
+ 667 007e BDE8F08F 		pop	{r4, r5, r6, r7, r8, r9, r10, fp, pc}
+ 668              	.LVL74:
+ 669              	.L61:
+ 670              	.LCFI9:
+ 671              		.cfi_restore_state
+ 294:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 672              		.loc 1 294 9 is_stmt 1 view .LVU180
+ 294:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 673              		.loc 1 294 22 is_stmt 0 view .LVU181
+ 674 0082 2234     		adds	r4, r4, #34
+ 675 0084 0594     		str	r4, [sp, #20]
+ 676 0086 E2E7     		b	.L49
+ 677              	.LVL75:
+ 678              	.L62:
+ 314:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 &hash_enc_len);
+ 679              		.loc 1 314 13 is_stmt 1 view .LVU182
+ 314:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 &hash_enc_len);
+ 680              		.loc 1 314 19 is_stmt 0 view .LVU183
+ 681 0088 05AB     		add	r3, sp, #20
+ 682 008a 4A46     		mov	r2, r9
+ 683 008c 5146     		mov	r1, r10
+ 684 008e 3046     		mov	r0, r6
+ 685              	.LVL76:
+ 314:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 &hash_enc_len);
+ 686              		.loc 1 314 19 view .LVU184
+ 687 0090 FFF7FEFF 		bl	wc_SignatureDerEncode
+ 688              	.LVL77:
+ 689 0094 0446     		mov	r4, r0
+ 690              	.LVL78:
+ 314:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 &hash_enc_len);
+ 691              		.loc 1 314 19 view .LVU185
+ 692 0096 ECE7     		b	.L51
+ 693              	.L63:
+ 321:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 hash_data, hash_enc_len, sig, sig_len, key, key_len);
+ 694              		.loc 1 321 13 is_stmt 1 view .LVU186
+ 321:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 hash_data, hash_enc_len, sig, sig_len, key, key_len);
+ 695              		.loc 1 321 19 is_stmt 0 view .LVU187
+ 696 0098 139B     		ldr	r3, [sp, #76]
+ 697 009a 0393     		str	r3, [sp, #12]
+ 698 009c 129B     		ldr	r3, [sp, #72]
+ 699 009e 0293     		str	r3, [sp, #8]
+ 700 00a0 0197     		str	r7, [sp, #4]
+ 701 00a2 109B     		ldr	r3, [sp, #64]
+ARM GAS  /tmp/cc8Z9J2L.s 			page 20
+
+
+ 702 00a4 0093     		str	r3, [sp]
+ 703 00a6 059B     		ldr	r3, [sp, #20]
+ 704 00a8 5246     		mov	r2, r10
+ 705 00aa 2946     		mov	r1, r5
+ 706 00ac 3046     		mov	r0, r6
+ 707              	.LVL79:
+ 321:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 hash_data, hash_enc_len, sig, sig_len, key, key_len);
+ 708              		.loc 1 321 19 view .LVU188
+ 709 00ae FFF7FEFF 		bl	wc_SignatureVerifyHash
+ 710              	.LVL80:
+ 711 00b2 0446     		mov	r4, r0
+ 712              	.LVL81:
+ 321:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 hash_data, hash_enc_len, sig, sig_len, key, key_len);
+ 713              		.loc 1 321 19 view .LVU189
+ 714 00b4 DEE7     		b	.L50
+ 715              	.LVL82:
+ 716              	.L52:
+ 274:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 717              		.loc 1 274 16 view .LVU190
+ 718 00b6 6FF0AC04 		mvn	r4, #172
+ 719 00ba DEE7     		b	.L47
+ 720              	.L53:
+ 274:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 721              		.loc 1 274 16 view .LVU191
+ 722 00bc 6FF0AC04 		mvn	r4, #172
+ 723 00c0 DBE7     		b	.L47
+ 724              	.LVL83:
+ 725              	.L54:
+ 274:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 726              		.loc 1 274 16 view .LVU192
+ 727 00c2 6FF0AC04 		mvn	r4, #172
+ 728 00c6 D8E7     		b	.L47
+ 729              	.L55:
+ 730 00c8 6FF0AC04 		mvn	r4, #172
+ 731 00cc D5E7     		b	.L47
+ 732              	.L56:
+ 733 00ce 6FF0AC04 		mvn	r4, #172
+ 734 00d2 D2E7     		b	.L47
+ 735              	.L57:
+ 736 00d4 6FF0AC04 		mvn	r4, #172
+ 737 00d8 CFE7     		b	.L47
+ 738              	.LVL84:
+ 739              	.L58:
+ 280:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 740              		.loc 1 280 16 view .LVU193
+ 741 00da 6FF0AC04 		mvn	r4, #172
+ 742 00de CCE7     		b	.L47
+ 743              	.LVL85:
+ 744              	.L59:
+ 302:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 745              		.loc 1 302 16 view .LVU194
+ 746 00e0 6FF07C04 		mvn	r4, #124
+ 747 00e4 C9E7     		b	.L47
+ 748              		.cfi_endproc
+ 749              	.LFE139:
+ 751              		.section	.text.wc_SignatureGenerateHash_ex,"ax",%progbits
+ 752              		.align	1
+ARM GAS  /tmp/cc8Z9J2L.s 			page 21
+
+
+ 753              		.global	wc_SignatureGenerateHash_ex
+ 754              		.syntax unified
+ 755              		.thumb
+ 756              		.thumb_func
+ 757              		.fpu fpv4-sp-d16
+ 759              	wc_SignatureGenerateHash_ex:
+ 760              	.LVL86:
+ 761              	.LFB141:
+ 332:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 333:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 334:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** int wc_SignatureGenerateHash(
+ 335:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     enum wc_HashType hash_type, enum wc_SignatureType sig_type,
+ 336:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     const byte* hash_data, word32 hash_len,
+ 337:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     byte* sig, word32 *sig_len,
+ 338:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     const void* key, word32 key_len, WC_RNG* rng)
+ 339:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** {
+ 340:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     return wc_SignatureGenerateHash_ex(hash_type, sig_type, hash_data, hash_len,
+ 341:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         sig, sig_len, key, key_len, rng, 1);
+ 342:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** }
+ 343:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 344:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** int wc_SignatureGenerateHash_ex(
+ 345:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     enum wc_HashType hash_type, enum wc_SignatureType sig_type,
+ 346:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     const byte* hash_data, word32 hash_len,
+ 347:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     byte* sig, word32 *sig_len,
+ 348:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     const void* key, word32 key_len, WC_RNG* rng, int verify)
+ 349:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** {
+ 762              		.loc 1 349 1 is_stmt 1 view -0
+ 763              		.cfi_startproc
+ 764              		@ args = 24, pretend = 0, frame = 0
+ 765              		@ frame_needed = 0, uses_anonymous_args = 0
+ 766              		.loc 1 349 1 is_stmt 0 view .LVU196
+ 767 0000 2DE9F04F 		push	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
+ 768              	.LCFI10:
+ 769              		.cfi_def_cfa_offset 36
+ 770              		.cfi_offset 4, -36
+ 771              		.cfi_offset 5, -32
+ 772              		.cfi_offset 6, -28
+ 773              		.cfi_offset 7, -24
+ 774              		.cfi_offset 8, -20
+ 775              		.cfi_offset 9, -16
+ 776              		.cfi_offset 10, -12
+ 777              		.cfi_offset 11, -8
+ 778              		.cfi_offset 14, -4
+ 779 0004 85B0     		sub	sp, sp, #20
+ 780              	.LCFI11:
+ 781              		.cfi_def_cfa_offset 56
+ 782 0006 DDF83890 		ldr	r9, [sp, #56]
+ 783 000a 0F9E     		ldr	r6, [sp, #60]
+ 784 000c 109F     		ldr	r7, [sp, #64]
+ 350:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     int ret;
+ 785              		.loc 1 350 5 is_stmt 1 view .LVU197
+ 351:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 352:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     /* Suppress possible unused arg if all signature types are disabled */
+ 353:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     (void)rng;
+ 786              		.loc 1 353 5 view .LVU198
+ 354:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 355:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     /* Check arguments */
+ARM GAS  /tmp/cc8Z9J2L.s 			page 22
+
+
+ 356:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     if (hash_data == NULL || hash_len == 0 ||
+ 787              		.loc 1 356 5 view .LVU199
+ 788              		.loc 1 356 8 is_stmt 0 view .LVU200
+ 789 000e 002A     		cmp	r2, #0
+ 790 0010 67D0     		beq	.L72
+ 791 0012 8046     		mov	r8, r0
+ 792 0014 0C46     		mov	r4, r1
+ 793 0016 1D46     		mov	r5, r3
+ 794 0018 9346     		mov	fp, r2
+ 795              		.loc 1 356 27 discriminator 1 view .LVU201
+ 796 001a 002B     		cmp	r3, #0
+ 797 001c 64D0     		beq	.L73
+ 798              		.loc 1 356 44 discriminator 2 view .LVU202
+ 799 001e B9F1000F 		cmp	r9, #0
+ 800 0022 64D0     		beq	.L74
+ 357:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         sig == NULL || sig_len == NULL || *sig_len == 0 ||
+ 801              		.loc 1 357 21 view .LVU203
+ 802 0024 002E     		cmp	r6, #0
+ 803 0026 65D0     		beq	.L75
+ 804              		.loc 1 357 43 discriminator 1 view .LVU204
+ 805 0028 D6F800A0 		ldr	r10, [r6]
+ 806              		.loc 1 357 40 discriminator 1 view .LVU205
+ 807 002c BAF1000F 		cmp	r10, #0
+ 808 0030 63D0     		beq	.L76
+ 809              		.loc 1 357 57 discriminator 2 view .LVU206
+ 810 0032 002F     		cmp	r7, #0
+ 811 0034 64D0     		beq	.L77
+ 358:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         key == NULL || key_len == 0) {
+ 812              		.loc 1 358 21 view .LVU207
+ 813 0036 119B     		ldr	r3, [sp, #68]
+ 814              	.LVL87:
+ 815              		.loc 1 358 21 view .LVU208
+ 816 0038 002B     		cmp	r3, #0
+ 817 003a 64D0     		beq	.L78
+ 359:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         return BAD_FUNC_ARG;
+ 360:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 361:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 362:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     /* Validate signature len (needs to be at least max) */
+ 363:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     if ((int)*sig_len < wc_SignatureGetSize(sig_type, key, key_len)) {
+ 818              		.loc 1 363 5 is_stmt 1 view .LVU209
+ 819              		.loc 1 363 25 is_stmt 0 view .LVU210
+ 820 003c 1A46     		mov	r2, r3
+ 821              	.LVL88:
+ 822              		.loc 1 363 25 view .LVU211
+ 823 003e 3946     		mov	r1, r7
+ 824              	.LVL89:
+ 825              		.loc 1 363 25 view .LVU212
+ 826 0040 2046     		mov	r0, r4
+ 827              	.LVL90:
+ 828              		.loc 1 363 25 view .LVU213
+ 829 0042 FFF7FEFF 		bl	wc_SignatureGetSize
+ 830              	.LVL91:
+ 831              		.loc 1 363 8 view .LVU214
+ 832 0046 8245     		cmp	r10, r0
+ 833 0048 60DB     		blt	.L79
+ 364:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         WOLFSSL_MSG("wc_SignatureGenerate: Invalid sig type/len");
+ 365:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         return BAD_FUNC_ARG;
+ARM GAS  /tmp/cc8Z9J2L.s 			page 23
+
+
+ 366:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 367:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 368:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     /* Validate hash size */
+ 369:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     ret = wc_HashGetDigestSize(hash_type);
+ 834              		.loc 1 369 5 is_stmt 1 view .LVU215
+ 835              		.loc 1 369 11 is_stmt 0 view .LVU216
+ 836 004a 4046     		mov	r0, r8
+ 837 004c FFF7FEFF 		bl	wc_HashGetDigestSize
+ 838              	.LVL92:
+ 370:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     if (ret < 0) {
+ 839              		.loc 1 370 5 is_stmt 1 view .LVU217
+ 840              		.loc 1 370 8 is_stmt 0 view .LVU218
+ 841 0050 0028     		cmp	r0, #0
+ 842              		.loc 1 370 8 view .LVU219
+ 843 0052 63DB     		blt	.L64
+ 371:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         WOLFSSL_MSG("wc_SignatureGenerate: Invalid hash type/len");
+ 372:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         return ret;
+ 373:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 374:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     ret = 0;
+ 844              		.loc 1 374 5 is_stmt 1 view .LVU220
+ 845              	.LVL93:
+ 375:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 376:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     /* Create signature using hash as data */
+ 377:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     switch (sig_type) {
+ 846              		.loc 1 377 5 view .LVU221
+ 847 0054 012C     		cmp	r4, #1
+ 848 0056 0AD0     		beq	.L80
+ 849 0058 63B2     		sxtb	r3, r4
+ 850 005a 002B     		cmp	r3, #0
+ 851 005c 59D0     		beq	.L81
+ 852 005e A31E     		subs	r3, r4, #2
+ 853 0060 DBB2     		uxtb	r3, r3
+ 854 0062 012B     		cmp	r3, #1
+ 855 0064 58D8     		bhi	.L82
+ 856 0066 0020     		movs	r0, #0
+ 857 0068 A246     		mov	r10, r4
+ 858 006a 129C     		ldr	r4, [sp, #72]
+ 859 006c 28E0     		b	.L67
+ 860              	.L80:
+ 861 006e 0020     		movs	r0, #0
+ 862 0070 A246     		mov	r10, r4
+ 863 0072 129C     		ldr	r4, [sp, #72]
+ 864 0074 02E0     		b	.L66
+ 865              	.LVL94:
+ 866              	.L68:
+ 378:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         case WC_SIGNATURE_TYPE_ECC:
+ 379:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #if defined(HAVE_ECC) && defined(HAVE_ECC_SIGN)
+ 380:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             /* Create signature using provided ECC key */
+ 381:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             do {
+ 382:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             #ifdef WOLFSSL_ASYNC_CRYPT
+ 383:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 ret = wc_AsyncWait(ret, &((ecc_key*)key)->asyncDev,
+ 384:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                     WC_ASYNC_FLAG_CALL_AGAIN);
+ 385:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             #endif
+ 386:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             if (ret >= 0)
+ 387:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 ret = wc_ecc_sign_hash(hash_data, hash_len, sig, sig_len,
+ 388:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                     rng, (ecc_key*)key);
+ 389:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             } while (ret == WC_PENDING_E);
+ARM GAS  /tmp/cc8Z9J2L.s 			page 24
+
+
+ 867              		.loc 1 389 21 view .LVU222
+ 868              		.loc 1 389 13 is_stmt 0 view .LVU223
+ 869 0076 10F16C0F 		cmn	r0, #108
+ 870 007a 0AD1     		bne	.L84
+ 871              	.LVL95:
+ 872              	.L66:
+ 381:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             #ifdef WOLFSSL_ASYNC_CRYPT
+ 873              		.loc 1 381 13 is_stmt 1 view .LVU224
+ 386:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 ret = wc_ecc_sign_hash(hash_data, hash_len, sig, sig_len,
+ 874              		.loc 1 386 13 view .LVU225
+ 386:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 ret = wc_ecc_sign_hash(hash_data, hash_len, sig, sig_len,
+ 875              		.loc 1 386 16 is_stmt 0 view .LVU226
+ 876 007c 0028     		cmp	r0, #0
+ 877 007e FADB     		blt	.L68
+ 387:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                     rng, (ecc_key*)key);
+ 878              		.loc 1 387 17 is_stmt 1 view .LVU227
+ 387:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                     rng, (ecc_key*)key);
+ 879              		.loc 1 387 23 is_stmt 0 view .LVU228
+ 880 0080 0197     		str	r7, [sp, #4]
+ 881 0082 0094     		str	r4, [sp]
+ 882 0084 3346     		mov	r3, r6
+ 883 0086 4A46     		mov	r2, r9
+ 884 0088 2946     		mov	r1, r5
+ 885 008a 5846     		mov	r0, fp
+ 886              	.LVL96:
+ 387:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                     rng, (ecc_key*)key);
+ 887              		.loc 1 387 23 view .LVU229
+ 888 008c FFF7FEFF 		bl	wc_ecc_sign_hash
+ 889              	.LVL97:
+ 387:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                     rng, (ecc_key*)key);
+ 890              		.loc 1 387 23 view .LVU230
+ 891 0090 F1E7     		b	.L68
+ 892              	.L84:
+ 387:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                     rng, (ecc_key*)key);
+ 893              		.loc 1 387 23 view .LVU231
+ 894 0092 5446     		mov	r4, r10
+ 895              	.L69:
+ 390:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #else
+ 391:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             ret = SIG_TYPE_E;
+ 392:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #endif
+ 393:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             break;
+ 394:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 395:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         case WC_SIGNATURE_TYPE_RSA_W_ENC:
+ 396:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         case WC_SIGNATURE_TYPE_RSA:
+ 397:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #if !defined(NO_RSA) && !defined(WOLFSSL_RSA_PUBLIC_ONLY) && \
+ 398:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     !defined(WOLFSSL_RSA_VERIFY_ONLY)
+ 399:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     #ifdef WOLFSSL_CRYPTOCELL
+ 400:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             /* use expected signature size (incoming sig_len could be larger buffer */
+ 401:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             *sig_len = wc_SignatureGetSize(sig_type, key, key_len);
+ 402:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             if (sig_type == WC_SIGNATURE_TYPE_RSA_W_ENC) {
+ 403:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 ret = cc310_RsaSSL_Sign(hash_data, hash_len, sig, *sig_len, key,
+ 404:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                                         cc310_hashModeRSA(hash_type, 0));
+ 405:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             }
+ 406:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             else {
+ 407:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 ret = cc310_RsaSSL_Sign(hash_data, hash_len, sig, *sig_len, key,
+ 408:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                                         cc310_hashModeRSA(hash_type, 1));
+ 409:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****            }
+ARM GAS  /tmp/cc8Z9J2L.s 			page 25
+
+
+ 410:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     #else
+ 411:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             /* Create signature using provided RSA key */
+ 412:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             do {
+ 413:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             #ifdef WOLFSSL_ASYNC_CRYPT
+ 414:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 ret = wc_AsyncWait(ret, &((RsaKey*)key)->asyncDev,
+ 415:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                     WC_ASYNC_FLAG_CALL_AGAIN);
+ 416:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             #endif
+ 417:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 if (ret >= 0)
+ 418:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                     ret = wc_RsaSSL_Sign(hash_data, hash_len, sig, *sig_len,
+ 419:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                         (RsaKey*)key, rng);
+ 420:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             } while (ret == WC_PENDING_E);
+ 421:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     #endif /* WOLFSSL_CRYPTOCELL */
+ 422:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             if (ret >= 0) {
+ 423:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 *sig_len = ret;
+ 424:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 ret = 0; /* Success */
+ 425:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             }
+ 426:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #else
+ 427:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             ret = SIG_TYPE_E;
+ 428:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #endif
+ 429:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             break;
+ 430:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 431:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         case WC_SIGNATURE_TYPE_NONE:
+ 432:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         default:
+ 433:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             ret = BAD_FUNC_ARG;
+ 434:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             break;
+ 435:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 436:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 437:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     if (ret == 0 && verify) {
+ 896              		.loc 1 437 5 is_stmt 1 view .LVU232
+ 897              		.loc 1 437 8 is_stmt 0 view .LVU233
+ 898 0094 0028     		cmp	r0, #0
+ 899 0096 41D1     		bne	.L64
+ 900              	.LVL98:
+ 901              	.L71:
+ 902              		.loc 1 437 18 discriminator 1 view .LVU234
+ 903 0098 139B     		ldr	r3, [sp, #76]
+ 904 009a 002B     		cmp	r3, #0
+ 905 009c 3ED0     		beq	.L64
+ 438:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         ret = wc_SignatureVerifyHash(hash_type, sig_type, hash_data, hash_len,
+ 906              		.loc 1 438 9 is_stmt 1 view .LVU235
+ 907              		.loc 1 438 15 is_stmt 0 view .LVU236
+ 908 009e 119B     		ldr	r3, [sp, #68]
+ 909 00a0 0393     		str	r3, [sp, #12]
+ 910 00a2 0297     		str	r7, [sp, #8]
+ 911 00a4 3368     		ldr	r3, [r6]
+ 912 00a6 0193     		str	r3, [sp, #4]
+ 913 00a8 CDF80090 		str	r9, [sp]
+ 914 00ac 2B46     		mov	r3, r5
+ 915 00ae 5A46     		mov	r2, fp
+ 916 00b0 2146     		mov	r1, r4
+ 917 00b2 4046     		mov	r0, r8
+ 918 00b4 FFF7FEFF 		bl	wc_SignatureVerifyHash
+ 919              	.LVL99:
+ 920              		.loc 1 438 15 view .LVU237
+ 921 00b8 30E0     		b	.L64
+ 922              	.L70:
+ 420:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     #endif /* WOLFSSL_CRYPTOCELL */
+ARM GAS  /tmp/cc8Z9J2L.s 			page 26
+
+
+ 923              		.loc 1 420 21 is_stmt 1 view .LVU238
+ 420:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     #endif /* WOLFSSL_CRYPTOCELL */
+ 924              		.loc 1 420 13 is_stmt 0 view .LVU239
+ 925 00ba 10F16C0F 		cmn	r0, #108
+ 926 00be 0AD1     		bne	.L85
+ 927              	.LVL100:
+ 928              	.L67:
+ 412:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             #ifdef WOLFSSL_ASYNC_CRYPT
+ 929              		.loc 1 412 13 is_stmt 1 view .LVU240
+ 417:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                     ret = wc_RsaSSL_Sign(hash_data, hash_len, sig, *sig_len,
+ 930              		.loc 1 417 17 view .LVU241
+ 417:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                     ret = wc_RsaSSL_Sign(hash_data, hash_len, sig, *sig_len,
+ 931              		.loc 1 417 20 is_stmt 0 view .LVU242
+ 932 00c0 0028     		cmp	r0, #0
+ 933 00c2 FADB     		blt	.L70
+ 418:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                         (RsaKey*)key, rng);
+ 934              		.loc 1 418 21 is_stmt 1 view .LVU243
+ 418:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                         (RsaKey*)key, rng);
+ 935              		.loc 1 418 27 is_stmt 0 view .LVU244
+ 936 00c4 0194     		str	r4, [sp, #4]
+ 937 00c6 0097     		str	r7, [sp]
+ 938 00c8 3368     		ldr	r3, [r6]
+ 939 00ca 4A46     		mov	r2, r9
+ 940 00cc 2946     		mov	r1, r5
+ 941 00ce 5846     		mov	r0, fp
+ 942              	.LVL101:
+ 418:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                         (RsaKey*)key, rng);
+ 943              		.loc 1 418 27 view .LVU245
+ 944 00d0 FFF7FEFF 		bl	wc_RsaSSL_Sign
+ 945              	.LVL102:
+ 418:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                         (RsaKey*)key, rng);
+ 946              		.loc 1 418 27 view .LVU246
+ 947 00d4 F1E7     		b	.L70
+ 948              	.L85:
+ 422:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 *sig_len = ret;
+ 949              		.loc 1 422 16 view .LVU247
+ 950 00d6 5446     		mov	r4, r10
+ 422:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 *sig_len = ret;
+ 951              		.loc 1 422 13 is_stmt 1 view .LVU248
+ 422:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 *sig_len = ret;
+ 952              		.loc 1 422 16 is_stmt 0 view .LVU249
+ 953 00d8 0028     		cmp	r0, #0
+ 954 00da DBDB     		blt	.L69
+ 423:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 ret = 0; /* Success */
+ 955              		.loc 1 423 17 is_stmt 1 view .LVU250
+ 423:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 ret = 0; /* Success */
+ 956              		.loc 1 423 26 is_stmt 0 view .LVU251
+ 957 00dc 3060     		str	r0, [r6]
+ 424:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             }
+ 958              		.loc 1 424 17 is_stmt 1 view .LVU252
+ 959              	.LVL103:
+ 437:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         ret = wc_SignatureVerifyHash(hash_type, sig_type, hash_data, hash_len,
+ 960              		.loc 1 437 5 view .LVU253
+ 424:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             }
+ 961              		.loc 1 424 21 is_stmt 0 view .LVU254
+ 962 00de 0020     		movs	r0, #0
+ 963 00e0 DAE7     		b	.L71
+ARM GAS  /tmp/cc8Z9J2L.s 			page 27
+
+
+ 964              	.LVL104:
+ 965              	.L72:
+ 359:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 966              		.loc 1 359 16 view .LVU255
+ 967 00e2 6FF0AC00 		mvn	r0, #172
+ 968              	.LVL105:
+ 359:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 969              		.loc 1 359 16 view .LVU256
+ 970 00e6 19E0     		b	.L64
+ 971              	.LVL106:
+ 972              	.L73:
+ 359:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 973              		.loc 1 359 16 view .LVU257
+ 974 00e8 6FF0AC00 		mvn	r0, #172
+ 975              	.LVL107:
+ 359:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 976              		.loc 1 359 16 view .LVU258
+ 977 00ec 16E0     		b	.L64
+ 978              	.LVL108:
+ 979              	.L74:
+ 359:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 980              		.loc 1 359 16 view .LVU259
+ 981 00ee 6FF0AC00 		mvn	r0, #172
+ 982              	.LVL109:
+ 359:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 983              		.loc 1 359 16 view .LVU260
+ 984 00f2 13E0     		b	.L64
+ 985              	.LVL110:
+ 986              	.L75:
+ 359:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 987              		.loc 1 359 16 view .LVU261
+ 988 00f4 6FF0AC00 		mvn	r0, #172
+ 989              	.LVL111:
+ 359:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 990              		.loc 1 359 16 view .LVU262
+ 991 00f8 10E0     		b	.L64
+ 992              	.LVL112:
+ 993              	.L76:
+ 359:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 994              		.loc 1 359 16 view .LVU263
+ 995 00fa 6FF0AC00 		mvn	r0, #172
+ 996              	.LVL113:
+ 359:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 997              		.loc 1 359 16 view .LVU264
+ 998 00fe 0DE0     		b	.L64
+ 999              	.LVL114:
+ 1000              	.L77:
+ 359:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 1001              		.loc 1 359 16 view .LVU265
+ 1002 0100 6FF0AC00 		mvn	r0, #172
+ 1003              	.LVL115:
+ 359:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 1004              		.loc 1 359 16 view .LVU266
+ 1005 0104 0AE0     		b	.L64
+ 1006              	.LVL116:
+ 1007              	.L78:
+ 359:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ARM GAS  /tmp/cc8Z9J2L.s 			page 28
+
+
+ 1008              		.loc 1 359 16 view .LVU267
+ 1009 0106 6FF0AC00 		mvn	r0, #172
+ 1010              	.LVL117:
+ 359:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 1011              		.loc 1 359 16 view .LVU268
+ 1012 010a 07E0     		b	.L64
+ 1013              	.LVL118:
+ 1014              	.L79:
+ 365:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 1015              		.loc 1 365 16 view .LVU269
+ 1016 010c 6FF0AC00 		mvn	r0, #172
+ 1017 0110 04E0     		b	.L64
+ 1018              	.LVL119:
+ 1019              	.L81:
+ 377:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         case WC_SIGNATURE_TYPE_ECC:
+ 1020              		.loc 1 377 5 view .LVU270
+ 1021 0112 6FF0AC00 		mvn	r0, #172
+ 1022 0116 01E0     		b	.L64
+ 1023              	.L82:
+ 1024 0118 6FF0AC00 		mvn	r0, #172
+ 1025              	.LVL120:
+ 1026              	.L64:
+ 439:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             sig, *sig_len, key, key_len);
+ 440:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 441:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 442:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     return ret;
+ 443:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** }
+ 1027              		.loc 1 443 1 view .LVU271
+ 1028 011c 05B0     		add	sp, sp, #20
+ 1029              	.LCFI12:
+ 1030              		.cfi_def_cfa_offset 36
+ 1031              		@ sp needed
+ 1032 011e BDE8F08F 		pop	{r4, r5, r6, r7, r8, r9, r10, fp, pc}
+ 1033              		.loc 1 443 1 view .LVU272
+ 1034              		.cfi_endproc
+ 1035              	.LFE141:
+ 1037              		.section	.text.wc_SignatureGenerateHash,"ax",%progbits
+ 1038              		.align	1
+ 1039              		.global	wc_SignatureGenerateHash
+ 1040              		.syntax unified
+ 1041              		.thumb
+ 1042              		.thumb_func
+ 1043              		.fpu fpv4-sp-d16
+ 1045              	wc_SignatureGenerateHash:
+ 1046              	.LVL121:
+ 1047              	.LFB140:
+ 339:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     return wc_SignatureGenerateHash_ex(hash_type, sig_type, hash_data, hash_len,
+ 1048              		.loc 1 339 1 is_stmt 1 view -0
+ 1049              		.cfi_startproc
+ 1050              		@ args = 20, pretend = 0, frame = 0
+ 1051              		@ frame_needed = 0, uses_anonymous_args = 0
+ 339:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     return wc_SignatureGenerateHash_ex(hash_type, sig_type, hash_data, hash_len,
+ 1052              		.loc 1 339 1 is_stmt 0 view .LVU274
+ 1053 0000 10B5     		push	{r4, lr}
+ 1054              	.LCFI13:
+ 1055              		.cfi_def_cfa_offset 8
+ 1056              		.cfi_offset 4, -8
+ARM GAS  /tmp/cc8Z9J2L.s 			page 29
+
+
+ 1057              		.cfi_offset 14, -4
+ 1058 0002 86B0     		sub	sp, sp, #24
+ 1059              	.LCFI14:
+ 1060              		.cfi_def_cfa_offset 32
+ 340:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         sig, sig_len, key, key_len, rng, 1);
+ 1061              		.loc 1 340 5 is_stmt 1 view .LVU275
+ 340:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         sig, sig_len, key, key_len, rng, 1);
+ 1062              		.loc 1 340 12 is_stmt 0 view .LVU276
+ 1063 0004 0124     		movs	r4, #1
+ 1064 0006 0594     		str	r4, [sp, #20]
+ 1065 0008 0C9C     		ldr	r4, [sp, #48]
+ 1066 000a 0494     		str	r4, [sp, #16]
+ 1067 000c 0B9C     		ldr	r4, [sp, #44]
+ 1068 000e 0394     		str	r4, [sp, #12]
+ 1069 0010 0A9C     		ldr	r4, [sp, #40]
+ 1070 0012 0294     		str	r4, [sp, #8]
+ 1071 0014 099C     		ldr	r4, [sp, #36]
+ 1072 0016 0194     		str	r4, [sp, #4]
+ 1073 0018 089C     		ldr	r4, [sp, #32]
+ 1074 001a 0094     		str	r4, [sp]
+ 1075 001c FFF7FEFF 		bl	wc_SignatureGenerateHash_ex
+ 1076              	.LVL122:
+ 342:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 1077              		.loc 1 342 1 view .LVU277
+ 1078 0020 06B0     		add	sp, sp, #24
+ 1079              	.LCFI15:
+ 1080              		.cfi_def_cfa_offset 8
+ 1081              		@ sp needed
+ 1082 0022 10BD     		pop	{r4, pc}
+ 342:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 1083              		.loc 1 342 1 view .LVU278
+ 1084              		.cfi_endproc
+ 1085              	.LFE140:
+ 1087              		.section	.text.wc_SignatureGenerate_ex,"ax",%progbits
+ 1088              		.align	1
+ 1089              		.global	wc_SignatureGenerate_ex
+ 1090              		.syntax unified
+ 1091              		.thumb
+ 1092              		.thumb_func
+ 1093              		.fpu fpv4-sp-d16
+ 1095              	wc_SignatureGenerate_ex:
+ 1096              	.LVL123:
+ 1097              	.LFB143:
+ 444:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 445:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** int wc_SignatureGenerate(
+ 446:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     enum wc_HashType hash_type, enum wc_SignatureType sig_type,
+ 447:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     const byte* data, word32 data_len,
+ 448:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     byte* sig, word32 *sig_len,
+ 449:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     const void* key, word32 key_len, WC_RNG* rng)
+ 450:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** {
+ 451:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     return wc_SignatureGenerate_ex(hash_type, sig_type, data, data_len, sig,
+ 452:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         sig_len, key, key_len, rng, 1);
+ 453:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** }
+ 454:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 455:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** int wc_SignatureGenerate_ex(
+ 456:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     enum wc_HashType hash_type, enum wc_SignatureType sig_type,
+ 457:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     const byte* data, word32 data_len,
+ARM GAS  /tmp/cc8Z9J2L.s 			page 30
+
+
+ 458:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     byte* sig, word32 *sig_len,
+ 459:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     const void* key, word32 key_len, WC_RNG* rng, int verify)
+ 460:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** {
+ 1098              		.loc 1 460 1 is_stmt 1 view -0
+ 1099              		.cfi_startproc
+ 1100              		@ args = 24, pretend = 0, frame = 8
+ 1101              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1102              		.loc 1 460 1 is_stmt 0 view .LVU280
+ 1103 0000 2DE9F04F 		push	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
+ 1104              	.LCFI16:
+ 1105              		.cfi_def_cfa_offset 36
+ 1106              		.cfi_offset 4, -36
+ 1107              		.cfi_offset 5, -32
+ 1108              		.cfi_offset 6, -28
+ 1109              		.cfi_offset 7, -24
+ 1110              		.cfi_offset 8, -20
+ 1111              		.cfi_offset 9, -16
+ 1112              		.cfi_offset 10, -12
+ 1113              		.cfi_offset 11, -8
+ 1114              		.cfi_offset 14, -4
+ 1115 0004 89B0     		sub	sp, sp, #36
+ 1116              	.LCFI17:
+ 1117              		.cfi_def_cfa_offset 72
+ 1118 0006 DDF84C80 		ldr	r8, [sp, #76]
+ 461:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     int ret;
+ 1119              		.loc 1 461 5 is_stmt 1 view .LVU281
+ 462:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     word32 hash_len, hash_enc_len;
+ 1120              		.loc 1 462 5 view .LVU282
+ 463:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #if defined(WOLFSSL_SMALL_STACK) || defined(NO_ASN)
+ 464:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     byte *hash_data;
+ 1121              		.loc 1 464 5 view .LVU283
+ 465:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #else
+ 466:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     byte hash_data[MAX_DER_DIGEST_SZ];
+ 467:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #endif
+ 468:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 469:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     /* Check arguments */
+ 470:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     if (data == NULL || data_len == 0 ||
+ 1122              		.loc 1 470 5 view .LVU284
+ 1123              		.loc 1 470 8 is_stmt 0 view .LVU285
+ 1124 000a 002A     		cmp	r2, #0
+ 1125 000c 70D0     		beq	.L94
+ 1126 000e 0646     		mov	r6, r0
+ 1127 0010 0D46     		mov	r5, r1
+ 1128 0012 1F46     		mov	r7, r3
+ 1129 0014 9146     		mov	r9, r2
+ 1130              		.loc 1 470 22 discriminator 1 view .LVU286
+ 1131 0016 002B     		cmp	r3, #0
+ 1132 0018 6DD0     		beq	.L95
+ 1133              		.loc 1 470 39 discriminator 2 view .LVU287
+ 1134 001a 129B     		ldr	r3, [sp, #72]
+ 1135              	.LVL124:
+ 1136              		.loc 1 470 39 discriminator 2 view .LVU288
+ 1137 001c 002B     		cmp	r3, #0
+ 1138 001e 6DD0     		beq	.L96
+ 471:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         sig == NULL || sig_len == NULL || *sig_len == 0 ||
+ 1139              		.loc 1 471 21 view .LVU289
+ 1140 0020 B8F1000F 		cmp	r8, #0
+ARM GAS  /tmp/cc8Z9J2L.s 			page 31
+
+
+ 1141 0024 6DD0     		beq	.L97
+ 1142              		.loc 1 471 43 discriminator 1 view .LVU290
+ 1143 0026 D8F80040 		ldr	r4, [r8]
+ 1144              		.loc 1 471 40 discriminator 1 view .LVU291
+ 1145 002a 002C     		cmp	r4, #0
+ 1146 002c 6CD0     		beq	.L98
+ 1147              		.loc 1 471 57 discriminator 2 view .LVU292
+ 1148 002e 149B     		ldr	r3, [sp, #80]
+ 1149 0030 002B     		cmp	r3, #0
+ 1150 0032 6CD0     		beq	.L99
+ 472:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         key == NULL || key_len == 0) {
+ 1151              		.loc 1 472 21 view .LVU293
+ 1152 0034 159B     		ldr	r3, [sp, #84]
+ 1153 0036 002B     		cmp	r3, #0
+ 1154 0038 6CD0     		beq	.L100
+ 473:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         return BAD_FUNC_ARG;
+ 474:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 475:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 476:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     /* Validate signature len (needs to be at least max) */
+ 477:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     if ((int)*sig_len < wc_SignatureGetSize(sig_type, key, key_len)) {
+ 1155              		.loc 1 477 5 is_stmt 1 view .LVU294
+ 1156              		.loc 1 477 25 is_stmt 0 view .LVU295
+ 1157 003a 1A46     		mov	r2, r3
+ 1158              	.LVL125:
+ 1159              		.loc 1 477 25 view .LVU296
+ 1160 003c 1499     		ldr	r1, [sp, #80]
+ 1161              	.LVL126:
+ 1162              		.loc 1 477 25 view .LVU297
+ 1163 003e 2846     		mov	r0, r5
+ 1164              	.LVL127:
+ 1165              		.loc 1 477 25 view .LVU298
+ 1166 0040 FFF7FEFF 		bl	wc_SignatureGetSize
+ 1167              	.LVL128:
+ 1168              		.loc 1 477 8 view .LVU299
+ 1169 0044 8442     		cmp	r4, r0
+ 1170 0046 68DB     		blt	.L101
+ 478:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         WOLFSSL_MSG("wc_SignatureGenerate: Invalid sig type/len");
+ 479:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         return BAD_FUNC_ARG;
+ 480:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 481:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 482:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     /* Validate hash size */
+ 483:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     ret = wc_HashGetDigestSize(hash_type);
+ 1171              		.loc 1 483 5 is_stmt 1 view .LVU300
+ 1172              		.loc 1 483 11 is_stmt 0 view .LVU301
+ 1173 0048 3046     		mov	r0, r6
+ 1174 004a FFF7FEFF 		bl	wc_HashGetDigestSize
+ 1175              	.LVL129:
+ 484:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     if (ret < 0) {
+ 1176              		.loc 1 484 5 is_stmt 1 view .LVU302
+ 1177              		.loc 1 484 8 is_stmt 0 view .LVU303
+ 1178 004e 041E     		subs	r4, r0, #0
+ 1179 0050 1CDB     		blt	.L88
+ 485:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         WOLFSSL_MSG("wc_SignatureGenerate: Invalid hash type/len");
+ 486:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         return ret;
+ 487:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 488:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     hash_enc_len = hash_len = ret;
+ 1180              		.loc 1 488 5 is_stmt 1 view .LVU304
+ARM GAS  /tmp/cc8Z9J2L.s 			page 32
+
+
+ 1181              		.loc 1 488 29 is_stmt 0 view .LVU305
+ 1182 0052 A246     		mov	r10, r4
+ 1183              	.LVL130:
+ 1184              		.loc 1 488 18 view .LVU306
+ 1185 0054 0794     		str	r4, [sp, #28]
+ 489:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 490:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #if !defined(NO_RSA) && !defined(WOLFSSL_RSA_PUBLIC_ONLY)
+ 491:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     if (sig_type == WC_SIGNATURE_TYPE_RSA_W_ENC) {
+ 1186              		.loc 1 491 5 is_stmt 1 view .LVU307
+ 1187              		.loc 1 491 8 is_stmt 0 view .LVU308
+ 1188 0056 032D     		cmp	r5, #3
+ 1189 0058 1CD0     		beq	.L104
+ 1190              	.L90:
+ 492:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         /* For RSA with ASN.1 encoding include room */
+ 493:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         hash_enc_len += MAX_DER_DIGEST_ASN_SZ;
+ 494:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 495:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #endif
+ 496:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 497:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #if defined(WOLFSSL_SMALL_STACK) || defined(NO_ASN)
+ 498:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     /* Allocate temporary buffer for hash data */
+ 499:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     hash_data = (byte*)XMALLOC(hash_enc_len, NULL, DYNAMIC_TYPE_TMP_BUFFER);
+ 1191              		.loc 1 499 5 is_stmt 1 view .LVU309
+ 1192              		.loc 1 499 24 is_stmt 0 view .LVU310
+ 1193 005a 0798     		ldr	r0, [sp, #28]
+ 1194              	.LVL131:
+ 1195              		.loc 1 499 24 view .LVU311
+ 1196 005c FFF7FEFF 		bl	pvPortMalloc
+ 1197              	.LVL132:
+ 500:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     if (hash_data == NULL) {
+ 1198              		.loc 1 500 5 is_stmt 1 view .LVU312
+ 1199              		.loc 1 500 8 is_stmt 0 view .LVU313
+ 1200 0060 8346     		mov	fp, r0
+ 1201 0062 0028     		cmp	r0, #0
+ 1202 0064 5CD0     		beq	.L102
+ 501:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         return MEMORY_E;
+ 502:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 503:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #endif
+ 504:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 505:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     /* Perform hash of data */
+ 506:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     ret = wc_Hash(hash_type, data, data_len, hash_data, hash_len);
+ 1203              		.loc 1 506 5 is_stmt 1 view .LVU314
+ 1204              		.loc 1 506 11 is_stmt 0 view .LVU315
+ 1205 0066 CDF800A0 		str	r10, [sp]
+ 1206 006a 0346     		mov	r3, r0
+ 1207 006c 3A46     		mov	r2, r7
+ 1208 006e 4946     		mov	r1, r9
+ 1209 0070 3046     		mov	r0, r6
+ 1210              	.LVL133:
+ 1211              		.loc 1 506 11 view .LVU316
+ 1212 0072 FFF7FEFF 		bl	wc_Hash
+ 1213              	.LVL134:
+ 507:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     if (ret == 0) {
+ 1214              		.loc 1 507 5 is_stmt 1 view .LVU317
+ 1215              		.loc 1 507 8 is_stmt 0 view .LVU318
+ 1216 0076 0446     		mov	r4, r0
+ 1217 0078 10B9     		cbnz	r0, .L91
+ 508:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         /* Handle RSA with DER encoding */
+ARM GAS  /tmp/cc8Z9J2L.s 			page 33
+
+
+ 509:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         if (sig_type == WC_SIGNATURE_TYPE_RSA_W_ENC) {
+ 1218              		.loc 1 509 9 is_stmt 1 view .LVU319
+ 1219              		.loc 1 509 12 is_stmt 0 view .LVU320
+ 1220 007a 032D     		cmp	r5, #3
+ 1221 007c 0DD0     		beq	.L105
+ 1222              	.L92:
+ 510:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         #if defined(NO_RSA) || defined(NO_ASN) || \
+ 511:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                                                 defined(WOLFSSL_RSA_PUBLIC_ONLY)
+ 512:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             ret = SIG_TYPE_E;
+ 513:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         #else
+ 514:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             ret = wc_SignatureDerEncode(hash_type, hash_data, hash_len,
+ 515:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 &hash_enc_len);
+ 516:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         #endif
+ 517:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         }
+ 518:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         if (ret == 0) {
+ 1223              		.loc 1 518 9 is_stmt 1 view .LVU321
+ 1224              		.loc 1 518 12 is_stmt 0 view .LVU322
+ 1225 007e A4B1     		cbz	r4, .L106
+ 1226              	.L91:
+ 519:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             /* Generate signature using hash */
+ 520:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             ret = wc_SignatureGenerateHash(hash_type, sig_type,
+ 521:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 hash_data, hash_enc_len, sig, sig_len, key, key_len, rng);
+ 522:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         }
+ 523:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 524:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 525:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     if (ret == 0 && verify) {
+ 1227              		.loc 1 525 5 is_stmt 1 view .LVU323
+ 1228              		.loc 1 525 8 is_stmt 0 view .LVU324
+ 1229 0080 0CB9     		cbnz	r4, .L93
+ 1230              		.loc 1 525 18 discriminator 1 view .LVU325
+ 1231 0082 179B     		ldr	r3, [sp, #92]
+ 1232 0084 1BBB     		cbnz	r3, .L107
+ 1233              	.L93:
+ 526:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         ret = wc_SignatureVerifyHash(hash_type, sig_type, hash_data,
+ 527:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             hash_enc_len, sig, *sig_len, key, key_len);
+ 528:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 529:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 530:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #if defined(WOLFSSL_SMALL_STACK) || defined(NO_ASN)
+ 531:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     XFREE(hash_data, NULL, DYNAMIC_TYPE_TMP_BUFFER);
+ 1234              		.loc 1 531 5 is_stmt 1 view .LVU326
+ 1235 0086 5846     		mov	r0, fp
+ 1236              	.LVL135:
+ 1237              		.loc 1 531 5 is_stmt 0 view .LVU327
+ 1238 0088 FFF7FEFF 		bl	vPortFree
+ 1239              	.LVL136:
+ 532:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** #endif
+ 533:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 534:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     return ret;
+ 1240              		.loc 1 534 5 is_stmt 1 view .LVU328
+ 1241              	.L88:
+ 535:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** }
+ 1242              		.loc 1 535 1 is_stmt 0 view .LVU329
+ 1243 008c 2046     		mov	r0, r4
+ 1244 008e 09B0     		add	sp, sp, #36
+ 1245              	.LCFI18:
+ 1246              		.cfi_remember_state
+ 1247              		.cfi_def_cfa_offset 36
+ARM GAS  /tmp/cc8Z9J2L.s 			page 34
+
+
+ 1248              		@ sp needed
+ 1249 0090 BDE8F08F 		pop	{r4, r5, r6, r7, r8, r9, r10, fp, pc}
+ 1250              	.LVL137:
+ 1251              	.L104:
+ 1252              	.LCFI19:
+ 1253              		.cfi_restore_state
+ 493:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 1254              		.loc 1 493 9 is_stmt 1 view .LVU330
+ 493:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 1255              		.loc 1 493 22 is_stmt 0 view .LVU331
+ 1256 0094 2234     		adds	r4, r4, #34
+ 1257 0096 0794     		str	r4, [sp, #28]
+ 1258 0098 DFE7     		b	.L90
+ 1259              	.LVL138:
+ 1260              	.L105:
+ 514:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 &hash_enc_len);
+ 1261              		.loc 1 514 13 is_stmt 1 view .LVU332
+ 514:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 &hash_enc_len);
+ 1262              		.loc 1 514 19 is_stmt 0 view .LVU333
+ 1263 009a 07AB     		add	r3, sp, #28
+ 1264 009c 5246     		mov	r2, r10
+ 1265 009e 5946     		mov	r1, fp
+ 1266 00a0 3046     		mov	r0, r6
+ 1267              	.LVL139:
+ 514:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 &hash_enc_len);
+ 1268              		.loc 1 514 19 view .LVU334
+ 1269 00a2 FFF7FEFF 		bl	wc_SignatureDerEncode
+ 1270              	.LVL140:
+ 1271 00a6 0446     		mov	r4, r0
+ 1272              	.LVL141:
+ 514:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 &hash_enc_len);
+ 1273              		.loc 1 514 19 view .LVU335
+ 1274 00a8 E9E7     		b	.L92
+ 1275              	.L106:
+ 520:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 hash_data, hash_enc_len, sig, sig_len, key, key_len, rng);
+ 1276              		.loc 1 520 13 is_stmt 1 view .LVU336
+ 520:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 hash_data, hash_enc_len, sig, sig_len, key, key_len, rng);
+ 1277              		.loc 1 520 19 is_stmt 0 view .LVU337
+ 1278 00aa 169B     		ldr	r3, [sp, #88]
+ 1279 00ac 0493     		str	r3, [sp, #16]
+ 1280 00ae 159B     		ldr	r3, [sp, #84]
+ 1281 00b0 0393     		str	r3, [sp, #12]
+ 1282 00b2 149B     		ldr	r3, [sp, #80]
+ 1283 00b4 0293     		str	r3, [sp, #8]
+ 1284 00b6 CDF80480 		str	r8, [sp, #4]
+ 1285 00ba 129B     		ldr	r3, [sp, #72]
+ 1286 00bc 0093     		str	r3, [sp]
+ 1287 00be 079B     		ldr	r3, [sp, #28]
+ 1288 00c0 5A46     		mov	r2, fp
+ 1289 00c2 2946     		mov	r1, r5
+ 1290 00c4 3046     		mov	r0, r6
+ 1291              	.LVL142:
+ 520:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 hash_data, hash_enc_len, sig, sig_len, key, key_len, rng);
+ 1292              		.loc 1 520 19 view .LVU338
+ 1293 00c6 FFF7FEFF 		bl	wc_SignatureGenerateHash
+ 1294              	.LVL143:
+ 1295 00ca 0446     		mov	r4, r0
+ARM GAS  /tmp/cc8Z9J2L.s 			page 35
+
+
+ 1296              	.LVL144:
+ 520:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****                 hash_data, hash_enc_len, sig, sig_len, key, key_len, rng);
+ 1297              		.loc 1 520 19 view .LVU339
+ 1298 00cc D8E7     		b	.L91
+ 1299              	.L107:
+ 526:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             hash_enc_len, sig, *sig_len, key, key_len);
+ 1300              		.loc 1 526 9 is_stmt 1 view .LVU340
+ 526:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             hash_enc_len, sig, *sig_len, key, key_len);
+ 1301              		.loc 1 526 15 is_stmt 0 view .LVU341
+ 1302 00ce 159B     		ldr	r3, [sp, #84]
+ 1303 00d0 0393     		str	r3, [sp, #12]
+ 1304 00d2 149B     		ldr	r3, [sp, #80]
+ 1305 00d4 0293     		str	r3, [sp, #8]
+ 1306 00d6 D8F80030 		ldr	r3, [r8]
+ 1307 00da 0193     		str	r3, [sp, #4]
+ 1308 00dc 129B     		ldr	r3, [sp, #72]
+ 1309 00de 0093     		str	r3, [sp]
+ 1310 00e0 079B     		ldr	r3, [sp, #28]
+ 1311 00e2 5A46     		mov	r2, fp
+ 1312 00e4 2946     		mov	r1, r5
+ 1313 00e6 3046     		mov	r0, r6
+ 1314              	.LVL145:
+ 526:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             hash_enc_len, sig, *sig_len, key, key_len);
+ 1315              		.loc 1 526 15 view .LVU342
+ 1316 00e8 FFF7FEFF 		bl	wc_SignatureVerifyHash
+ 1317              	.LVL146:
+ 1318 00ec 0446     		mov	r4, r0
+ 1319              	.LVL147:
+ 526:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****             hash_enc_len, sig, *sig_len, key, key_len);
+ 1320              		.loc 1 526 15 view .LVU343
+ 1321 00ee CAE7     		b	.L93
+ 1322              	.LVL148:
+ 1323              	.L94:
+ 473:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 1324              		.loc 1 473 16 view .LVU344
+ 1325 00f0 6FF0AC04 		mvn	r4, #172
+ 1326 00f4 CAE7     		b	.L88
+ 1327              	.L95:
+ 473:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 1328              		.loc 1 473 16 view .LVU345
+ 1329 00f6 6FF0AC04 		mvn	r4, #172
+ 1330 00fa C7E7     		b	.L88
+ 1331              	.LVL149:
+ 1332              	.L96:
+ 473:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 1333              		.loc 1 473 16 view .LVU346
+ 1334 00fc 6FF0AC04 		mvn	r4, #172
+ 1335 0100 C4E7     		b	.L88
+ 1336              	.L97:
+ 1337 0102 6FF0AC04 		mvn	r4, #172
+ 1338 0106 C1E7     		b	.L88
+ 1339              	.L98:
+ 1340 0108 6FF0AC04 		mvn	r4, #172
+ 1341 010c BEE7     		b	.L88
+ 1342              	.L99:
+ 1343 010e 6FF0AC04 		mvn	r4, #172
+ 1344 0112 BBE7     		b	.L88
+ARM GAS  /tmp/cc8Z9J2L.s 			page 36
+
+
+ 1345              	.L100:
+ 1346 0114 6FF0AC04 		mvn	r4, #172
+ 1347 0118 B8E7     		b	.L88
+ 1348              	.LVL150:
+ 1349              	.L101:
+ 479:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 1350              		.loc 1 479 16 view .LVU347
+ 1351 011a 6FF0AC04 		mvn	r4, #172
+ 1352 011e B5E7     		b	.L88
+ 1353              	.LVL151:
+ 1354              	.L102:
+ 501:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     }
+ 1355              		.loc 1 501 16 view .LVU348
+ 1356 0120 6FF07C04 		mvn	r4, #124
+ 1357 0124 B2E7     		b	.L88
+ 1358              		.cfi_endproc
+ 1359              	.LFE143:
+ 1361              		.section	.text.wc_SignatureGenerate,"ax",%progbits
+ 1362              		.align	1
+ 1363              		.global	wc_SignatureGenerate
+ 1364              		.syntax unified
+ 1365              		.thumb
+ 1366              		.thumb_func
+ 1367              		.fpu fpv4-sp-d16
+ 1369              	wc_SignatureGenerate:
+ 1370              	.LVL152:
+ 1371              	.LFB142:
+ 450:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     return wc_SignatureGenerate_ex(hash_type, sig_type, data, data_len, sig,
+ 1372              		.loc 1 450 1 is_stmt 1 view -0
+ 1373              		.cfi_startproc
+ 1374              		@ args = 20, pretend = 0, frame = 0
+ 1375              		@ frame_needed = 0, uses_anonymous_args = 0
+ 450:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****     return wc_SignatureGenerate_ex(hash_type, sig_type, data, data_len, sig,
+ 1376              		.loc 1 450 1 is_stmt 0 view .LVU350
+ 1377 0000 10B5     		push	{r4, lr}
+ 1378              	.LCFI20:
+ 1379              		.cfi_def_cfa_offset 8
+ 1380              		.cfi_offset 4, -8
+ 1381              		.cfi_offset 14, -4
+ 1382 0002 86B0     		sub	sp, sp, #24
+ 1383              	.LCFI21:
+ 1384              		.cfi_def_cfa_offset 32
+ 451:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         sig_len, key, key_len, rng, 1);
+ 1385              		.loc 1 451 5 is_stmt 1 view .LVU351
+ 451:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c ****         sig_len, key, key_len, rng, 1);
+ 1386              		.loc 1 451 12 is_stmt 0 view .LVU352
+ 1387 0004 0124     		movs	r4, #1
+ 1388 0006 0594     		str	r4, [sp, #20]
+ 1389 0008 0C9C     		ldr	r4, [sp, #48]
+ 1390 000a 0494     		str	r4, [sp, #16]
+ 1391 000c 0B9C     		ldr	r4, [sp, #44]
+ 1392 000e 0394     		str	r4, [sp, #12]
+ 1393 0010 0A9C     		ldr	r4, [sp, #40]
+ 1394 0012 0294     		str	r4, [sp, #8]
+ 1395 0014 099C     		ldr	r4, [sp, #36]
+ 1396 0016 0194     		str	r4, [sp, #4]
+ 1397 0018 089C     		ldr	r4, [sp, #32]
+ARM GAS  /tmp/cc8Z9J2L.s 			page 37
+
+
+ 1398 001a 0094     		str	r4, [sp]
+ 1399 001c FFF7FEFF 		bl	wc_SignatureGenerate_ex
+ 1400              	.LVL153:
+ 453:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 1401              		.loc 1 453 1 view .LVU353
+ 1402 0020 06B0     		add	sp, sp, #24
+ 1403              	.LCFI22:
+ 1404              		.cfi_def_cfa_offset 8
+ 1405              		@ sp needed
+ 1406 0022 10BD     		pop	{r4, pc}
+ 453:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/signature.c **** 
+ 1407              		.loc 1 453 1 view .LVU354
+ 1408              		.cfi_endproc
+ 1409              	.LFE142:
+ 1411              		.text
+ 1412              	.Letext0:
+ 1413              		.file 2 "Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfssl/wolfcrypt/types.h"
+ 1414              		.file 3 "Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfssl/wolfcrypt/random.h"
+ 1415              		.file 4 "Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfssl/wolfcrypt/signature.h"
+ 1416              		.file 5 "Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfssl/wolfcrypt/sp_int.h"
+ 1417              		.file 6 "Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfssl/wolfcrypt/asn_public.h"
+ 1418              		.file 7 "Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfssl/wolfcrypt/ecc.h"
+ 1419              		.file 8 "Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfssl/wolfcrypt/rsa.h"
+ 1420              		.file 9 "Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfssl/wolfcrypt/asn.h"
+ 1421              		.file 10 "Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfssl/wolfcrypt/hash.h"
+ 1422              		.file 11 "Middlewares/Third_Party/FreeRTOS/Source/include/portable.h"
+ 1423              		.file 12 "<built-in>"
+ 1424              		.file 13 "/usr/arm-none-eabi/include/string.h"
+ 1425              		.file 14 "Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfssl/wolfcrypt/error-crypt.h"
+ARM GAS  /tmp/cc8Z9J2L.s 			page 38
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 signature.c
+     /tmp/cc8Z9J2L.s:18     .text.wc_SignatureDerEncode:0000000000000000 $t
+     /tmp/cc8Z9J2L.s:25     .text.wc_SignatureDerEncode:0000000000000000 wc_SignatureDerEncode
+     /tmp/cc8Z9J2L.s:87     .text.wc_SignatureGetSize:0000000000000000 $t
+     /tmp/cc8Z9J2L.s:94     .text.wc_SignatureGetSize:0000000000000000 wc_SignatureGetSize
+     /tmp/cc8Z9J2L.s:181    .text.wc_SignatureVerifyHash:0000000000000000 $t
+     /tmp/cc8Z9J2L.s:188    .text.wc_SignatureVerifyHash:0000000000000000 wc_SignatureVerifyHash
+     /tmp/cc8Z9J2L.s:518    .text.wc_SignatureVerify:0000000000000000 $t
+     /tmp/cc8Z9J2L.s:525    .text.wc_SignatureVerify:0000000000000000 wc_SignatureVerify
+     /tmp/cc8Z9J2L.s:752    .text.wc_SignatureGenerateHash_ex:0000000000000000 $t
+     /tmp/cc8Z9J2L.s:759    .text.wc_SignatureGenerateHash_ex:0000000000000000 wc_SignatureGenerateHash_ex
+     /tmp/cc8Z9J2L.s:1038   .text.wc_SignatureGenerateHash:0000000000000000 $t
+     /tmp/cc8Z9J2L.s:1045   .text.wc_SignatureGenerateHash:0000000000000000 wc_SignatureGenerateHash
+     /tmp/cc8Z9J2L.s:1088   .text.wc_SignatureGenerate_ex:0000000000000000 $t
+     /tmp/cc8Z9J2L.s:1095   .text.wc_SignatureGenerate_ex:0000000000000000 wc_SignatureGenerate_ex
+     /tmp/cc8Z9J2L.s:1362   .text.wc_SignatureGenerate:0000000000000000 $t
+     /tmp/cc8Z9J2L.s:1369   .text.wc_SignatureGenerate:0000000000000000 wc_SignatureGenerate
+
+UNDEFINED SYMBOLS
+wc_HashGetOID
+wc_EncodeSignature
+wc_RsaEncryptSize
+wc_ecc_sig_size
+wc_HashGetDigestSize
+pvPortMalloc
+memset
+memcpy
+wc_ecc_verify_hash
+wc_RsaSSL_VerifyInline
+vPortFree
+memcmp
+wc_Hash
+wc_ecc_sign_hash
+wc_RsaSSL_Sign

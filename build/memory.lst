@@ -1,0 +1,589 @@
+ARM GAS  /tmp/ccuQN8zb.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"memory.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.wolfSSL_SetAllocators,"ax",%progbits
+  18              		.align	1
+  19              		.global	wolfSSL_SetAllocators
+  20              		.arch armv7e-m
+  21              		.syntax unified
+  22              		.thumb
+  23              		.thumb_func
+  24              		.fpu fpv4-sp-d16
+  26              	wolfSSL_SetAllocators:
+  27              	.LVL0:
+  28              	.LFB136:
+  29              		.file 1 "Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c"
+   1:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** /* memory.c
+   2:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****  *
+   3:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****  * Copyright (C) 2006-2020 wolfSSL Inc.
+   4:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****  *
+   5:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****  * This file is part of wolfSSL.
+   6:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****  *
+   7:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****  * wolfSSL is free software; you can redistribute it and/or modify
+   8:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****  * it under the terms of the GNU General Public License as published by
+   9:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****  * the Free Software Foundation; either version 2 of the License, or
+  10:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****  * (at your option) any later version.
+  11:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****  *
+  12:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****  * wolfSSL is distributed in the hope that it will be useful,
+  13:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+  14:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  15:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****  * GNU General Public License for more details.
+  16:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****  *
+  17:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****  * You should have received a copy of the GNU General Public License
+  18:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****  * along with this program; if not, write to the Free Software
+  19:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335, USA
+  20:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****  */
+  21:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** 
+  22:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** 
+  23:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** #ifdef HAVE_CONFIG_H
+  24:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     #include <config.h>
+  25:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** #endif
+  26:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** 
+  27:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** #include <wolfssl/wolfcrypt/settings.h>
+  28:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** 
+  29:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** /* check old macros @wc_fips */
+ARM GAS  /tmp/ccuQN8zb.s 			page 2
+
+
+  30:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** #if defined(USE_CYASSL_MEMORY) && !defined(USE_WOLFSSL_MEMORY)
+  31:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     #define USE_WOLFSSL_MEMORY
+  32:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** #endif
+  33:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** #if defined(CYASSL_MALLOC_CHECK) && !defined(WOLFSSL_MALLOC_CHECK)
+  34:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     #define WOLFSSL_MALLOC_CHECK
+  35:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** #endif
+  36:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** 
+  37:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** 
+  38:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** /*
+  39:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** Possible memory options:
+  40:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****  * NO_WOLFSSL_MEMORY:               Disables wolf memory callback support. When not defined setting
+  41:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****  * WOLFSSL_STATIC_MEMORY:           Turns on the use of static memory buffers and functions.
+  42:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****                                         This allows for using static memory instead of dynamic.
+  43:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****  * WOLFSSL_STATIC_ALIGN:            Define defaults to 16 to indicate static memory alignment.
+  44:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****  * HAVE_IO_POOL:                    Enables use of static thread safe memory pool for input/output 
+  45:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****  * XMALLOC_OVERRIDE:                Allows override of the XMALLOC, XFREE and XREALLOC macros.
+  46:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****  * XMALLOC_USER:                    Allows custom XMALLOC, XFREE and XREALLOC functions to be defin
+  47:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****  * WOLFSSL_NO_MALLOC:               Disables the fall-back case to use STDIO malloc/free when no ca
+  48:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****  * WOLFSSL_TRACK_MEMORY:            Enables memory tracking for total stats and list of allocated m
+  49:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****  * WOLFSSL_DEBUG_MEMORY:            Enables extra function and line number args for memory callback
+  50:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****  * WOLFSSL_DEBUG_MEMORY_PRINT:      Enables printing of each malloc/free.
+  51:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****  * WOLFSSL_MALLOC_CHECK:            Reports malloc or alignment failure using WOLFSSL_STATIC_ALIGN
+  52:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****  * WOLFSSL_FORCE_MALLOC_FAIL_TEST:  Used for internal testing to induce random malloc failures.
+  53:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****  * WOLFSSL_HEAP_TEST:               Used for internal testing of heap hint
+  54:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****  */
+  55:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** 
+  56:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** #ifdef WOLFSSL_ZEPHYR
+  57:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** #undef realloc
+  58:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** void *z_realloc(void *ptr, size_t size)
+  59:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** {
+  60:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     if (ptr == NULL)
+  61:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****         ptr = malloc(size);
+  62:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     else
+  63:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****         ptr = realloc(ptr, size);
+  64:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** 
+  65:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     return ptr;
+  66:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** }
+  67:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** #define realloc z_realloc
+  68:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** #endif
+  69:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** 
+  70:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** #ifdef USE_WOLFSSL_MEMORY
+  71:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** 
+  72:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** #include <wolfssl/wolfcrypt/memory.h>
+  73:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** #include <wolfssl/wolfcrypt/error-crypt.h>
+  74:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** #include <wolfssl/wolfcrypt/logging.h>
+  75:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** 
+  76:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** #if defined(WOLFSSL_DEBUG_MEMORY) && defined(WOLFSSL_DEBUG_MEMORY_PRINT)
+  77:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** #include <stdio.h>
+  78:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** #endif
+  79:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** 
+  80:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** #ifdef WOLFSSL_FORCE_MALLOC_FAIL_TEST
+  81:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     static int gMemFailCountSeed;
+  82:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     static int gMemFailCount;
+  83:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     void wolfSSL_SetMemFailCount(int memFailCount)
+  84:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     {
+  85:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****         if (gMemFailCountSeed == 0) {
+  86:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****             gMemFailCountSeed = memFailCount;
+ARM GAS  /tmp/ccuQN8zb.s 			page 3
+
+
+  87:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****             gMemFailCount = memFailCount;
+  88:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****         }
+  89:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     }
+  90:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** #endif
+  91:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** #if defined(WOLFSSL_MALLOC_CHECK) || defined(WOLFSSL_TRACK_MEMORY_FULL) || \
+  92:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****                                                      defined(WOLFSSL_MEMORY_LOG)
+  93:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     #include <stdio.h>
+  94:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** #endif
+  95:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** 
+  96:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** 
+  97:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** /* Set these to default values initially. */
+  98:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** static wolfSSL_Malloc_cb  malloc_function = NULL;
+  99:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** static wolfSSL_Free_cb    free_function = NULL;
+ 100:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** static wolfSSL_Realloc_cb realloc_function = NULL;
+ 101:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** 
+ 102:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** int wolfSSL_SetAllocators(wolfSSL_Malloc_cb  mf,
+ 103:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****                           wolfSSL_Free_cb    ff,
+ 104:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****                           wolfSSL_Realloc_cb rf)
+ 105:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** {
+  30              		.loc 1 105 1 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 0
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              		@ link register save eliminated.
+ 106:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     malloc_function = mf;
+  35              		.loc 1 106 5 view .LVU1
+  36              		.loc 1 106 21 is_stmt 0 view .LVU2
+  37 0000 034B     		ldr	r3, .L2
+  38 0002 1860     		str	r0, [r3]
+ 107:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     free_function = ff;
+  39              		.loc 1 107 5 is_stmt 1 view .LVU3
+  40              		.loc 1 107 19 is_stmt 0 view .LVU4
+  41 0004 034B     		ldr	r3, .L2+4
+  42 0006 1960     		str	r1, [r3]
+ 108:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     realloc_function = rf;
+  43              		.loc 1 108 5 is_stmt 1 view .LVU5
+  44              		.loc 1 108 22 is_stmt 0 view .LVU6
+  45 0008 034B     		ldr	r3, .L2+8
+  46 000a 1A60     		str	r2, [r3]
+ 109:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     return 0;
+  47              		.loc 1 109 5 is_stmt 1 view .LVU7
+ 110:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** }
+  48              		.loc 1 110 1 is_stmt 0 view .LVU8
+  49 000c 0020     		movs	r0, #0
+  50              	.LVL1:
+  51              		.loc 1 110 1 view .LVU9
+  52 000e 7047     		bx	lr
+  53              	.L3:
+  54              		.align	2
+  55              	.L2:
+  56 0010 00000000 		.word	.LANCHOR0
+  57 0014 00000000 		.word	.LANCHOR1
+  58 0018 00000000 		.word	.LANCHOR2
+  59              		.cfi_endproc
+  60              	.LFE136:
+  62              		.section	.text.wolfSSL_GetAllocators,"ax",%progbits
+  63              		.align	1
+ARM GAS  /tmp/ccuQN8zb.s 			page 4
+
+
+  64              		.global	wolfSSL_GetAllocators
+  65              		.syntax unified
+  66              		.thumb
+  67              		.thumb_func
+  68              		.fpu fpv4-sp-d16
+  70              	wolfSSL_GetAllocators:
+  71              	.LVL2:
+  72              	.LFB137:
+ 111:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** 
+ 112:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** int wolfSSL_GetAllocators(wolfSSL_Malloc_cb*  mf,
+ 113:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****                           wolfSSL_Free_cb*    ff,
+ 114:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****                           wolfSSL_Realloc_cb* rf)
+ 115:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** {
+  73              		.loc 1 115 1 is_stmt 1 view -0
+  74              		.cfi_startproc
+  75              		@ args = 0, pretend = 0, frame = 0
+  76              		@ frame_needed = 0, uses_anonymous_args = 0
+  77              		@ link register save eliminated.
+ 116:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     if (mf) *mf = malloc_function;
+  78              		.loc 1 116 5 view .LVU11
+  79              		.loc 1 116 8 is_stmt 0 view .LVU12
+  80 0000 0346     		mov	r3, r0
+  81 0002 10B1     		cbz	r0, .L5
+  82              		.loc 1 116 13 is_stmt 1 discriminator 1 view .LVU13
+  83              		.loc 1 116 17 is_stmt 0 discriminator 1 view .LVU14
+  84 0004 0648     		ldr	r0, .L8
+  85              	.LVL3:
+  86              		.loc 1 116 17 discriminator 1 view .LVU15
+  87 0006 0068     		ldr	r0, [r0]
+  88 0008 1860     		str	r0, [r3]
+  89              	.L5:
+ 117:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     if (ff) *ff = free_function;
+  90              		.loc 1 117 5 is_stmt 1 view .LVU16
+  91              		.loc 1 117 8 is_stmt 0 view .LVU17
+  92 000a 11B1     		cbz	r1, .L6
+  93              		.loc 1 117 13 is_stmt 1 discriminator 1 view .LVU18
+  94              		.loc 1 117 17 is_stmt 0 discriminator 1 view .LVU19
+  95 000c 054B     		ldr	r3, .L8+4
+  96              	.LVL4:
+  97              		.loc 1 117 17 discriminator 1 view .LVU20
+  98 000e 1B68     		ldr	r3, [r3]
+  99 0010 0B60     		str	r3, [r1]
+ 100              	.L6:
+ 118:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     if (rf) *rf = realloc_function;
+ 101              		.loc 1 118 5 is_stmt 1 view .LVU21
+ 102              		.loc 1 118 8 is_stmt 0 view .LVU22
+ 103 0012 12B1     		cbz	r2, .L7
+ 104              		.loc 1 118 13 is_stmt 1 discriminator 1 view .LVU23
+ 105              		.loc 1 118 17 is_stmt 0 discriminator 1 view .LVU24
+ 106 0014 044B     		ldr	r3, .L8+8
+ 107 0016 1B68     		ldr	r3, [r3]
+ 108 0018 1360     		str	r3, [r2]
+ 109              	.L7:
+ 119:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     return 0;
+ 110              		.loc 1 119 5 is_stmt 1 view .LVU25
+ 120:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** }
+ 111              		.loc 1 120 1 is_stmt 0 view .LVU26
+ARM GAS  /tmp/ccuQN8zb.s 			page 5
+
+
+ 112 001a 0020     		movs	r0, #0
+ 113 001c 7047     		bx	lr
+ 114              	.L9:
+ 115 001e 00BF     		.align	2
+ 116              	.L8:
+ 117 0020 00000000 		.word	.LANCHOR0
+ 118 0024 00000000 		.word	.LANCHOR1
+ 119 0028 00000000 		.word	.LANCHOR2
+ 120              		.cfi_endproc
+ 121              	.LFE137:
+ 123              		.section	.text.wolfSSL_Malloc,"ax",%progbits
+ 124              		.align	1
+ 125              		.global	wolfSSL_Malloc
+ 126              		.syntax unified
+ 127              		.thumb
+ 128              		.thumb_func
+ 129              		.fpu fpv4-sp-d16
+ 131              	wolfSSL_Malloc:
+ 132              	.LVL5:
+ 133              	.LFB138:
+ 121:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** 
+ 122:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** #ifndef WOLFSSL_STATIC_MEMORY
+ 123:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** #ifdef WOLFSSL_DEBUG_MEMORY
+ 124:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** void* wolfSSL_Malloc(size_t size, const char* func, unsigned int line)
+ 125:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** #else
+ 126:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** void* wolfSSL_Malloc(size_t size)
+ 127:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** #endif
+ 128:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** {
+ 134              		.loc 1 128 1 is_stmt 1 view -0
+ 135              		.cfi_startproc
+ 136              		@ args = 0, pretend = 0, frame = 0
+ 137              		@ frame_needed = 0, uses_anonymous_args = 0
+ 138              		.loc 1 128 1 is_stmt 0 view .LVU28
+ 139 0000 08B5     		push	{r3, lr}
+ 140              	.LCFI0:
+ 141              		.cfi_def_cfa_offset 8
+ 142              		.cfi_offset 3, -8
+ 143              		.cfi_offset 14, -4
+ 129:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     void* res = 0;
+ 144              		.loc 1 129 5 is_stmt 1 view .LVU29
+ 145              	.LVL6:
+ 130:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** 
+ 131:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     if (malloc_function) {
+ 146              		.loc 1 131 5 view .LVU30
+ 147              		.loc 1 131 9 is_stmt 0 view .LVU31
+ 148 0002 044B     		ldr	r3, .L14
+ 149 0004 1B68     		ldr	r3, [r3]
+ 150              		.loc 1 131 8 view .LVU32
+ 151 0006 0BB1     		cbz	r3, .L11
+ 132:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     #ifdef WOLFSSL_DEBUG_MEMORY
+ 133:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****         res = malloc_function(size, func, line);
+ 134:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     #else
+ 135:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****         res = malloc_function(size);
+ 152              		.loc 1 135 9 is_stmt 1 view .LVU33
+ 153              		.loc 1 135 15 is_stmt 0 view .LVU34
+ 154 0008 9847     		blx	r3
+ 155              	.LVL7:
+ARM GAS  /tmp/ccuQN8zb.s 			page 6
+
+
+ 156              	.L10:
+ 136:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     #endif
+ 137:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     }
+ 138:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     else {
+ 139:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     #ifndef WOLFSSL_NO_MALLOC
+ 140:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****         res = malloc(size);
+ 141:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     #else
+ 142:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****         WOLFSSL_MSG("No malloc available");
+ 143:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     #endif
+ 144:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     }
+ 145:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** 
+ 146:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** #ifdef WOLFSSL_DEBUG_MEMORY
+ 147:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** #if defined(WOLFSSL_DEBUG_MEMORY_PRINT) && !defined(WOLFSSL_TRACK_MEMORY)
+ 148:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     printf("Alloc: %p -> %u at %s:%d\n", res, (word32)size, func, line);
+ 149:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** #else
+ 150:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     (void)func;
+ 151:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     (void)line;
+ 152:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** #endif
+ 153:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** #endif
+ 154:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** 
+ 155:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** #ifdef WOLFSSL_MALLOC_CHECK
+ 156:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     if (res == NULL)
+ 157:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****         WOLFSSL_MSG("wolfSSL_malloc failed");
+ 158:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** #endif
+ 159:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** 
+ 160:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** #ifdef WOLFSSL_FORCE_MALLOC_FAIL_TEST
+ 161:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     if (res && --gMemFailCount == 0) {
+ 162:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****         printf("\n---FORCED MEM FAIL TEST---\n");
+ 163:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****         if (free_function) {
+ 164:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****         #ifdef WOLFSSL_DEBUG_MEMORY
+ 165:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****             free_function(res, func, line);
+ 166:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****         #else
+ 167:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****             free_function(res);
+ 168:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****         #endif
+ 169:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****         }
+ 170:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****         else {
+ 171:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****             free(res); /* clear */
+ 172:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****         }
+ 173:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****         gMemFailCount = gMemFailCountSeed; /* reset */
+ 174:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****         return NULL;
+ 175:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     }
+ 176:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** #endif
+ 177:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** 
+ 178:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     return res;
+ 179:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** }
+ 157              		.loc 1 179 1 view .LVU35
+ 158 000a 08BD     		pop	{r3, pc}
+ 159              	.LVL8:
+ 160              	.L11:
+ 140:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     #else
+ 161              		.loc 1 140 9 is_stmt 1 view .LVU36
+ 140:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     #else
+ 162              		.loc 1 140 15 is_stmt 0 view .LVU37
+ 163 000c FFF7FEFF 		bl	malloc
+ 164              	.LVL9:
+ 178:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** }
+ 165              		.loc 1 178 5 is_stmt 1 view .LVU38
+ARM GAS  /tmp/ccuQN8zb.s 			page 7
+
+
+ 178:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** }
+ 166              		.loc 1 178 12 is_stmt 0 view .LVU39
+ 167 0010 FBE7     		b	.L10
+ 168              	.L15:
+ 169 0012 00BF     		.align	2
+ 170              	.L14:
+ 171 0014 00000000 		.word	.LANCHOR0
+ 172              		.cfi_endproc
+ 173              	.LFE138:
+ 175              		.section	.text.wolfSSL_Free,"ax",%progbits
+ 176              		.align	1
+ 177              		.global	wolfSSL_Free
+ 178              		.syntax unified
+ 179              		.thumb
+ 180              		.thumb_func
+ 181              		.fpu fpv4-sp-d16
+ 183              	wolfSSL_Free:
+ 184              	.LVL10:
+ 185              	.LFB139:
+ 180:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** 
+ 181:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** #ifdef WOLFSSL_DEBUG_MEMORY
+ 182:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** void wolfSSL_Free(void *ptr, const char* func, unsigned int line)
+ 183:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** #else
+ 184:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** void wolfSSL_Free(void *ptr)
+ 185:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** #endif
+ 186:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** {
+ 186              		.loc 1 186 1 is_stmt 1 view -0
+ 187              		.cfi_startproc
+ 188              		@ args = 0, pretend = 0, frame = 0
+ 189              		@ frame_needed = 0, uses_anonymous_args = 0
+ 190              		.loc 1 186 1 is_stmt 0 view .LVU41
+ 191 0000 08B5     		push	{r3, lr}
+ 192              	.LCFI1:
+ 193              		.cfi_def_cfa_offset 8
+ 194              		.cfi_offset 3, -8
+ 195              		.cfi_offset 14, -4
+ 187:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** #ifdef WOLFSSL_DEBUG_MEMORY
+ 188:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** #if defined(WOLFSSL_DEBUG_MEMORY_PRINT) && !defined(WOLFSSL_TRACK_MEMORY)
+ 189:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     printf("Free: %p at %s:%d\n", ptr, func, line);
+ 190:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** #else
+ 191:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     (void)func;
+ 192:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     (void)line;
+ 193:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** #endif
+ 194:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** #endif
+ 195:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** 
+ 196:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     if (free_function) {
+ 196              		.loc 1 196 5 is_stmt 1 view .LVU42
+ 197              		.loc 1 196 9 is_stmt 0 view .LVU43
+ 198 0002 044B     		ldr	r3, .L20
+ 199 0004 1B68     		ldr	r3, [r3]
+ 200              		.loc 1 196 8 view .LVU44
+ 201 0006 0BB1     		cbz	r3, .L17
+ 197:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     #ifdef WOLFSSL_DEBUG_MEMORY
+ 198:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****         free_function(ptr, func, line);
+ 199:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     #else
+ 200:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****         free_function(ptr);
+ 202              		.loc 1 200 9 is_stmt 1 view .LVU45
+ARM GAS  /tmp/ccuQN8zb.s 			page 8
+
+
+ 203 0008 9847     		blx	r3
+ 204              	.LVL11:
+ 205              	.L16:
+ 201:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     #endif
+ 202:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     }
+ 203:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     else {
+ 204:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     #ifndef WOLFSSL_NO_MALLOC
+ 205:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****         free(ptr);
+ 206:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     #else
+ 207:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****         WOLFSSL_MSG("No free available");
+ 208:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     #endif
+ 209:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     }
+ 210:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** }
+ 206              		.loc 1 210 1 is_stmt 0 view .LVU46
+ 207 000a 08BD     		pop	{r3, pc}
+ 208              	.LVL12:
+ 209              	.L17:
+ 205:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     #else
+ 210              		.loc 1 205 9 is_stmt 1 view .LVU47
+ 211 000c FFF7FEFF 		bl	free
+ 212              	.LVL13:
+ 213              		.loc 1 210 1 is_stmt 0 view .LVU48
+ 214 0010 FBE7     		b	.L16
+ 215              	.L21:
+ 216 0012 00BF     		.align	2
+ 217              	.L20:
+ 218 0014 00000000 		.word	.LANCHOR1
+ 219              		.cfi_endproc
+ 220              	.LFE139:
+ 222              		.section	.text.wolfSSL_Realloc,"ax",%progbits
+ 223              		.align	1
+ 224              		.global	wolfSSL_Realloc
+ 225              		.syntax unified
+ 226              		.thumb
+ 227              		.thumb_func
+ 228              		.fpu fpv4-sp-d16
+ 230              	wolfSSL_Realloc:
+ 231              	.LVL14:
+ 232              	.LFB140:
+ 211:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** 
+ 212:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** #ifdef WOLFSSL_DEBUG_MEMORY
+ 213:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** void* wolfSSL_Realloc(void *ptr, size_t size, const char* func, unsigned int line)
+ 214:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** #else
+ 215:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** void* wolfSSL_Realloc(void *ptr, size_t size)
+ 216:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** #endif
+ 217:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** {
+ 233              		.loc 1 217 1 is_stmt 1 view -0
+ 234              		.cfi_startproc
+ 235              		@ args = 0, pretend = 0, frame = 0
+ 236              		@ frame_needed = 0, uses_anonymous_args = 0
+ 237              		.loc 1 217 1 is_stmt 0 view .LVU50
+ 238 0000 08B5     		push	{r3, lr}
+ 239              	.LCFI2:
+ 240              		.cfi_def_cfa_offset 8
+ 241              		.cfi_offset 3, -8
+ 242              		.cfi_offset 14, -4
+ 218:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     void* res = 0;
+ARM GAS  /tmp/ccuQN8zb.s 			page 9
+
+
+ 243              		.loc 1 218 5 is_stmt 1 view .LVU51
+ 244              	.LVL15:
+ 219:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** 
+ 220:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     if (realloc_function) {
+ 245              		.loc 1 220 5 view .LVU52
+ 246              		.loc 1 220 9 is_stmt 0 view .LVU53
+ 247 0002 044B     		ldr	r3, .L26
+ 248 0004 1B68     		ldr	r3, [r3]
+ 249              		.loc 1 220 8 view .LVU54
+ 250 0006 0BB1     		cbz	r3, .L23
+ 221:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     #ifdef WOLFSSL_DEBUG_MEMORY
+ 222:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****         res = realloc_function(ptr, size, func, line);
+ 223:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     #else
+ 224:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****         res = realloc_function(ptr, size);
+ 251              		.loc 1 224 9 is_stmt 1 view .LVU55
+ 252              		.loc 1 224 15 is_stmt 0 view .LVU56
+ 253 0008 9847     		blx	r3
+ 254              	.LVL16:
+ 255              	.L22:
+ 225:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     #endif
+ 226:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     }
+ 227:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     else {
+ 228:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     #ifndef WOLFSSL_NO_MALLOC
+ 229:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****         res = realloc(ptr, size);
+ 230:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     #else
+ 231:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****         WOLFSSL_MSG("No realloc available");
+ 232:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     #endif
+ 233:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     }
+ 234:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** 
+ 235:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     return res;
+ 236:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** }
+ 256              		.loc 1 236 1 view .LVU57
+ 257 000a 08BD     		pop	{r3, pc}
+ 258              	.LVL17:
+ 259              	.L23:
+ 229:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     #else
+ 260              		.loc 1 229 9 is_stmt 1 view .LVU58
+ 229:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c ****     #else
+ 261              		.loc 1 229 15 is_stmt 0 view .LVU59
+ 262 000c FFF7FEFF 		bl	realloc
+ 263              	.LVL18:
+ 235:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** }
+ 264              		.loc 1 235 5 is_stmt 1 view .LVU60
+ 235:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/memory.c **** }
+ 265              		.loc 1 235 12 is_stmt 0 view .LVU61
+ 266 0010 FBE7     		b	.L22
+ 267              	.L27:
+ 268 0012 00BF     		.align	2
+ 269              	.L26:
+ 270 0014 00000000 		.word	.LANCHOR2
+ 271              		.cfi_endproc
+ 272              	.LFE140:
+ 274              		.section	.bss.free_function,"aw",%nobits
+ 275              		.align	2
+ 276              		.set	.LANCHOR1,. + 0
+ 279              	free_function:
+ 280 0000 00000000 		.space	4
+ARM GAS  /tmp/ccuQN8zb.s 			page 10
+
+
+ 281              		.section	.bss.malloc_function,"aw",%nobits
+ 282              		.align	2
+ 283              		.set	.LANCHOR0,. + 0
+ 286              	malloc_function:
+ 287 0000 00000000 		.space	4
+ 288              		.section	.bss.realloc_function,"aw",%nobits
+ 289              		.align	2
+ 290              		.set	.LANCHOR2,. + 0
+ 293              	realloc_function:
+ 294 0000 00000000 		.space	4
+ 295              		.text
+ 296              	.Letext0:
+ 297              		.file 2 "/usr/lib/gcc/arm-none-eabi/10.2.0/include/stddef.h"
+ 298              		.file 3 "Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfssl/wolfcrypt/memory.h"
+ 299              		.file 4 "/usr/arm-none-eabi/include/stdlib.h"
+ARM GAS  /tmp/ccuQN8zb.s 			page 11
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 memory.c
+     /tmp/ccuQN8zb.s:18     .text.wolfSSL_SetAllocators:0000000000000000 $t
+     /tmp/ccuQN8zb.s:26     .text.wolfSSL_SetAllocators:0000000000000000 wolfSSL_SetAllocators
+     /tmp/ccuQN8zb.s:56     .text.wolfSSL_SetAllocators:0000000000000010 $d
+     /tmp/ccuQN8zb.s:63     .text.wolfSSL_GetAllocators:0000000000000000 $t
+     /tmp/ccuQN8zb.s:70     .text.wolfSSL_GetAllocators:0000000000000000 wolfSSL_GetAllocators
+     /tmp/ccuQN8zb.s:117    .text.wolfSSL_GetAllocators:0000000000000020 $d
+     /tmp/ccuQN8zb.s:124    .text.wolfSSL_Malloc:0000000000000000 $t
+     /tmp/ccuQN8zb.s:131    .text.wolfSSL_Malloc:0000000000000000 wolfSSL_Malloc
+     /tmp/ccuQN8zb.s:171    .text.wolfSSL_Malloc:0000000000000014 $d
+     /tmp/ccuQN8zb.s:176    .text.wolfSSL_Free:0000000000000000 $t
+     /tmp/ccuQN8zb.s:183    .text.wolfSSL_Free:0000000000000000 wolfSSL_Free
+     /tmp/ccuQN8zb.s:218    .text.wolfSSL_Free:0000000000000014 $d
+     /tmp/ccuQN8zb.s:223    .text.wolfSSL_Realloc:0000000000000000 $t
+     /tmp/ccuQN8zb.s:230    .text.wolfSSL_Realloc:0000000000000000 wolfSSL_Realloc
+     /tmp/ccuQN8zb.s:270    .text.wolfSSL_Realloc:0000000000000014 $d
+     /tmp/ccuQN8zb.s:275    .bss.free_function:0000000000000000 $d
+     /tmp/ccuQN8zb.s:279    .bss.free_function:0000000000000000 free_function
+     /tmp/ccuQN8zb.s:282    .bss.malloc_function:0000000000000000 $d
+     /tmp/ccuQN8zb.s:286    .bss.malloc_function:0000000000000000 malloc_function
+     /tmp/ccuQN8zb.s:289    .bss.realloc_function:0000000000000000 $d
+     /tmp/ccuQN8zb.s:293    .bss.realloc_function:0000000000000000 realloc_function
+
+UNDEFINED SYMBOLS
+malloc
+free
+realloc

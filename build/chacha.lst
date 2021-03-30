@@ -1,0 +1,2320 @@
+ARM GAS  /tmp/ccSRLI0x.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"chacha.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.wc_Chacha_wordtobyte,"ax",%progbits
+  18              		.align	1
+  19              		.arch armv7e-m
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv4-sp-d16
+  25              	wc_Chacha_wordtobyte:
+  26              	.LVL0:
+  27              	.LFB177:
+  28              		.file 1 "Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c"
+   1:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** /* chacha.c
+   2:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****  *
+   3:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****  * Copyright (C) 2006-2020 wolfSSL Inc.
+   4:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****  *
+   5:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****  * This file is part of wolfSSL.
+   6:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****  *
+   7:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****  * wolfSSL is free software; you can redistribute it and/or modify
+   8:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****  * it under the terms of the GNU General Public License as published by
+   9:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****  * the Free Software Foundation; either version 2 of the License, or
+  10:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****  * (at your option) any later version.
+  11:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****  *
+  12:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****  * wolfSSL is distributed in the hope that it will be useful,
+  13:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+  14:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  15:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****  * GNU General Public License for more details.
+  16:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****  *
+  17:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****  * You should have received a copy of the GNU General Public License
+  18:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****  * along with this program; if not, write to the Free Software
+  19:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335, USA
+  20:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****  */
+  21:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** /*
+  22:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+  23:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** DESCRIPTION
+  24:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** This library contains implementation for the ChaCha20 stream cipher.
+  25:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+  26:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** Based from chacha-ref.c version 20080118
+  27:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** D. J. Bernstein
+  28:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** Public domain.
+  29:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+  30:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** */
+ARM GAS  /tmp/ccSRLI0x.s 			page 2
+
+
+  31:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** #ifdef WOLFSSL_ARMASM
+  32:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     /* implementation is located in wolfcrypt/src/port/arm/armv8-chacha.c */
+  33:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+  34:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** #else
+  35:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** #ifdef HAVE_CONFIG_H
+  36:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     #include <config.h>
+  37:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** #endif
+  38:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+  39:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** #include <wolfssl/wolfcrypt/settings.h>
+  40:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+  41:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** #if defined(HAVE_CHACHA) && !defined(WOLFSSL_ARMASM)
+  42:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+  43:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** #include <wolfssl/wolfcrypt/chacha.h>
+  44:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** #include <wolfssl/wolfcrypt/error-crypt.h>
+  45:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** #include <wolfssl/wolfcrypt/logging.h>
+  46:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** #include <wolfssl/wolfcrypt/cpuid.h>
+  47:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** #ifdef NO_INLINE
+  48:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     #include <wolfssl/wolfcrypt/misc.h>
+  49:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** #else
+  50:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     #define WOLFSSL_MISC_INCLUDED
+  51:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     #include <wolfcrypt/src/misc.c>
+  52:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** #endif
+  53:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+  54:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** #ifdef CHACHA_AEAD_TEST
+  55:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     #include <stdio.h>
+  56:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** #endif
+  57:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+  58:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** #ifdef USE_INTEL_CHACHA_SPEEDUP
+  59:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     #include <emmintrin.h>
+  60:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     #include <immintrin.h>
+  61:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+  62:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     #if defined(__GNUC__) && ((__GNUC__ < 4) || \
+  63:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****                               (__GNUC__ == 4 && __GNUC_MINOR__ <= 8))
+  64:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         #undef  NO_AVX2_SUPPORT
+  65:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         #define NO_AVX2_SUPPORT
+  66:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     #endif
+  67:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     #if defined(__clang__) && ((__clang_major__ < 3) || \
+  68:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****                                (__clang_major__ == 3 && __clang_minor__ <= 5))
+  69:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         #undef  NO_AVX2_SUPPORT
+  70:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         #define NO_AVX2_SUPPORT
+  71:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     #elif defined(__clang__) && defined(NO_AVX2_SUPPORT)
+  72:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         #undef NO_AVX2_SUPPORT
+  73:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     #endif
+  74:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+  75:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     #ifndef NO_AVX2_SUPPORT
+  76:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         #define HAVE_INTEL_AVX2
+  77:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     #endif
+  78:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+  79:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     static int cpuidFlagsSet = 0;
+  80:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     static int cpuidFlags = 0;
+  81:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** #endif
+  82:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+  83:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** #ifdef BIG_ENDIAN_ORDER
+  84:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     #define LITTLE32(x) ByteReverseWord32(x)
+  85:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** #else
+  86:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     #define LITTLE32(x) (x)
+  87:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** #endif
+ARM GAS  /tmp/ccSRLI0x.s 			page 3
+
+
+  88:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+  89:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** /* Number of rounds */
+  90:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** #define ROUNDS  20
+  91:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+  92:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** #define U32C(v) (v##U)
+  93:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** #define U32V(v) ((word32)(v) & U32C(0xFFFFFFFF))
+  94:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** #define U8TO32_LITTLE(p) LITTLE32(((word32*)(p))[0])
+  95:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+  96:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** #define ROTATE(v,c) rotlFixed(v, c)
+  97:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** #define XOR(v,w)    ((v) ^ (w))
+  98:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** #define PLUS(v,w)   (U32V((v) + (w)))
+  99:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** #define PLUSONE(v)  (PLUS((v),1))
+ 100:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 101:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** #define QUARTERROUND(a,b,c,d) \
+ 102:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****   x[a] = PLUS(x[a],x[b]); x[d] = ROTATE(XOR(x[d],x[a]),16); \
+ 103:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****   x[c] = PLUS(x[c],x[d]); x[b] = ROTATE(XOR(x[b],x[c]),12); \
+ 104:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****   x[a] = PLUS(x[a],x[b]); x[d] = ROTATE(XOR(x[d],x[a]), 8); \
+ 105:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****   x[c] = PLUS(x[c],x[d]); x[b] = ROTATE(XOR(x[b],x[c]), 7);
+ 106:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 107:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 108:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** /**
+ 109:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****   * Set up iv(nonce). Earlier versions used 64 bits instead of 96, this version
+ 110:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****   * uses the typical AEAD 96 bit nonce and can do record sizes of 256 GB.
+ 111:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****   */
+ 112:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** int wc_Chacha_SetIV(ChaCha* ctx, const byte* inIv, word32 counter)
+ 113:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** {
+ 114:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     word32 temp[CHACHA_IV_WORDS];/* used for alignment of memory */
+ 115:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 116:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 117:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     if (ctx == NULL || inIv == NULL)
+ 118:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         return BAD_FUNC_ARG;
+ 119:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 120:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     XMEMCPY(temp, inIv, CHACHA_IV_BYTES);
+ 121:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 122:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->left = 0; /* resets state */
+ 123:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->X[CHACHA_MATRIX_CNT_IV+0] = counter;           /* block counter */
+ 124:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->X[CHACHA_MATRIX_CNT_IV+1] = LITTLE32(temp[0]); /* fixed variable from nonce */
+ 125:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->X[CHACHA_MATRIX_CNT_IV+2] = LITTLE32(temp[1]); /* counter from nonce */
+ 126:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->X[CHACHA_MATRIX_CNT_IV+3] = LITTLE32(temp[2]); /* counter from nonce */
+ 127:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 128:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     return 0;
+ 129:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** }
+ 130:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 131:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** /* "expand 32-byte k" as unsigned 32 byte */
+ 132:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** static const word32 sigma[4] = {0x61707865, 0x3320646e, 0x79622d32, 0x6b206574};
+ 133:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** /* "expand 16-byte k" as unsigned 16 byte */
+ 134:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** static const word32 tau[4] = {0x61707865, 0x3120646e, 0x79622d36, 0x6b206574};
+ 135:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 136:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** /**
+ 137:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****   * Key setup. 8 word iv (nonce)
+ 138:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****   */
+ 139:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** int wc_Chacha_SetKey(ChaCha* ctx, const byte* key, word32 keySz)
+ 140:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** {
+ 141:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     const word32* constants;
+ 142:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     const byte*   k;
+ 143:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 144:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** #ifdef XSTREAM_ALIGN
+ARM GAS  /tmp/ccSRLI0x.s 			page 4
+
+
+ 145:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     word32 alignKey[8];
+ 146:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** #endif
+ 147:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 148:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     if (ctx == NULL || key == NULL)
+ 149:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         return BAD_FUNC_ARG;
+ 150:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 151:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     if (keySz != (CHACHA_MAX_KEY_SZ/2) && keySz != CHACHA_MAX_KEY_SZ)
+ 152:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         return BAD_FUNC_ARG;
+ 153:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 154:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** #ifdef XSTREAM_ALIGN
+ 155:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     if ((wolfssl_word)key % 4) {
+ 156:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         WOLFSSL_MSG("wc_ChachaSetKey unaligned key");
+ 157:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         XMEMCPY(alignKey, key, keySz);
+ 158:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         k = (byte*)alignKey;
+ 159:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     }
+ 160:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     else {
+ 161:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         k = key;
+ 162:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     }
+ 163:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** #else
+ 164:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     k = key;
+ 165:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** #endif /* XSTREAM_ALIGN */
+ 166:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 167:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** #ifdef CHACHA_AEAD_TEST
+ 168:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     word32 i;
+ 169:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     printf("ChaCha key used :\n");
+ 170:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     for (i = 0; i < keySz; i++) {
+ 171:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         printf("%02x", key[i]);
+ 172:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         if ((i + 1) % 8 == 0)
+ 173:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****            printf("\n");
+ 174:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     }
+ 175:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     printf("\n\n");
+ 176:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** #endif
+ 177:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 178:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->X[4] = U8TO32_LITTLE(k +  0);
+ 179:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->X[5] = U8TO32_LITTLE(k +  4);
+ 180:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->X[6] = U8TO32_LITTLE(k +  8);
+ 181:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->X[7] = U8TO32_LITTLE(k + 12);
+ 182:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     if (keySz == CHACHA_MAX_KEY_SZ) {
+ 183:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         k += 16;
+ 184:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         constants = sigma;
+ 185:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     }
+ 186:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     else {
+ 187:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         constants = tau;
+ 188:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     }
+ 189:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->X[ 8] = U8TO32_LITTLE(k +  0);
+ 190:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->X[ 9] = U8TO32_LITTLE(k +  4);
+ 191:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->X[10] = U8TO32_LITTLE(k +  8);
+ 192:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->X[11] = U8TO32_LITTLE(k + 12);
+ 193:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->X[ 0] = constants[0];
+ 194:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->X[ 1] = constants[1];
+ 195:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->X[ 2] = constants[2];
+ 196:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->X[ 3] = constants[3];
+ 197:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->left = 0; /* resets state */
+ 198:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 199:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     return 0;
+ 200:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** }
+ 201:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ARM GAS  /tmp/ccSRLI0x.s 			page 5
+
+
+ 202:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** /**
+ 203:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****   * Converts word into bytes with rotations having been done.
+ 204:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****   */
+ 205:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** static WC_INLINE void wc_Chacha_wordtobyte(word32 output[CHACHA_CHUNK_WORDS],
+ 206:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     const word32 input[CHACHA_CHUNK_WORDS])
+ 207:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** {
+  29              		.loc 1 207 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 88
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33              		.loc 1 207 1 is_stmt 0 view .LVU1
+  34 0000 2DE9F04F 		push	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
+  35              	.LCFI0:
+  36              		.cfi_def_cfa_offset 36
+  37              		.cfi_offset 4, -36
+  38              		.cfi_offset 5, -32
+  39              		.cfi_offset 6, -28
+  40              		.cfi_offset 7, -24
+  41              		.cfi_offset 8, -20
+  42              		.cfi_offset 9, -16
+  43              		.cfi_offset 10, -12
+  44              		.cfi_offset 11, -8
+  45              		.cfi_offset 14, -4
+  46 0004 97B0     		sub	sp, sp, #92
+  47              	.LCFI1:
+  48              		.cfi_def_cfa_offset 128
+  49 0006 0490     		str	r0, [sp, #16]
+  50 0008 0591     		str	r1, [sp, #20]
+ 208:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     word32 x[CHACHA_CHUNK_WORDS];
+  51              		.loc 1 208 5 is_stmt 1 view .LVU2
+ 209:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     word32 i;
+  52              		.loc 1 209 5 view .LVU3
+ 210:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 211:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     for (i = 0; i < CHACHA_CHUNK_WORDS; i++) {
+  53              		.loc 1 211 5 view .LVU4
+  54              	.LVL1:
+  55              		.loc 1 211 12 is_stmt 0 view .LVU5
+  56 000a 0023     		movs	r3, #0
+  57 000c 0846     		mov	r0, r1
+  58              	.LVL2:
+  59              		.loc 1 211 5 view .LVU6
+  60 000e 07E0     		b	.L2
+  61              	.LVL3:
+  62              	.L3:
+ 212:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         x[i] = input[i];
+  63              		.loc 1 212 9 is_stmt 1 discriminator 3 view .LVU7
+  64              		.loc 1 212 21 is_stmt 0 discriminator 3 view .LVU8
+  65 0010 50F82310 		ldr	r1, [r0, r3, lsl #2]
+  66              		.loc 1 212 14 discriminator 3 view .LVU9
+  67 0014 16AA     		add	r2, sp, #88
+  68 0016 02EB8302 		add	r2, r2, r3, lsl #2
+  69 001a 42F8401C 		str	r1, [r2, #-64]
+ 211:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         x[i] = input[i];
+  70              		.loc 1 211 41 is_stmt 1 discriminator 3 view .LVU10
+ 211:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         x[i] = input[i];
+  71              		.loc 1 211 42 is_stmt 0 discriminator 3 view .LVU11
+  72 001e 0133     		adds	r3, r3, #1
+ARM GAS  /tmp/ccSRLI0x.s 			page 6
+
+
+  73              	.LVL4:
+  74              	.L2:
+ 211:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         x[i] = input[i];
+  75              		.loc 1 211 17 is_stmt 1 discriminator 1 view .LVU12
+ 211:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         x[i] = input[i];
+  76              		.loc 1 211 5 is_stmt 0 discriminator 1 view .LVU13
+  77 0020 0F2B     		cmp	r3, #15
+  78 0022 F5D9     		bls	.L3
+ 213:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     }
+ 214:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 215:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     for (i = (ROUNDS); i > 0; i -= 2) {
+  79              		.loc 1 215 12 view .LVU14
+  80 0024 4FF0140E 		mov	lr, #20
+  81 0028 CDF804E0 		str	lr, [sp, #4]
+  82 002c EEE0     		b	.L4
+  83              	.LVL5:
+  84              	.L5:
+ 216:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         QUARTERROUND(0, 4,  8, 12)
+  85              		.loc 1 216 9 is_stmt 1 discriminator 3 view .LVU15
+  86 002e 0A9B     		ldr	r3, [sp, #40]
+  87              	.LVL6:
+  88              		.loc 1 216 9 is_stmt 0 discriminator 3 view .LVU16
+  89 0030 0698     		ldr	r0, [sp, #24]
+  90 0032 1844     		add	r0, r0, r3
+  91 0034 0690     		str	r0, [sp, #24]
+  92              		.loc 1 216 9 is_stmt 1 discriminator 3 view .LVU17
+  93 0036 129A     		ldr	r2, [sp, #72]
+  94 0038 4240     		eors	r2, r2, r0
+  95              	.LVL7:
+  96              	.LBB66:
+  97              	.LBI66:
+  98              		.file 2 "Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c"
+   1:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c **** /* misc.c
+   2:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****  *
+   3:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****  * Copyright (C) 2006-2020 wolfSSL Inc.
+   4:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****  *
+   5:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****  * This file is part of wolfSSL.
+   6:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****  *
+   7:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****  * wolfSSL is free software; you can redistribute it and/or modify
+   8:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****  * it under the terms of the GNU General Public License as published by
+   9:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****  * the Free Software Foundation; either version 2 of the License, or
+  10:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****  * (at your option) any later version.
+  11:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****  *
+  12:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****  * wolfSSL is distributed in the hope that it will be useful,
+  13:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+  14:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  15:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****  * GNU General Public License for more details.
+  16:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****  *
+  17:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****  * You should have received a copy of the GNU General Public License
+  18:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****  * along with this program; if not, write to the Free Software
+  19:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335, USA
+  20:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****  */
+  21:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c **** /*
+  22:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c **** 
+  23:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c **** DESCRIPTION
+  24:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c **** This module implements the arithmetic-shift right, left, byte swapping, XOR,
+  25:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c **** masking and clearing memory logic.
+ARM GAS  /tmp/ccSRLI0x.s 			page 7
+
+
+  26:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c **** 
+  27:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c **** */
+  28:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c **** #ifdef HAVE_CONFIG_H
+  29:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****     #include <config.h>
+  30:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c **** #endif
+  31:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c **** 
+  32:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c **** #include <wolfssl/wolfcrypt/settings.h>
+  33:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c **** 
+  34:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c **** #ifndef WOLF_CRYPT_MISC_C
+  35:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c **** #define WOLF_CRYPT_MISC_C
+  36:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c **** 
+  37:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c **** #include <wolfssl/wolfcrypt/misc.h>
+  38:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c **** 
+  39:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c **** /* inlining these functions is a huge speed increase and a small size decrease,
+  40:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****    because the functions are smaller than function call setup/cleanup, e.g.,
+  41:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****    md5 benchmark is twice as fast with inline.  If you don't want it, then
+  42:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****    define NO_INLINE and compile this file into wolfssl, otherwise it's used as
+  43:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****    a source header
+  44:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****  */
+  45:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c **** 
+  46:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c **** #ifdef NO_INLINE
+  47:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****     #define WC_STATIC
+  48:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c **** #else
+  49:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****     #define WC_STATIC static
+  50:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c **** #endif
+  51:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c **** 
+  52:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c **** /* Check for if compiling misc.c when not needed. */
+  53:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c **** #if !defined(WOLFSSL_MISC_INCLUDED) && !defined(NO_INLINE)
+  54:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****     #ifndef WOLFSSL_IGNORE_FILE_WARN
+  55:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****         #warning misc.c does not need to be compiled when using inline (NO_INLINE not defined)
+  56:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****     #endif
+  57:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c **** 
+  58:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c **** #else
+  59:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c **** 
+  60:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c **** 
+  61:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c **** #if defined(__ICCARM__)
+  62:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****     #include <intrinsics.h>
+  63:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c **** #endif
+  64:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c **** 
+  65:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c **** 
+  66:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c **** #ifdef INTEL_INTRINSICS
+  67:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c **** 
+  68:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****     #include <stdlib.h>      /* get intrinsic definitions */
+  69:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c **** 
+  70:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****     /* for non visual studio probably need no long version, 32 bit only
+  71:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****      * i.e., _rotl and _rotr */
+  72:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****     #pragma intrinsic(_lrotl, _lrotr)
+  73:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c **** 
+  74:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****     WC_STATIC WC_INLINE word32 rotlFixed(word32 x, word32 y)
+  75:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****     {
+  76:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****         return y ? _lrotl(x, y) : x;
+  77:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****     }
+  78:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c **** 
+  79:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****     WC_STATIC WC_INLINE word32 rotrFixed(word32 x, word32 y)
+  80:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****     {
+  81:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****         return y ? _lrotr(x, y) : x;
+  82:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****     }
+ARM GAS  /tmp/ccSRLI0x.s 			page 8
+
+
+  83:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c **** 
+  84:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c **** #else /* generic */
+  85:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c **** /* This routine performs a left circular arithmetic shift of <x> by <y> value. */
+  86:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c **** 
+  87:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****     WC_STATIC WC_INLINE word32 rotlFixed(word32 x, word32 y)
+  99              		.loc 2 87 32 discriminator 3 view .LVU18
+ 100              	.LBB67:
+  88:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****     {
+  89:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****         return (x << y) | (x >> (sizeof(y) * 8 - y));
+ 101              		.loc 2 89 9 discriminator 3 view .LVU19
+ 102              		.loc 2 89 25 is_stmt 0 discriminator 3 view .LVU20
+ 103 003a 4FEA3242 		ror	r2, r2, #16
+ 104              	.LVL8:
+ 105              		.loc 2 89 25 discriminator 3 view .LVU21
+ 106              	.LBE67:
+ 107              	.LBE66:
+ 108              		.loc 1 216 9 discriminator 3 view .LVU22
+ 109 003e 1292     		str	r2, [sp, #72]
+ 110              		.loc 1 216 9 is_stmt 1 discriminator 3 view .LVU23
+ 111 0040 0E9C     		ldr	r4, [sp, #56]
+ 112 0042 1444     		add	r4, r4, r2
+ 113 0044 0E94     		str	r4, [sp, #56]
+ 114              		.loc 1 216 9 discriminator 3 view .LVU24
+ 115 0046 6340     		eors	r3, r3, r4
+ 116              	.LVL9:
+ 117              	.LBB68:
+ 118              	.LBI68:
+  87:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****     {
+ 119              		.loc 2 87 32 discriminator 3 view .LVU25
+ 120              	.LBB69:
+ 121              		.loc 2 89 9 discriminator 3 view .LVU26
+ 122              		.loc 2 89 25 is_stmt 0 discriminator 3 view .LVU27
+ 123 0048 4FEA3353 		ror	r3, r3, #20
+ 124              	.LVL10:
+ 125              		.loc 2 89 25 discriminator 3 view .LVU28
+ 126              	.LBE69:
+ 127              	.LBE68:
+ 128              		.loc 1 216 9 discriminator 3 view .LVU29
+ 129 004c 0A93     		str	r3, [sp, #40]
+ 130              		.loc 1 216 9 is_stmt 1 discriminator 3 view .LVU30
+ 131 004e 1844     		add	r0, r0, r3
+ 132 0050 0690     		str	r0, [sp, #24]
+ 133              		.loc 1 216 9 discriminator 3 view .LVU31
+ 134 0052 80EA020A 		eor	r10, r0, r2
+ 135              	.LVL11:
+ 136              	.LBB70:
+ 137              	.LBI70:
+  87:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****     {
+ 138              		.loc 2 87 32 discriminator 3 view .LVU32
+ 139              	.LBB71:
+ 140              		.loc 2 89 9 discriminator 3 view .LVU33
+ 141              		.loc 2 89 25 is_stmt 0 discriminator 3 view .LVU34
+ 142 0056 4FEA3A6A 		ror	r10, r10, #24
+ 143              	.LVL12:
+ 144              		.loc 2 89 25 discriminator 3 view .LVU35
+ 145              	.LBE71:
+ 146              	.LBE70:
+ARM GAS  /tmp/ccSRLI0x.s 			page 9
+
+
+ 147              		.loc 1 216 9 discriminator 3 view .LVU36
+ 148 005a CDF848A0 		str	r10, [sp, #72]
+ 149              		.loc 1 216 9 is_stmt 1 discriminator 3 view .LVU37
+ 150 005e 5444     		add	r4, r4, r10
+ 151 0060 0E94     		str	r4, [sp, #56]
+ 152              		.loc 1 216 9 discriminator 3 view .LVU38
+ 153 0062 6340     		eors	r3, r3, r4
+ 154              	.LVL13:
+ 155              	.LBB72:
+ 156              	.LBI72:
+  87:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****     {
+ 157              		.loc 2 87 32 discriminator 3 view .LVU39
+ 158              	.LBB73:
+ 159              		.loc 2 89 9 discriminator 3 view .LVU40
+ 160              		.loc 2 89 25 is_stmt 0 discriminator 3 view .LVU41
+ 161 0064 4FEA7361 		ror	r1, r3, #25
+ 162              	.LVL14:
+ 163              		.loc 2 89 25 discriminator 3 view .LVU42
+ 164              	.LBE73:
+ 165              	.LBE72:
+ 166              		.loc 1 216 9 discriminator 3 view .LVU43
+ 167 0068 0391     		str	r1, [sp, #12]
+ 168 006a 0A91     		str	r1, [sp, #40]
+ 217:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         QUARTERROUND(1, 5,  9, 13)
+ 169              		.loc 1 217 9 is_stmt 1 discriminator 3 view .LVU44
+ 170 006c 0B9B     		ldr	r3, [sp, #44]
+ 171 006e 0799     		ldr	r1, [sp, #28]
+ 172 0070 1944     		add	r1, r1, r3
+ 173 0072 0791     		str	r1, [sp, #28]
+ 174              		.loc 1 217 9 discriminator 3 view .LVU45
+ 175 0074 139A     		ldr	r2, [sp, #76]
+ 176 0076 4A40     		eors	r2, r2, r1
+ 177              	.LVL15:
+ 178              	.LBB74:
+ 179              	.LBI74:
+  87:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****     {
+ 180              		.loc 2 87 32 discriminator 3 view .LVU46
+ 181              	.LBB75:
+ 182              		.loc 2 89 9 discriminator 3 view .LVU47
+ 183              		.loc 2 89 25 is_stmt 0 discriminator 3 view .LVU48
+ 184 0078 4FEA3242 		ror	r2, r2, #16
+ 185              	.LVL16:
+ 186              		.loc 2 89 25 discriminator 3 view .LVU49
+ 187              	.LBE75:
+ 188              	.LBE74:
+ 189              		.loc 1 217 9 discriminator 3 view .LVU50
+ 190 007c 1392     		str	r2, [sp, #76]
+ 191              		.loc 1 217 9 is_stmt 1 discriminator 3 view .LVU51
+ 192 007e 0F9D     		ldr	r5, [sp, #60]
+ 193 0080 1544     		add	r5, r5, r2
+ 194 0082 0F95     		str	r5, [sp, #60]
+ 195              		.loc 1 217 9 discriminator 3 view .LVU52
+ 196 0084 6B40     		eors	r3, r3, r5
+ 197              	.LVL17:
+ 198              	.LBB76:
+ 199              	.LBI76:
+  87:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****     {
+ARM GAS  /tmp/ccSRLI0x.s 			page 10
+
+
+ 200              		.loc 2 87 32 discriminator 3 view .LVU53
+ 201              	.LBB77:
+ 202              		.loc 2 89 9 discriminator 3 view .LVU54
+ 203              		.loc 2 89 25 is_stmt 0 discriminator 3 view .LVU55
+ 204 0086 4FEA3353 		ror	r3, r3, #20
+ 205              	.LVL18:
+ 206              		.loc 2 89 25 discriminator 3 view .LVU56
+ 207              	.LBE77:
+ 208              	.LBE76:
+ 209              		.loc 1 217 9 discriminator 3 view .LVU57
+ 210 008a 0B93     		str	r3, [sp, #44]
+ 211              		.loc 1 217 9 is_stmt 1 discriminator 3 view .LVU58
+ 212 008c 1944     		add	r1, r1, r3
+ 213 008e 0791     		str	r1, [sp, #28]
+ 214              		.loc 1 217 9 discriminator 3 view .LVU59
+ 215 0090 81EA0209 		eor	r9, r1, r2
+ 216              	.LVL19:
+ 217              	.LBB78:
+ 218              	.LBI78:
+  87:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****     {
+ 219              		.loc 2 87 32 discriminator 3 view .LVU60
+ 220              	.LBB79:
+ 221              		.loc 2 89 9 discriminator 3 view .LVU61
+ 222              		.loc 2 89 25 is_stmt 0 discriminator 3 view .LVU62
+ 223 0094 4FEA3969 		ror	r9, r9, #24
+ 224              	.LVL20:
+ 225              		.loc 2 89 25 discriminator 3 view .LVU63
+ 226              	.LBE79:
+ 227              	.LBE78:
+ 228              		.loc 1 217 9 discriminator 3 view .LVU64
+ 229 0098 CDF84C90 		str	r9, [sp, #76]
+ 230              		.loc 1 217 9 is_stmt 1 discriminator 3 view .LVU65
+ 231 009c 05EB0902 		add	r2, r5, r9
+ 232 00a0 0F92     		str	r2, [sp, #60]
+ 233              		.loc 1 217 9 discriminator 3 view .LVU66
+ 234 00a2 0292     		str	r2, [sp, #8]
+ 235 00a4 82EA030E 		eor	lr, r2, r3
+ 236              	.LVL21:
+ 237              	.LBB80:
+ 238              	.LBI80:
+  87:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****     {
+ 239              		.loc 2 87 32 discriminator 3 view .LVU67
+ 240              	.LBB81:
+ 241              		.loc 2 89 9 discriminator 3 view .LVU68
+ 242              		.loc 2 89 25 is_stmt 0 discriminator 3 view .LVU69
+ 243 00a8 4FEA7E6E 		ror	lr, lr, #25
+ 244              	.LVL22:
+ 245              		.loc 2 89 25 discriminator 3 view .LVU70
+ 246              	.LBE81:
+ 247              	.LBE80:
+ 248              		.loc 1 217 9 discriminator 3 view .LVU71
+ 249 00ac CDF82CE0 		str	lr, [sp, #44]
+ 218:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         QUARTERROUND(2, 6, 10, 14)
+ 250              		.loc 1 218 9 is_stmt 1 discriminator 3 view .LVU72
+ 251 00b0 0C9F     		ldr	r7, [sp, #48]
+ 252 00b2 089A     		ldr	r2, [sp, #32]
+ 253 00b4 3A44     		add	r2, r2, r7
+ARM GAS  /tmp/ccSRLI0x.s 			page 11
+
+
+ 254 00b6 0892     		str	r2, [sp, #32]
+ 255              		.loc 1 218 9 discriminator 3 view .LVU73
+ 256 00b8 149B     		ldr	r3, [sp, #80]
+ 257 00ba 5340     		eors	r3, r3, r2
+ 258              	.LVL23:
+ 259              	.LBB82:
+ 260              	.LBI82:
+  87:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****     {
+ 261              		.loc 2 87 32 discriminator 3 view .LVU74
+ 262              	.LBB83:
+ 263              		.loc 2 89 9 discriminator 3 view .LVU75
+ 264              		.loc 2 89 25 is_stmt 0 discriminator 3 view .LVU76
+ 265 00bc 4FEA3343 		ror	r3, r3, #16
+ 266              	.LVL24:
+ 267              		.loc 2 89 25 discriminator 3 view .LVU77
+ 268              	.LBE83:
+ 269              	.LBE82:
+ 270              		.loc 1 218 9 discriminator 3 view .LVU78
+ 271 00c0 1493     		str	r3, [sp, #80]
+ 272              		.loc 1 218 9 is_stmt 1 discriminator 3 view .LVU79
+ 273 00c2 109D     		ldr	r5, [sp, #64]
+ 274 00c4 1D44     		add	r5, r5, r3
+ 275 00c6 1095     		str	r5, [sp, #64]
+ 276              		.loc 1 218 9 discriminator 3 view .LVU80
+ 277 00c8 6F40     		eors	r7, r7, r5
+ 278              	.LVL25:
+ 279              	.LBB84:
+ 280              	.LBI84:
+  87:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****     {
+ 281              		.loc 2 87 32 discriminator 3 view .LVU81
+ 282              	.LBB85:
+ 283              		.loc 2 89 9 discriminator 3 view .LVU82
+ 284              		.loc 2 89 25 is_stmt 0 discriminator 3 view .LVU83
+ 285 00ca 4FEA3757 		ror	r7, r7, #20
+ 286              	.LVL26:
+ 287              		.loc 2 89 25 discriminator 3 view .LVU84
+ 288              	.LBE85:
+ 289              	.LBE84:
+ 290              		.loc 1 218 9 discriminator 3 view .LVU85
+ 291 00ce 0C97     		str	r7, [sp, #48]
+ 292              		.loc 1 218 9 is_stmt 1 discriminator 3 view .LVU86
+ 293 00d0 3A44     		add	r2, r2, r7
+ 294 00d2 0892     		str	r2, [sp, #32]
+ 295              		.loc 1 218 9 discriminator 3 view .LVU87
+ 296 00d4 5340     		eors	r3, r3, r2
+ 297              	.LVL27:
+ 298              	.LBB86:
+ 299              	.LBI86:
+  87:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****     {
+ 300              		.loc 2 87 32 discriminator 3 view .LVU88
+ 301              	.LBB87:
+ 302              		.loc 2 89 9 discriminator 3 view .LVU89
+ 303              		.loc 2 89 25 is_stmt 0 discriminator 3 view .LVU90
+ 304 00d6 4FEA3368 		ror	r8, r3, #24
+ 305              	.LVL28:
+ 306              		.loc 2 89 25 discriminator 3 view .LVU91
+ 307              	.LBE87:
+ARM GAS  /tmp/ccSRLI0x.s 			page 12
+
+
+ 308              	.LBE86:
+ 309              		.loc 1 218 9 discriminator 3 view .LVU92
+ 310 00da CDF85080 		str	r8, [sp, #80]
+ 311              		.loc 1 218 9 is_stmt 1 discriminator 3 view .LVU93
+ 312 00de 05EB080C 		add	ip, r5, r8
+ 313 00e2 CDF840C0 		str	ip, [sp, #64]
+ 314              		.loc 1 218 9 discriminator 3 view .LVU94
+ 315 00e6 8CEA0707 		eor	r7, ip, r7
+ 316              	.LVL29:
+ 317              	.LBB88:
+ 318              	.LBI88:
+  87:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****     {
+ 319              		.loc 2 87 32 discriminator 3 view .LVU95
+ 320              	.LBB89:
+ 321              		.loc 2 89 9 discriminator 3 view .LVU96
+ 322              		.loc 2 89 25 is_stmt 0 discriminator 3 view .LVU97
+ 323 00ea 4FEA7767 		ror	r7, r7, #25
+ 324              	.LVL30:
+ 325              		.loc 2 89 25 discriminator 3 view .LVU98
+ 326              	.LBE89:
+ 327              	.LBE88:
+ 328              		.loc 1 218 9 discriminator 3 view .LVU99
+ 329 00ee 0C97     		str	r7, [sp, #48]
+ 219:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         QUARTERROUND(3, 7, 11, 15)
+ 330              		.loc 1 219 9 is_stmt 1 discriminator 3 view .LVU100
+ 331 00f0 0D9D     		ldr	r5, [sp, #52]
+ 332 00f2 099B     		ldr	r3, [sp, #36]
+ 333 00f4 2B44     		add	r3, r3, r5
+ 334 00f6 0993     		str	r3, [sp, #36]
+ 335              		.loc 1 219 9 discriminator 3 view .LVU101
+ 336 00f8 159E     		ldr	r6, [sp, #84]
+ 337 00fa 5E40     		eors	r6, r6, r3
+ 338              	.LVL31:
+ 339              	.LBB90:
+ 340              	.LBI90:
+  87:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****     {
+ 341              		.loc 2 87 32 discriminator 3 view .LVU102
+ 342              	.LBB91:
+ 343              		.loc 2 89 9 discriminator 3 view .LVU103
+ 344              		.loc 2 89 25 is_stmt 0 discriminator 3 view .LVU104
+ 345 00fc 4FEA364B 		ror	fp, r6, #16
+ 346              	.LVL32:
+ 347              		.loc 2 89 25 discriminator 3 view .LVU105
+ 348              	.LBE91:
+ 349              	.LBE90:
+ 350              		.loc 1 219 9 discriminator 3 view .LVU106
+ 351 0100 CDF854B0 		str	fp, [sp, #84]
+ 352              		.loc 1 219 9 is_stmt 1 discriminator 3 view .LVU107
+ 353 0104 119E     		ldr	r6, [sp, #68]
+ 354 0106 5E44     		add	r6, r6, fp
+ 355 0108 1196     		str	r6, [sp, #68]
+ 356              		.loc 1 219 9 discriminator 3 view .LVU108
+ 357 010a 7540     		eors	r5, r5, r6
+ 358              	.LVL33:
+ 359              	.LBB92:
+ 360              	.LBI92:
+  87:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****     {
+ARM GAS  /tmp/ccSRLI0x.s 			page 13
+
+
+ 361              		.loc 2 87 32 discriminator 3 view .LVU109
+ 362              	.LBB93:
+ 363              		.loc 2 89 9 discriminator 3 view .LVU110
+ 364              		.loc 2 89 25 is_stmt 0 discriminator 3 view .LVU111
+ 365 010c 4FEA3555 		ror	r5, r5, #20
+ 366              	.LVL34:
+ 367              		.loc 2 89 25 discriminator 3 view .LVU112
+ 368              	.LBE93:
+ 369              	.LBE92:
+ 370              		.loc 1 219 9 discriminator 3 view .LVU113
+ 371 0110 0D95     		str	r5, [sp, #52]
+ 372              		.loc 1 219 9 is_stmt 1 discriminator 3 view .LVU114
+ 373 0112 2B44     		add	r3, r3, r5
+ 374 0114 0993     		str	r3, [sp, #36]
+ 375              		.loc 1 219 9 discriminator 3 view .LVU115
+ 376 0116 83EA0B0B 		eor	fp, r3, fp
+ 377              	.LVL35:
+ 378              	.LBB94:
+ 379              	.LBI94:
+  87:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****     {
+ 380              		.loc 2 87 32 discriminator 3 view .LVU116
+ 381              	.LBB95:
+ 382              		.loc 2 89 9 discriminator 3 view .LVU117
+ 383              		.loc 2 89 25 is_stmt 0 discriminator 3 view .LVU118
+ 384 011a 4FEA3B6B 		ror	fp, fp, #24
+ 385              	.LVL36:
+ 386              		.loc 2 89 25 discriminator 3 view .LVU119
+ 387              	.LBE95:
+ 388              	.LBE94:
+ 389              		.loc 1 219 9 discriminator 3 view .LVU120
+ 390 011e CDF854B0 		str	fp, [sp, #84]
+ 391              		.loc 1 219 9 is_stmt 1 discriminator 3 view .LVU121
+ 392 0122 5E44     		add	r6, r6, fp
+ 393 0124 1196     		str	r6, [sp, #68]
+ 394              		.loc 1 219 9 discriminator 3 view .LVU122
+ 395 0126 7540     		eors	r5, r5, r6
+ 396              	.LVL37:
+ 397              	.LBB96:
+ 398              	.LBI96:
+  87:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****     {
+ 399              		.loc 2 87 32 discriminator 3 view .LVU123
+ 400              	.LBB97:
+ 401              		.loc 2 89 9 discriminator 3 view .LVU124
+ 402              		.loc 2 89 25 is_stmt 0 discriminator 3 view .LVU125
+ 403 0128 4FEA7565 		ror	r5, r5, #25
+ 404              	.LVL38:
+ 405              		.loc 2 89 25 discriminator 3 view .LVU126
+ 406              	.LBE97:
+ 407              	.LBE96:
+ 408              		.loc 1 219 9 discriminator 3 view .LVU127
+ 409 012c 0D95     		str	r5, [sp, #52]
+ 220:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         QUARTERROUND(0, 5, 10, 15)
+ 410              		.loc 1 220 9 is_stmt 1 discriminator 3 view .LVU128
+ 411 012e 7044     		add	r0, r0, lr
+ 412 0130 0690     		str	r0, [sp, #24]
+ 413              		.loc 1 220 9 discriminator 3 view .LVU129
+ 414 0132 80EA0B0B 		eor	fp, r0, fp
+ARM GAS  /tmp/ccSRLI0x.s 			page 14
+
+
+ 415              	.LVL39:
+ 416              	.LBB98:
+ 417              	.LBI98:
+  87:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****     {
+ 418              		.loc 2 87 32 discriminator 3 view .LVU130
+ 419              	.LBB99:
+ 420              		.loc 2 89 9 discriminator 3 view .LVU131
+ 421              		.loc 2 89 25 is_stmt 0 discriminator 3 view .LVU132
+ 422 0136 4FEA3B4B 		ror	fp, fp, #16
+ 423              	.LVL40:
+ 424              		.loc 2 89 25 discriminator 3 view .LVU133
+ 425              	.LBE99:
+ 426              	.LBE98:
+ 427              		.loc 1 220 9 discriminator 3 view .LVU134
+ 428 013a CDF854B0 		str	fp, [sp, #84]
+ 429              		.loc 1 220 9 is_stmt 1 discriminator 3 view .LVU135
+ 430 013e DC44     		add	ip, ip, fp
+ 431 0140 CDF840C0 		str	ip, [sp, #64]
+ 432              		.loc 1 220 9 discriminator 3 view .LVU136
+ 433 0144 8CEA0E0E 		eor	lr, ip, lr
+ 434              	.LVL41:
+ 435              	.LBB100:
+ 436              	.LBI100:
+  87:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****     {
+ 437              		.loc 2 87 32 discriminator 3 view .LVU137
+ 438              	.LBB101:
+ 439              		.loc 2 89 9 discriminator 3 view .LVU138
+ 440              		.loc 2 89 25 is_stmt 0 discriminator 3 view .LVU139
+ 441 0148 4FEA3E5E 		ror	lr, lr, #20
+ 442              	.LVL42:
+ 443              		.loc 2 89 25 discriminator 3 view .LVU140
+ 444              	.LBE101:
+ 445              	.LBE100:
+ 446              		.loc 1 220 9 discriminator 3 view .LVU141
+ 447 014c CDF82CE0 		str	lr, [sp, #44]
+ 448              		.loc 1 220 9 is_stmt 1 discriminator 3 view .LVU142
+ 449 0150 7044     		add	r0, r0, lr
+ 450 0152 0690     		str	r0, [sp, #24]
+ 451              		.loc 1 220 9 discriminator 3 view .LVU143
+ 452 0154 80EA0B00 		eor	r0, r0, fp
+ 453              	.LVL43:
+ 454              	.LBB102:
+ 455              	.LBI102:
+  87:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****     {
+ 456              		.loc 2 87 32 discriminator 3 view .LVU144
+ 457              	.LBB103:
+ 458              		.loc 2 89 9 discriminator 3 view .LVU145
+ 459              		.loc 2 89 25 is_stmt 0 discriminator 3 view .LVU146
+ 460 0158 4FEA3060 		ror	r0, r0, #24
+ 461              	.LVL44:
+ 462              		.loc 2 89 25 discriminator 3 view .LVU147
+ 463              	.LBE103:
+ 464              	.LBE102:
+ 465              		.loc 1 220 9 discriminator 3 view .LVU148
+ 466 015c 1590     		str	r0, [sp, #84]
+ 467              		.loc 1 220 9 is_stmt 1 discriminator 3 view .LVU149
+ 468 015e 6044     		add	r0, r0, ip
+ARM GAS  /tmp/ccSRLI0x.s 			page 15
+
+
+ 469 0160 1090     		str	r0, [sp, #64]
+ 470              		.loc 1 220 9 discriminator 3 view .LVU150
+ 471 0162 80EA0E00 		eor	r0, r0, lr
+ 472              	.LVL45:
+ 473              	.LBB104:
+ 474              	.LBI104:
+  87:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****     {
+ 475              		.loc 2 87 32 discriminator 3 view .LVU151
+ 476              	.LBB105:
+ 477              		.loc 2 89 9 discriminator 3 view .LVU152
+ 478              		.loc 2 89 25 is_stmt 0 discriminator 3 view .LVU153
+ 479 0166 4FEA7060 		ror	r0, r0, #25
+ 480              	.LVL46:
+ 481              		.loc 2 89 25 discriminator 3 view .LVU154
+ 482              	.LBE105:
+ 483              	.LBE104:
+ 484              		.loc 1 220 9 discriminator 3 view .LVU155
+ 485 016a 0B90     		str	r0, [sp, #44]
+ 221:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         QUARTERROUND(1, 6, 11, 12)
+ 486              		.loc 1 221 9 is_stmt 1 discriminator 3 view .LVU156
+ 487 016c 3944     		add	r1, r1, r7
+ 488 016e 0791     		str	r1, [sp, #28]
+ 489              		.loc 1 221 9 discriminator 3 view .LVU157
+ 490 0170 81EA0A0A 		eor	r10, r1, r10
+ 491              	.LVL47:
+ 492              	.LBB106:
+ 493              	.LBI106:
+  87:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****     {
+ 494              		.loc 2 87 32 discriminator 3 view .LVU158
+ 495              	.LBB107:
+ 496              		.loc 2 89 9 discriminator 3 view .LVU159
+ 497              		.loc 2 89 25 is_stmt 0 discriminator 3 view .LVU160
+ 498 0174 4FEA3A40 		ror	r0, r10, #16
+ 499              	.LVL48:
+ 500              		.loc 2 89 25 discriminator 3 view .LVU161
+ 501              	.LBE107:
+ 502              	.LBE106:
+ 503              		.loc 1 221 9 discriminator 3 view .LVU162
+ 504 0178 1290     		str	r0, [sp, #72]
+ 505              		.loc 1 221 9 is_stmt 1 discriminator 3 view .LVU163
+ 506 017a 0644     		add	r6, r6, r0
+ 507 017c 1196     		str	r6, [sp, #68]
+ 508              		.loc 1 221 9 discriminator 3 view .LVU164
+ 509 017e 7740     		eors	r7, r7, r6
+ 510              	.LVL49:
+ 511              	.LBB108:
+ 512              	.LBI108:
+  87:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****     {
+ 513              		.loc 2 87 32 discriminator 3 view .LVU165
+ 514              	.LBB109:
+ 515              		.loc 2 89 9 discriminator 3 view .LVU166
+ 516              		.loc 2 89 25 is_stmt 0 discriminator 3 view .LVU167
+ 517 0180 4FEA3757 		ror	r7, r7, #20
+ 518              	.LVL50:
+ 519              		.loc 2 89 25 discriminator 3 view .LVU168
+ 520              	.LBE109:
+ 521              	.LBE108:
+ARM GAS  /tmp/ccSRLI0x.s 			page 16
+
+
+ 522              		.loc 1 221 9 discriminator 3 view .LVU169
+ 523 0184 0C97     		str	r7, [sp, #48]
+ 524              		.loc 1 221 9 is_stmt 1 discriminator 3 view .LVU170
+ 525 0186 3944     		add	r1, r1, r7
+ 526 0188 0791     		str	r1, [sp, #28]
+ 527              		.loc 1 221 9 discriminator 3 view .LVU171
+ 528 018a 4140     		eors	r1, r1, r0
+ 529              	.LVL51:
+ 530              	.LBB110:
+ 531              	.LBI110:
+  87:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****     {
+ 532              		.loc 2 87 32 discriminator 3 view .LVU172
+ 533              	.LBB111:
+ 534              		.loc 2 89 9 discriminator 3 view .LVU173
+ 535              		.loc 2 89 25 is_stmt 0 discriminator 3 view .LVU174
+ 536 018c 4FEA3161 		ror	r1, r1, #24
+ 537              	.LVL52:
+ 538              		.loc 2 89 25 discriminator 3 view .LVU175
+ 539              	.LBE111:
+ 540              	.LBE110:
+ 541              		.loc 1 221 9 discriminator 3 view .LVU176
+ 542 0190 1291     		str	r1, [sp, #72]
+ 543              		.loc 1 221 9 is_stmt 1 discriminator 3 view .LVU177
+ 544 0192 0E44     		add	r6, r6, r1
+ 545 0194 1196     		str	r6, [sp, #68]
+ 546              		.loc 1 221 9 discriminator 3 view .LVU178
+ 547 0196 7E40     		eors	r6, r6, r7
+ 548              	.LVL53:
+ 549              	.LBB112:
+ 550              	.LBI112:
+  87:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****     {
+ 551              		.loc 2 87 32 discriminator 3 view .LVU179
+ 552              	.LBB113:
+ 553              		.loc 2 89 9 discriminator 3 view .LVU180
+ 554              		.loc 2 89 25 is_stmt 0 discriminator 3 view .LVU181
+ 555 0198 4FEA7666 		ror	r6, r6, #25
+ 556              	.LVL54:
+ 557              		.loc 2 89 25 discriminator 3 view .LVU182
+ 558              	.LBE113:
+ 559              	.LBE112:
+ 560              		.loc 1 221 9 discriminator 3 view .LVU183
+ 561 019c 0C96     		str	r6, [sp, #48]
+ 222:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         QUARTERROUND(2, 7,  8, 13)
+ 562              		.loc 1 222 9 is_stmt 1 discriminator 3 view .LVU184
+ 563 019e 2A44     		add	r2, r2, r5
+ 564 01a0 0892     		str	r2, [sp, #32]
+ 565              		.loc 1 222 9 discriminator 3 view .LVU185
+ 566 01a2 82EA0909 		eor	r9, r2, r9
+ 567              	.LVL55:
+ 568              	.LBB114:
+ 569              	.LBI114:
+  87:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****     {
+ 570              		.loc 2 87 32 discriminator 3 view .LVU186
+ 571              	.LBB115:
+ 572              		.loc 2 89 9 discriminator 3 view .LVU187
+ 573              		.loc 2 89 25 is_stmt 0 discriminator 3 view .LVU188
+ 574 01a6 4FEA3941 		ror	r1, r9, #16
+ARM GAS  /tmp/ccSRLI0x.s 			page 17
+
+
+ 575              	.LVL56:
+ 576              		.loc 2 89 25 discriminator 3 view .LVU189
+ 577              	.LBE115:
+ 578              	.LBE114:
+ 579              		.loc 1 222 9 discriminator 3 view .LVU190
+ 580 01aa 1391     		str	r1, [sp, #76]
+ 581              		.loc 1 222 9 is_stmt 1 discriminator 3 view .LVU191
+ 582 01ac 0C44     		add	r4, r4, r1
+ 583 01ae 0E94     		str	r4, [sp, #56]
+ 584              		.loc 1 222 9 discriminator 3 view .LVU192
+ 585 01b0 6540     		eors	r5, r5, r4
+ 586              	.LVL57:
+ 587              	.LBB116:
+ 588              	.LBI116:
+  87:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****     {
+ 589              		.loc 2 87 32 discriminator 3 view .LVU193
+ 590              	.LBB117:
+ 591              		.loc 2 89 9 discriminator 3 view .LVU194
+ 592              		.loc 2 89 25 is_stmt 0 discriminator 3 view .LVU195
+ 593 01b2 4FEA3555 		ror	r5, r5, #20
+ 594              	.LVL58:
+ 595              		.loc 2 89 25 discriminator 3 view .LVU196
+ 596              	.LBE117:
+ 597              	.LBE116:
+ 598              		.loc 1 222 9 discriminator 3 view .LVU197
+ 599 01b6 0D95     		str	r5, [sp, #52]
+ 600              		.loc 1 222 9 is_stmt 1 discriminator 3 view .LVU198
+ 601 01b8 2A44     		add	r2, r2, r5
+ 602 01ba 0892     		str	r2, [sp, #32]
+ 603              		.loc 1 222 9 discriminator 3 view .LVU199
+ 604 01bc 4A40     		eors	r2, r2, r1
+ 605              	.LVL59:
+ 606              	.LBB118:
+ 607              	.LBI118:
+  87:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****     {
+ 608              		.loc 2 87 32 discriminator 3 view .LVU200
+ 609              	.LBB119:
+ 610              		.loc 2 89 9 discriminator 3 view .LVU201
+ 611              		.loc 2 89 25 is_stmt 0 discriminator 3 view .LVU202
+ 612 01be 4FEA3262 		ror	r2, r2, #24
+ 613              	.LVL60:
+ 614              		.loc 2 89 25 discriminator 3 view .LVU203
+ 615              	.LBE119:
+ 616              	.LBE118:
+ 617              		.loc 1 222 9 discriminator 3 view .LVU204
+ 618 01c2 1392     		str	r2, [sp, #76]
+ 619              		.loc 1 222 9 is_stmt 1 discriminator 3 view .LVU205
+ 620 01c4 1444     		add	r4, r4, r2
+ 621 01c6 0E94     		str	r4, [sp, #56]
+ 622              		.loc 1 222 9 discriminator 3 view .LVU206
+ 623 01c8 6C40     		eors	r4, r4, r5
+ 624              	.LVL61:
+ 625              	.LBB120:
+ 626              	.LBI120:
+  87:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****     {
+ 627              		.loc 2 87 32 discriminator 3 view .LVU207
+ 628              	.LBB121:
+ARM GAS  /tmp/ccSRLI0x.s 			page 18
+
+
+ 629              		.loc 2 89 9 discriminator 3 view .LVU208
+ 630              		.loc 2 89 25 is_stmt 0 discriminator 3 view .LVU209
+ 631 01ca 4FEA7464 		ror	r4, r4, #25
+ 632              	.LVL62:
+ 633              		.loc 2 89 25 discriminator 3 view .LVU210
+ 634              	.LBE121:
+ 635              	.LBE120:
+ 636              		.loc 1 222 9 discriminator 3 view .LVU211
+ 637 01ce 0D94     		str	r4, [sp, #52]
+ 223:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         QUARTERROUND(3, 4,  9, 14)
+ 638              		.loc 1 223 9 is_stmt 1 discriminator 3 view .LVU212
+ 639 01d0 0399     		ldr	r1, [sp, #12]
+ 640 01d2 0B44     		add	r3, r3, r1
+ 641 01d4 0993     		str	r3, [sp, #36]
+ 642              		.loc 1 223 9 discriminator 3 view .LVU213
+ 643 01d6 83EA0808 		eor	r8, r3, r8
+ 644              	.LVL63:
+ 645              	.LBB122:
+ 646              	.LBI122:
+  87:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****     {
+ 647              		.loc 2 87 32 discriminator 3 view .LVU214
+ 648              	.LBB123:
+ 649              		.loc 2 89 9 discriminator 3 view .LVU215
+ 650              		.loc 2 89 25 is_stmt 0 discriminator 3 view .LVU216
+ 651 01da 4FEA3840 		ror	r0, r8, #16
+ 652              	.LVL64:
+ 653              		.loc 2 89 25 discriminator 3 view .LVU217
+ 654              	.LBE123:
+ 655              	.LBE122:
+ 656              		.loc 1 223 9 discriminator 3 view .LVU218
+ 657 01de 1490     		str	r0, [sp, #80]
+ 658              		.loc 1 223 9 is_stmt 1 discriminator 3 view .LVU219
+ 659 01e0 029D     		ldr	r5, [sp, #8]
+ 660 01e2 2A18     		adds	r2, r5, r0
+ 661 01e4 0F92     		str	r2, [sp, #60]
+ 662              		.loc 1 223 9 discriminator 3 view .LVU220
+ 663 01e6 5140     		eors	r1, r1, r2
+ 664              	.LVL65:
+ 665              	.LBB124:
+ 666              	.LBI124:
+  87:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****     {
+ 667              		.loc 2 87 32 discriminator 3 view .LVU221
+ 668              	.LBB125:
+ 669              		.loc 2 89 9 discriminator 3 view .LVU222
+ 670              		.loc 2 89 25 is_stmt 0 discriminator 3 view .LVU223
+ 671 01e8 4FEA3151 		ror	r1, r1, #20
+ 672              	.LVL66:
+ 673              		.loc 2 89 25 discriminator 3 view .LVU224
+ 674              	.LBE125:
+ 675              	.LBE124:
+ 676              		.loc 1 223 9 discriminator 3 view .LVU225
+ 677 01ec 0A91     		str	r1, [sp, #40]
+ 678              		.loc 1 223 9 is_stmt 1 discriminator 3 view .LVU226
+ 679 01ee 0B44     		add	r3, r3, r1
+ 680 01f0 0993     		str	r3, [sp, #36]
+ 681              		.loc 1 223 9 discriminator 3 view .LVU227
+ 682 01f2 4340     		eors	r3, r3, r0
+ARM GAS  /tmp/ccSRLI0x.s 			page 19
+
+
+ 683              	.LVL67:
+ 684              	.LBB126:
+ 685              	.LBI126:
+  87:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****     {
+ 686              		.loc 2 87 32 discriminator 3 view .LVU228
+ 687              	.LBB127:
+ 688              		.loc 2 89 9 discriminator 3 view .LVU229
+ 689              		.loc 2 89 25 is_stmt 0 discriminator 3 view .LVU230
+ 690 01f4 4FEA3363 		ror	r3, r3, #24
+ 691              	.LVL68:
+ 692              		.loc 2 89 25 discriminator 3 view .LVU231
+ 693              	.LBE127:
+ 694              	.LBE126:
+ 695              		.loc 1 223 9 discriminator 3 view .LVU232
+ 696 01f8 1493     		str	r3, [sp, #80]
+ 697              		.loc 1 223 9 is_stmt 1 discriminator 3 view .LVU233
+ 698 01fa 1344     		add	r3, r3, r2
+ 699 01fc 0F93     		str	r3, [sp, #60]
+ 700              		.loc 1 223 9 discriminator 3 view .LVU234
+ 701 01fe 4B40     		eors	r3, r3, r1
+ 702              	.LVL69:
+ 703              	.LBB128:
+ 704              	.LBI128:
+  87:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/misc.c ****     {
+ 705              		.loc 2 87 32 discriminator 3 view .LVU235
+ 706              	.LBB129:
+ 707              		.loc 2 89 9 discriminator 3 view .LVU236
+ 708              		.loc 2 89 25 is_stmt 0 discriminator 3 view .LVU237
+ 709 0200 4FEA7363 		ror	r3, r3, #25
+ 710              	.LVL70:
+ 711              		.loc 2 89 25 discriminator 3 view .LVU238
+ 712              	.LBE129:
+ 713              	.LBE128:
+ 714              		.loc 1 223 9 discriminator 3 view .LVU239
+ 715 0204 0A93     		str	r3, [sp, #40]
+ 215:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         QUARTERROUND(0, 4,  8, 12)
+ 716              		.loc 1 215 31 is_stmt 1 discriminator 3 view .LVU240
+ 215:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         QUARTERROUND(0, 4,  8, 12)
+ 717              		.loc 1 215 33 is_stmt 0 discriminator 3 view .LVU241
+ 718 0206 019B     		ldr	r3, [sp, #4]
+ 719 0208 023B     		subs	r3, r3, #2
+ 720 020a 0193     		str	r3, [sp, #4]
+ 721              	.LVL71:
+ 722              	.L4:
+ 215:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         QUARTERROUND(0, 4,  8, 12)
+ 723              		.loc 1 215 24 is_stmt 1 discriminator 1 view .LVU242
+ 215:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         QUARTERROUND(0, 4,  8, 12)
+ 724              		.loc 1 215 5 is_stmt 0 discriminator 1 view .LVU243
+ 725 020c 019B     		ldr	r3, [sp, #4]
+ 726 020e 002B     		cmp	r3, #0
+ 727 0210 7FF40DAF 		bne	.L5
+ 224:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     }
+ 225:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 226:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     for (i = 0; i < CHACHA_CHUNK_WORDS; i++) {
+ 728              		.loc 1 226 12 view .LVU244
+ 729 0214 9E46     		mov	lr, r3
+ 730 0216 059C     		ldr	r4, [sp, #20]
+ARM GAS  /tmp/ccSRLI0x.s 			page 20
+
+
+ 731 0218 0AE0     		b	.L6
+ 732              	.LVL72:
+ 733              	.L7:
+ 227:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         x[i] = PLUS(x[i], input[i]);
+ 734              		.loc 1 227 9 is_stmt 1 discriminator 3 view .LVU245
+ 735              		.loc 1 227 16 is_stmt 0 discriminator 3 view .LVU246
+ 736 021a 16AA     		add	r2, sp, #88
+ 737 021c 02EB8301 		add	r1, r2, r3, lsl #2
+ 738 0220 51F8402C 		ldr	r2, [r1, #-64]
+ 739 0224 54F82300 		ldr	r0, [r4, r3, lsl #2]
+ 740 0228 0244     		add	r2, r2, r0
+ 741              		.loc 1 227 14 discriminator 3 view .LVU247
+ 742 022a 41F8402C 		str	r2, [r1, #-64]
+ 226:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         x[i] = PLUS(x[i], input[i]);
+ 743              		.loc 1 226 41 is_stmt 1 discriminator 3 view .LVU248
+ 226:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         x[i] = PLUS(x[i], input[i]);
+ 744              		.loc 1 226 42 is_stmt 0 discriminator 3 view .LVU249
+ 745 022e 0133     		adds	r3, r3, #1
+ 746              	.LVL73:
+ 747              	.L6:
+ 226:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         x[i] = PLUS(x[i], input[i]);
+ 748              		.loc 1 226 17 is_stmt 1 discriminator 1 view .LVU250
+ 226:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         x[i] = PLUS(x[i], input[i]);
+ 749              		.loc 1 226 5 is_stmt 0 discriminator 1 view .LVU251
+ 750 0230 0F2B     		cmp	r3, #15
+ 751 0232 F2D9     		bls	.L7
+ 226:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         x[i] = PLUS(x[i], input[i]);
+ 752              		.loc 1 226 5 discriminator 1 view .LVU252
+ 753 0234 049A     		ldr	r2, [sp, #16]
+ 754 0236 08E0     		b	.L8
+ 755              	.LVL74:
+ 756              	.L9:
+ 228:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     }
+ 229:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 230:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     for (i = 0; i < CHACHA_CHUNK_WORDS; i++) {
+ 231:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         output[i] = LITTLE32(x[i]);
+ 757              		.loc 1 231 9 is_stmt 1 discriminator 3 view .LVU253
+ 758              		.loc 1 231 21 is_stmt 0 discriminator 3 view .LVU254
+ 759 0238 16AB     		add	r3, sp, #88
+ 760 023a 03EB8E03 		add	r3, r3, lr, lsl #2
+ 761 023e 53F8403C 		ldr	r3, [r3, #-64]
+ 762              		.loc 1 231 19 discriminator 3 view .LVU255
+ 763 0242 42F82E30 		str	r3, [r2, lr, lsl #2]
+ 230:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         output[i] = LITTLE32(x[i]);
+ 764              		.loc 1 230 41 is_stmt 1 discriminator 3 view .LVU256
+ 230:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         output[i] = LITTLE32(x[i]);
+ 765              		.loc 1 230 42 is_stmt 0 discriminator 3 view .LVU257
+ 766 0246 0EF1010E 		add	lr, lr, #1
+ 767              	.LVL75:
+ 768              	.L8:
+ 230:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         output[i] = LITTLE32(x[i]);
+ 769              		.loc 1 230 17 is_stmt 1 discriminator 1 view .LVU258
+ 230:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         output[i] = LITTLE32(x[i]);
+ 770              		.loc 1 230 5 is_stmt 0 discriminator 1 view .LVU259
+ 771 024a BEF10F0F 		cmp	lr, #15
+ 772 024e F3D9     		bls	.L9
+ 232:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     }
+ARM GAS  /tmp/ccSRLI0x.s 			page 21
+
+
+ 233:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** }
+ 773              		.loc 1 233 1 view .LVU260
+ 774 0250 17B0     		add	sp, sp, #92
+ 775              	.LCFI2:
+ 776              		.cfi_def_cfa_offset 36
+ 777              		@ sp needed
+ 778 0252 BDE8F08F 		pop	{r4, r5, r6, r7, r8, r9, r10, fp, pc}
+ 779              		.loc 1 233 1 view .LVU261
+ 780              		.cfi_endproc
+ 781              	.LFE177:
+ 783              		.section	.text.wc_Chacha_encrypt_bytes,"ax",%progbits
+ 784              		.align	1
+ 785              		.syntax unified
+ 786              		.thumb
+ 787              		.thumb_func
+ 788              		.fpu fpv4-sp-d16
+ 790              	wc_Chacha_encrypt_bytes:
+ 791              	.LVL76:
+ 792              	.LFB178:
+ 234:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 235:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 236:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** #ifdef HAVE_XCHACHA
+ 237:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 238:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** /*
+ 239:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****  * wc_HChacha_block - half a ChaCha block, for XChaCha
+ 240:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****  *
+ 241:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****  * see https://tools.ietf.org/html/draft-arciszewski-xchacha-03
+ 242:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****  */
+ 243:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** static WC_INLINE void wc_HChacha_block(ChaCha* ctx, word32 stream[CHACHA_CHUNK_WORDS/2], int nround
+ 244:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** {
+ 245:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     word32 x[CHACHA_CHUNK_WORDS];
+ 246:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     word32 i;
+ 247:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 248:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     for (i = 0; i < CHACHA_CHUNK_WORDS; i++) {
+ 249:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         x[i] = ctx->X[i];
+ 250:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     }
+ 251:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 252:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     for (i = nrounds; i > 0; i -= 2) {
+ 253:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         QUARTERROUND(0, 4,  8, 12)
+ 254:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         QUARTERROUND(1, 5,  9, 13)
+ 255:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         QUARTERROUND(2, 6, 10, 14)
+ 256:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         QUARTERROUND(3, 7, 11, 15)
+ 257:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         QUARTERROUND(0, 5, 10, 15)
+ 258:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         QUARTERROUND(1, 6, 11, 12)
+ 259:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         QUARTERROUND(2, 7,  8, 13)
+ 260:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         QUARTERROUND(3, 4,  9, 14)
+ 261:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     }
+ 262:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 263:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     for (i = 0; i < CHACHA_CHUNK_WORDS/4; ++i)
+ 264:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         stream[i] = x[i];
+ 265:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     for (i = CHACHA_CHUNK_WORDS/4; i < CHACHA_CHUNK_WORDS/2; ++i)
+ 266:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         stream[i] = x[i + CHACHA_CHUNK_WORDS/2];
+ 267:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** }
+ 268:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 269:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** /* XChaCha -- https://tools.ietf.org/html/draft-arciszewski-xchacha-03 */
+ 270:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** int wc_XChacha_SetKey(ChaCha *ctx,
+ 271:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****                       const byte *key, word32 keySz,
+ARM GAS  /tmp/ccSRLI0x.s 			page 22
+
+
+ 272:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****                       const byte *nonce, word32 nonceSz,
+ 273:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****                       word32 counter) {
+ 274:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     word32 k[CHACHA_MAX_KEY_SZ];
+ 275:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     byte iv[CHACHA_IV_BYTES];
+ 276:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     int ret;
+ 277:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 278:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     if (nonceSz != XCHACHA_NONCE_BYTES)
+ 279:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         return BAD_FUNC_ARG;
+ 280:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 281:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     if ((ret = wc_Chacha_SetKey(ctx, key, keySz)) < 0)
+ 282:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         return ret;
+ 283:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 284:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     /* form a first chacha IV from the first 16 bytes of the nonce.
+ 285:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****      * the first word is supplied in the "counter" arg, and
+ 286:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****      * the result is a full 128 bit nonceful IV for the one-time block
+ 287:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****      * crypto op that follows.
+ 288:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****      */
+ 289:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     if ((ret = wc_Chacha_SetIV(ctx, nonce + 4, U8TO32_LITTLE(nonce))) < 0)
+ 290:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         return ret;
+ 291:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 292:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     wc_HChacha_block(ctx, k, 20); /* 20 rounds, but keeping half the output. */
+ 293:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 294:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     /* the HChacha output is used as a 256 bit key for the main cipher. */
+ 295:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     XMEMCPY(&ctx->X[4], k, 8 * sizeof(word32));
+ 296:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 297:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     /* use 8 bytes from the end of the 24 byte nonce, padded up to 12 bytes,
+ 298:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****      * to form the IV for the main cipher.
+ 299:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****      */
+ 300:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     XMEMSET(iv, 0, 4);
+ 301:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     XMEMCPY(iv + 4, nonce + 16, 8);
+ 302:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 303:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     if ((ret = wc_Chacha_SetIV(ctx, iv, counter)) < 0)
+ 304:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         return ret;
+ 305:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 306:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ForceZero(k, sizeof k);
+ 307:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ForceZero(iv, sizeof iv);
+ 308:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 309:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     return 0;
+ 310:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** }
+ 311:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 312:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** #endif /* HAVE_XCHACHA */
+ 313:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 314:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 315:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** #ifdef __cplusplus
+ 316:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     extern "C" {
+ 317:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** #endif
+ 318:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 319:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** extern void chacha_encrypt_x64(ChaCha* ctx, const byte* m, byte* c,
+ 320:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****                                word32 bytes);
+ 321:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** extern void chacha_encrypt_avx1(ChaCha* ctx, const byte* m, byte* c,
+ 322:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****                                 word32 bytes);
+ 323:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** extern void chacha_encrypt_avx2(ChaCha* ctx, const byte* m, byte* c,
+ 324:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****                                 word32 bytes);
+ 325:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 326:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** #ifdef __cplusplus
+ 327:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     }  /* extern "C" */
+ 328:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** #endif
+ARM GAS  /tmp/ccSRLI0x.s 			page 23
+
+
+ 329:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 330:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 331:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** /**
+ 332:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****   * Encrypt a stream of bytes
+ 333:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****   */
+ 334:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** static void wc_Chacha_encrypt_bytes(ChaCha* ctx, const byte* m, byte* c,
+ 335:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****                                     word32 bytes)
+ 336:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** {
+ 793              		.loc 1 336 1 is_stmt 1 view -0
+ 794              		.cfi_startproc
+ 795              		@ args = 0, pretend = 0, frame = 64
+ 796              		@ frame_needed = 0, uses_anonymous_args = 0
+ 797              		.loc 1 336 1 is_stmt 0 view .LVU263
+ 798 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 799              	.LCFI3:
+ 800              		.cfi_def_cfa_offset 20
+ 801              		.cfi_offset 4, -20
+ 802              		.cfi_offset 5, -16
+ 803              		.cfi_offset 6, -12
+ 804              		.cfi_offset 7, -8
+ 805              		.cfi_offset 14, -4
+ 806 0002 91B0     		sub	sp, sp, #68
+ 807              	.LCFI4:
+ 808              		.cfi_def_cfa_offset 88
+ 809 0004 0646     		mov	r6, r0
+ 810 0006 0C46     		mov	r4, r1
+ 811 0008 1546     		mov	r5, r2
+ 337:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     byte*  output;
+ 812              		.loc 1 337 5 is_stmt 1 view .LVU264
+ 338:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     word32 temp[CHACHA_CHUNK_WORDS]; /* used to make sure aligned */
+ 813              		.loc 1 338 5 view .LVU265
+ 339:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     word32 i;
+ 814              		.loc 1 339 5 view .LVU266
+ 340:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 341:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     /* handle left overs */
+ 342:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     if (bytes > 0 && ctx->left > 0) {
+ 815              		.loc 1 342 5 view .LVU267
+ 816              		.loc 1 342 8 is_stmt 0 view .LVU268
+ 817 000a 1F46     		mov	r7, r3
+ 818 000c 83B3     		cbz	r3, .L19
+ 819              		.loc 1 342 25 discriminator 1 view .LVU269
+ 820 000e 036C     		ldr	r3, [r0, #64]
+ 821              	.LVL77:
+ 822              		.loc 1 342 19 discriminator 1 view .LVU270
+ 823 0010 73B3     		cbz	r3, .L19
+ 343:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         wc_Chacha_wordtobyte(temp, ctx->X); /* recreate the stream */
+ 824              		.loc 1 343 9 is_stmt 1 view .LVU271
+ 825 0012 0146     		mov	r1, r0
+ 826              	.LVL78:
+ 827              		.loc 1 343 9 is_stmt 0 view .LVU272
+ 828 0014 6846     		mov	r0, sp
+ 829              	.LVL79:
+ 830              		.loc 1 343 9 view .LVU273
+ 831 0016 FFF7FEFF 		bl	wc_Chacha_wordtobyte
+ 832              	.LVL80:
+ 344:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         output = (byte*)temp + CHACHA_CHUNK_BYTES - ctx->left;
+ 833              		.loc 1 344 9 is_stmt 1 view .LVU274
+ARM GAS  /tmp/ccSRLI0x.s 			page 24
+
+
+ 834              		.loc 1 344 56 is_stmt 0 view .LVU275
+ 835 001a 306C     		ldr	r0, [r6, #64]
+ 836              		.loc 1 344 51 view .LVU276
+ 837 001c C0F14000 		rsb	r0, r0, #64
+ 838              	.LVL81:
+ 345:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         for (i = 0; i < bytes && i < ctx->left; i++) {
+ 839              		.loc 1 345 9 is_stmt 1 view .LVU277
+ 840              		.loc 1 345 16 is_stmt 0 view .LVU278
+ 841 0020 0023     		movs	r3, #0
+ 842              		.loc 1 345 9 view .LVU279
+ 843 0022 08E0     		b	.L13
+ 844              	.LVL82:
+ 845              	.L15:
+ 346:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****             c[i] = (byte)(m[i] ^ output[i]);
+ 846              		.loc 1 346 13 is_stmt 1 discriminator 4 view .LVU280
+ 847              		.loc 1 346 28 is_stmt 0 discriminator 4 view .LVU281
+ 848 0024 E25C     		ldrb	r2, [r4, r3]	@ zero_extendqisi2
+ 849              		.loc 1 346 40 discriminator 4 view .LVU282
+ 850 0026 10A9     		add	r1, sp, #64
+ 851 0028 0144     		add	r1, r1, r0
+ 852 002a 1944     		add	r1, r1, r3
+ 853 002c 11F8401C 		ldrb	r1, [r1, #-64]	@ zero_extendqisi2
+ 854              		.loc 1 346 20 discriminator 4 view .LVU283
+ 855 0030 4A40     		eors	r2, r2, r1
+ 856              		.loc 1 346 18 discriminator 4 view .LVU284
+ 857 0032 EA54     		strb	r2, [r5, r3]
+ 345:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         for (i = 0; i < bytes && i < ctx->left; i++) {
+ 858              		.loc 1 345 49 is_stmt 1 discriminator 4 view .LVU285
+ 345:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         for (i = 0; i < bytes && i < ctx->left; i++) {
+ 859              		.loc 1 345 50 is_stmt 0 discriminator 4 view .LVU286
+ 860 0034 0133     		adds	r3, r3, #1
+ 861              	.LVL83:
+ 862              	.L13:
+ 345:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         for (i = 0; i < bytes && i < ctx->left; i++) {
+ 863              		.loc 1 345 21 is_stmt 1 discriminator 1 view .LVU287
+ 345:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         for (i = 0; i < bytes && i < ctx->left; i++) {
+ 864              		.loc 1 345 9 is_stmt 0 discriminator 1 view .LVU288
+ 865 0036 BB42     		cmp	r3, r7
+ 866 0038 02D2     		bcs	.L14
+ 345:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         for (i = 0; i < bytes && i < ctx->left; i++) {
+ 867              		.loc 1 345 41 discriminator 3 view .LVU289
+ 868 003a 326C     		ldr	r2, [r6, #64]
+ 345:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         for (i = 0; i < bytes && i < ctx->left; i++) {
+ 869              		.loc 1 345 31 discriminator 3 view .LVU290
+ 870 003c 9A42     		cmp	r2, r3
+ 871 003e F1D8     		bhi	.L15
+ 872              	.L14:
+ 347:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         }
+ 348:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         ctx->left -= i;
+ 873              		.loc 1 348 9 is_stmt 1 view .LVU291
+ 874              		.loc 1 348 19 is_stmt 0 view .LVU292
+ 875 0040 326C     		ldr	r2, [r6, #64]
+ 876 0042 D21A     		subs	r2, r2, r3
+ 877 0044 3264     		str	r2, [r6, #64]
+ 349:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 350:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         /* Used up all of the stream that was left, increment the counter */
+ 351:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         if (ctx->left == 0) {
+ARM GAS  /tmp/ccSRLI0x.s 			page 25
+
+
+ 878              		.loc 1 351 9 is_stmt 1 view .LVU293
+ 879              		.loc 1 351 12 is_stmt 0 view .LVU294
+ 880 0046 12B9     		cbnz	r2, .L16
+ 352:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****             ctx->X[CHACHA_MATRIX_CNT_IV] =
+ 881              		.loc 1 352 13 is_stmt 1 view .LVU295
+ 353:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****                                           PLUSONE(ctx->X[CHACHA_MATRIX_CNT_IV]);
+ 882              		.loc 1 353 43 is_stmt 0 view .LVU296
+ 883 0048 326B     		ldr	r2, [r6, #48]
+ 884 004a 0132     		adds	r2, r2, #1
+ 352:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****             ctx->X[CHACHA_MATRIX_CNT_IV] =
+ 885              		.loc 1 352 42 view .LVU297
+ 886 004c 3263     		str	r2, [r6, #48]
+ 887              	.L16:
+ 354:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         }
+ 355:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         bytes -= i;
+ 888              		.loc 1 355 9 is_stmt 1 view .LVU298
+ 889              		.loc 1 355 15 is_stmt 0 view .LVU299
+ 890 004e FF1A     		subs	r7, r7, r3
+ 891              	.LVL84:
+ 356:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         c += i;
+ 892              		.loc 1 356 9 is_stmt 1 view .LVU300
+ 893              		.loc 1 356 11 is_stmt 0 view .LVU301
+ 894 0050 1D44     		add	r5, r5, r3
+ 895              	.LVL85:
+ 357:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         m += i;
+ 896              		.loc 1 357 9 is_stmt 1 view .LVU302
+ 897              		.loc 1 357 11 is_stmt 0 view .LVU303
+ 898 0052 1C44     		add	r4, r4, r3
+ 899              	.LVL86:
+ 900              		.loc 1 357 11 view .LVU304
+ 901 0054 0CE0     		b	.L19
+ 902              	.LVL87:
+ 903              	.L18:
+ 358:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     }
+ 359:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 360:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     output = (byte*)temp;
+ 361:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     while (bytes >= CHACHA_CHUNK_BYTES) {
+ 362:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         wc_Chacha_wordtobyte(temp, ctx->X);
+ 363:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         ctx->X[CHACHA_MATRIX_CNT_IV] = PLUSONE(ctx->X[CHACHA_MATRIX_CNT_IV]);
+ 364:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         for (i = 0; i < CHACHA_CHUNK_BYTES; ++i) {
+ 365:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****             c[i] = (byte)(m[i] ^ output[i]);
+ 904              		.loc 1 365 13 is_stmt 1 discriminator 3 view .LVU305
+ 905              		.loc 1 365 28 is_stmt 0 discriminator 3 view .LVU306
+ 906 0056 E25C     		ldrb	r2, [r4, r3]	@ zero_extendqisi2
+ 907              		.loc 1 365 40 discriminator 3 view .LVU307
+ 908 0058 10A9     		add	r1, sp, #64
+ 909 005a 1944     		add	r1, r1, r3
+ 910 005c 11F8401C 		ldrb	r1, [r1, #-64]	@ zero_extendqisi2
+ 911              		.loc 1 365 20 discriminator 3 view .LVU308
+ 912 0060 4A40     		eors	r2, r2, r1
+ 913              		.loc 1 365 18 discriminator 3 view .LVU309
+ 914 0062 EA54     		strb	r2, [r5, r3]
+ 364:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****             c[i] = (byte)(m[i] ^ output[i]);
+ 915              		.loc 1 364 45 is_stmt 1 discriminator 3 view .LVU310
+ 916 0064 0133     		adds	r3, r3, #1
+ 917              	.LVL88:
+ 918              	.L17:
+ARM GAS  /tmp/ccSRLI0x.s 			page 26
+
+
+ 364:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****             c[i] = (byte)(m[i] ^ output[i]);
+ 919              		.loc 1 364 21 discriminator 1 view .LVU311
+ 364:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****             c[i] = (byte)(m[i] ^ output[i]);
+ 920              		.loc 1 364 9 is_stmt 0 discriminator 1 view .LVU312
+ 921 0066 3F2B     		cmp	r3, #63
+ 922 0068 F5D9     		bls	.L18
+ 366:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         }
+ 367:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         bytes -= CHACHA_CHUNK_BYTES;
+ 923              		.loc 1 367 9 is_stmt 1 view .LVU313
+ 924              		.loc 1 367 15 is_stmt 0 view .LVU314
+ 925 006a 403F     		subs	r7, r7, #64
+ 926              	.LVL89:
+ 368:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         c += CHACHA_CHUNK_BYTES;
+ 927              		.loc 1 368 9 is_stmt 1 view .LVU315
+ 928              		.loc 1 368 11 is_stmt 0 view .LVU316
+ 929 006c 4035     		adds	r5, r5, #64
+ 930              	.LVL90:
+ 369:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         m += CHACHA_CHUNK_BYTES;
+ 931              		.loc 1 369 9 is_stmt 1 view .LVU317
+ 932              		.loc 1 369 11 is_stmt 0 view .LVU318
+ 933 006e 4034     		adds	r4, r4, #64
+ 934              	.LVL91:
+ 935              	.L19:
+ 361:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         wc_Chacha_wordtobyte(temp, ctx->X);
+ 936              		.loc 1 361 11 is_stmt 1 view .LVU319
+ 937 0070 3F2F     		cmp	r7, #63
+ 938 0072 08D9     		bls	.L25
+ 362:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         ctx->X[CHACHA_MATRIX_CNT_IV] = PLUSONE(ctx->X[CHACHA_MATRIX_CNT_IV]);
+ 939              		.loc 1 362 9 view .LVU320
+ 940 0074 3146     		mov	r1, r6
+ 941 0076 6846     		mov	r0, sp
+ 942 0078 FFF7FEFF 		bl	wc_Chacha_wordtobyte
+ 943              	.LVL92:
+ 363:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         for (i = 0; i < CHACHA_CHUNK_BYTES; ++i) {
+ 944              		.loc 1 363 9 view .LVU321
+ 363:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         for (i = 0; i < CHACHA_CHUNK_BYTES; ++i) {
+ 945              		.loc 1 363 40 is_stmt 0 view .LVU322
+ 946 007c 336B     		ldr	r3, [r6, #48]
+ 947 007e 0133     		adds	r3, r3, #1
+ 363:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         for (i = 0; i < CHACHA_CHUNK_BYTES; ++i) {
+ 948              		.loc 1 363 38 view .LVU323
+ 949 0080 3363     		str	r3, [r6, #48]
+ 364:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****             c[i] = (byte)(m[i] ^ output[i]);
+ 950              		.loc 1 364 9 is_stmt 1 view .LVU324
+ 951              	.LVL93:
+ 364:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****             c[i] = (byte)(m[i] ^ output[i]);
+ 952              		.loc 1 364 16 is_stmt 0 view .LVU325
+ 953 0082 0023     		movs	r3, #0
+ 364:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****             c[i] = (byte)(m[i] ^ output[i]);
+ 954              		.loc 1 364 9 view .LVU326
+ 955 0084 EFE7     		b	.L17
+ 956              	.LVL94:
+ 957              	.L25:
+ 370:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     }
+ 371:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 372:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     if (bytes) {
+ 958              		.loc 1 372 5 is_stmt 1 view .LVU327
+ARM GAS  /tmp/ccSRLI0x.s 			page 27
+
+
+ 959              		.loc 1 372 8 is_stmt 0 view .LVU328
+ 960 0086 0FB9     		cbnz	r7, .L26
+ 961              	.L11:
+ 373:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         /* in this case there will always be some left over since bytes is less
+ 374:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****          * than CHACHA_CHUNK_BYTES, so do not increment counter after getting
+ 375:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****          * stream in order for the stream to be recreated on next call */
+ 376:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         wc_Chacha_wordtobyte(temp, ctx->X);
+ 377:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         for (i = 0; i < bytes; ++i) {
+ 378:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****             c[i] = m[i] ^ output[i];
+ 379:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         }
+ 380:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         ctx->left = CHACHA_CHUNK_BYTES - i;
+ 381:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     }
+ 382:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** }
+ 962              		.loc 1 382 1 view .LVU329
+ 963 0088 11B0     		add	sp, sp, #68
+ 964              	.LCFI5:
+ 965              		.cfi_remember_state
+ 966              		.cfi_def_cfa_offset 20
+ 967              		@ sp needed
+ 968 008a F0BD     		pop	{r4, r5, r6, r7, pc}
+ 969              	.LVL95:
+ 970              	.L26:
+ 971              	.LCFI6:
+ 972              		.cfi_restore_state
+ 376:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         for (i = 0; i < bytes; ++i) {
+ 973              		.loc 1 376 9 is_stmt 1 view .LVU330
+ 974 008c 3146     		mov	r1, r6
+ 975 008e 6846     		mov	r0, sp
+ 976 0090 FFF7FEFF 		bl	wc_Chacha_wordtobyte
+ 977              	.LVL96:
+ 377:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****             c[i] = m[i] ^ output[i];
+ 978              		.loc 1 377 9 view .LVU331
+ 377:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****             c[i] = m[i] ^ output[i];
+ 979              		.loc 1 377 16 is_stmt 0 view .LVU332
+ 980 0094 0023     		movs	r3, #0
+ 377:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****             c[i] = m[i] ^ output[i];
+ 981              		.loc 1 377 9 view .LVU333
+ 982 0096 07E0     		b	.L22
+ 983              	.LVL97:
+ 984              	.L23:
+ 378:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         }
+ 985              		.loc 1 378 13 is_stmt 1 discriminator 3 view .LVU334
+ 378:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         }
+ 986              		.loc 1 378 21 is_stmt 0 discriminator 3 view .LVU335
+ 987 0098 E25C     		ldrb	r2, [r4, r3]	@ zero_extendqisi2
+ 378:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         }
+ 988              		.loc 1 378 33 discriminator 3 view .LVU336
+ 989 009a 10A9     		add	r1, sp, #64
+ 990 009c 1944     		add	r1, r1, r3
+ 991 009e 11F8401C 		ldrb	r1, [r1, #-64]	@ zero_extendqisi2
+ 378:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         }
+ 992              		.loc 1 378 18 discriminator 3 view .LVU337
+ 993 00a2 4A40     		eors	r2, r2, r1
+ 994 00a4 EA54     		strb	r2, [r5, r3]
+ 377:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****             c[i] = m[i] ^ output[i];
+ 995              		.loc 1 377 32 is_stmt 1 discriminator 3 view .LVU338
+ 996 00a6 0133     		adds	r3, r3, #1
+ARM GAS  /tmp/ccSRLI0x.s 			page 28
+
+
+ 997              	.LVL98:
+ 998              	.L22:
+ 377:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****             c[i] = m[i] ^ output[i];
+ 999              		.loc 1 377 21 discriminator 1 view .LVU339
+ 377:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****             c[i] = m[i] ^ output[i];
+ 1000              		.loc 1 377 9 is_stmt 0 discriminator 1 view .LVU340
+ 1001 00a8 9F42     		cmp	r7, r3
+ 1002 00aa F5D8     		bhi	.L23
+ 380:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     }
+ 1003              		.loc 1 380 9 is_stmt 1 view .LVU341
+ 380:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     }
+ 1004              		.loc 1 380 40 is_stmt 0 view .LVU342
+ 1005 00ac C3F14003 		rsb	r3, r3, #64
+ 1006              	.LVL99:
+ 380:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     }
+ 1007              		.loc 1 380 19 view .LVU343
+ 1008 00b0 3364     		str	r3, [r6, #64]
+ 1009              		.loc 1 382 1 view .LVU344
+ 1010 00b2 E9E7     		b	.L11
+ 1011              		.cfi_endproc
+ 1012              	.LFE178:
+ 1014              		.section	.text.wc_Chacha_SetIV,"ax",%progbits
+ 1015              		.align	1
+ 1016              		.global	wc_Chacha_SetIV
+ 1017              		.syntax unified
+ 1018              		.thumb
+ 1019              		.thumb_func
+ 1020              		.fpu fpv4-sp-d16
+ 1022              	wc_Chacha_SetIV:
+ 1023              	.LVL100:
+ 1024              	.LFB175:
+ 113:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     word32 temp[CHACHA_IV_WORDS];/* used for alignment of memory */
+ 1025              		.loc 1 113 1 is_stmt 1 view -0
+ 1026              		.cfi_startproc
+ 1027              		@ args = 0, pretend = 0, frame = 16
+ 1028              		@ frame_needed = 0, uses_anonymous_args = 0
+ 114:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 1029              		.loc 1 114 5 view .LVU346
+ 117:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         return BAD_FUNC_ARG;
+ 1030              		.loc 1 117 5 view .LVU347
+ 117:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         return BAD_FUNC_ARG;
+ 1031              		.loc 1 117 8 is_stmt 0 view .LVU348
+ 1032 0000 D0B1     		cbz	r0, .L29
+ 113:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     word32 temp[CHACHA_IV_WORDS];/* used for alignment of memory */
+ 1033              		.loc 1 113 1 discriminator 1 view .LVU349
+ 1034 0002 10B5     		push	{r4, lr}
+ 1035              	.LCFI7:
+ 1036              		.cfi_def_cfa_offset 8
+ 1037              		.cfi_offset 4, -8
+ 1038              		.cfi_offset 14, -4
+ 1039 0004 84B0     		sub	sp, sp, #16
+ 1040              	.LCFI8:
+ 1041              		.cfi_def_cfa_offset 24
+ 1042 0006 0B46     		mov	r3, r1
+ 1043 0008 1446     		mov	r4, r2
+ 1044 000a 8446     		mov	ip, r0
+ 117:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         return BAD_FUNC_ARG;
+ARM GAS  /tmp/ccSRLI0x.s 			page 29
+
+
+ 1045              		.loc 1 117 21 discriminator 1 view .LVU350
+ 1046 000c B9B1     		cbz	r1, .L30
+ 120:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 1047              		.loc 1 120 5 is_stmt 1 view .LVU351
+ 1048 000e 0DF1040E 		add	lr, sp, #4
+ 1049 0012 0868     		ldr	r0, [r1]	@ unaligned
+ 1050              	.LVL101:
+ 120:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 1051              		.loc 1 120 5 is_stmt 0 view .LVU352
+ 1052 0014 4968     		ldr	r1, [r1, #4]	@ unaligned
+ 1053              	.LVL102:
+ 120:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 1054              		.loc 1 120 5 view .LVU353
+ 1055 0016 9A68     		ldr	r2, [r3, #8]	@ unaligned
+ 1056              	.LVL103:
+ 120:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 1057              		.loc 1 120 5 view .LVU354
+ 1058 0018 AEE80700 		stmia	lr!, {r0, r1, r2}
+ 122:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->X[CHACHA_MATRIX_CNT_IV+0] = counter;           /* block counter */
+ 1059              		.loc 1 122 5 is_stmt 1 view .LVU355
+ 122:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->X[CHACHA_MATRIX_CNT_IV+0] = counter;           /* block counter */
+ 1060              		.loc 1 122 15 is_stmt 0 view .LVU356
+ 1061 001c 0020     		movs	r0, #0
+ 1062 001e CCF84000 		str	r0, [ip, #64]
+ 123:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->X[CHACHA_MATRIX_CNT_IV+1] = LITTLE32(temp[0]); /* fixed variable from nonce */
+ 1063              		.loc 1 123 5 is_stmt 1 view .LVU357
+ 123:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->X[CHACHA_MATRIX_CNT_IV+1] = LITTLE32(temp[0]); /* fixed variable from nonce */
+ 1064              		.loc 1 123 36 is_stmt 0 view .LVU358
+ 1065 0022 CCF83040 		str	r4, [ip, #48]
+ 124:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->X[CHACHA_MATRIX_CNT_IV+2] = LITTLE32(temp[1]); /* counter from nonce */
+ 1066              		.loc 1 124 5 is_stmt 1 view .LVU359
+ 124:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->X[CHACHA_MATRIX_CNT_IV+2] = LITTLE32(temp[1]); /* counter from nonce */
+ 1067              		.loc 1 124 38 is_stmt 0 view .LVU360
+ 1068 0026 019B     		ldr	r3, [sp, #4]
+ 1069              	.LVL104:
+ 124:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->X[CHACHA_MATRIX_CNT_IV+2] = LITTLE32(temp[1]); /* counter from nonce */
+ 1070              		.loc 1 124 36 view .LVU361
+ 1071 0028 CCF83430 		str	r3, [ip, #52]
+ 125:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->X[CHACHA_MATRIX_CNT_IV+3] = LITTLE32(temp[2]); /* counter from nonce */
+ 1072              		.loc 1 125 5 is_stmt 1 view .LVU362
+ 125:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->X[CHACHA_MATRIX_CNT_IV+3] = LITTLE32(temp[2]); /* counter from nonce */
+ 1073              		.loc 1 125 36 is_stmt 0 view .LVU363
+ 1074 002c CCF83810 		str	r1, [ip, #56]
+ 126:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 1075              		.loc 1 126 5 is_stmt 1 view .LVU364
+ 126:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 1076              		.loc 1 126 36 is_stmt 0 view .LVU365
+ 1077 0030 CCF83C20 		str	r2, [ip, #60]
+ 128:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** }
+ 1078              		.loc 1 128 5 is_stmt 1 view .LVU366
+ 1079              	.L27:
+ 129:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 1080              		.loc 1 129 1 is_stmt 0 view .LVU367
+ 1081 0034 04B0     		add	sp, sp, #16
+ 1082              	.LCFI9:
+ 1083              		.cfi_def_cfa_offset 8
+ 1084              		@ sp needed
+ARM GAS  /tmp/ccSRLI0x.s 			page 30
+
+
+ 1085 0036 10BD     		pop	{r4, pc}
+ 1086              	.LVL105:
+ 1087              	.L29:
+ 1088              	.LCFI10:
+ 1089              		.cfi_def_cfa_offset 0
+ 1090              		.cfi_restore 4
+ 1091              		.cfi_restore 14
+ 118:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 1092              		.loc 1 118 16 view .LVU368
+ 1093 0038 6FF0AC00 		mvn	r0, #172
+ 1094              	.LVL106:
+ 129:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 1095              		.loc 1 129 1 view .LVU369
+ 1096 003c 7047     		bx	lr
+ 1097              	.LVL107:
+ 1098              	.L30:
+ 1099              	.LCFI11:
+ 1100              		.cfi_def_cfa_offset 24
+ 1101              		.cfi_offset 4, -8
+ 1102              		.cfi_offset 14, -4
+ 118:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 1103              		.loc 1 118 16 view .LVU370
+ 1104 003e 6FF0AC00 		mvn	r0, #172
+ 1105              	.LVL108:
+ 118:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 1106              		.loc 1 118 16 view .LVU371
+ 1107 0042 F7E7     		b	.L27
+ 1108              		.cfi_endproc
+ 1109              	.LFE175:
+ 1111              		.section	.text.wc_Chacha_SetKey,"ax",%progbits
+ 1112              		.align	1
+ 1113              		.global	wc_Chacha_SetKey
+ 1114              		.syntax unified
+ 1115              		.thumb
+ 1116              		.thumb_func
+ 1117              		.fpu fpv4-sp-d16
+ 1119              	wc_Chacha_SetKey:
+ 1120              	.LVL109:
+ 1121              	.LFB176:
+ 140:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     const word32* constants;
+ 1122              		.loc 1 140 1 is_stmt 1 view -0
+ 1123              		.cfi_startproc
+ 1124              		@ args = 0, pretend = 0, frame = 32
+ 1125              		@ frame_needed = 0, uses_anonymous_args = 0
+ 141:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     const byte*   k;
+ 1126              		.loc 1 141 5 view .LVU373
+ 142:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 1127              		.loc 1 142 5 view .LVU374
+ 145:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** #endif
+ 1128              		.loc 1 145 5 view .LVU375
+ 148:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         return BAD_FUNC_ARG;
+ 1129              		.loc 1 148 5 view .LVU376
+ 148:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         return BAD_FUNC_ARG;
+ 1130              		.loc 1 148 8 is_stmt 0 view .LVU377
+ 1131 0000 0028     		cmp	r0, #0
+ 1132 0002 34D0     		beq	.L40
+ 140:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     const word32* constants;
+ARM GAS  /tmp/ccSRLI0x.s 			page 31
+
+
+ 1133              		.loc 1 140 1 discriminator 1 view .LVU378
+ 1134 0004 30B5     		push	{r4, r5, lr}
+ 1135              	.LCFI12:
+ 1136              		.cfi_def_cfa_offset 12
+ 1137              		.cfi_offset 4, -12
+ 1138              		.cfi_offset 5, -8
+ 1139              		.cfi_offset 14, -4
+ 1140 0006 89B0     		sub	sp, sp, #36
+ 1141              	.LCFI13:
+ 1142              		.cfi_def_cfa_offset 48
+ 1143 0008 1546     		mov	r5, r2
+ 1144 000a 0446     		mov	r4, r0
+ 148:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         return BAD_FUNC_ARG;
+ 1145              		.loc 1 148 21 discriminator 1 view .LVU379
+ 1146 000c 0029     		cmp	r1, #0
+ 1147 000e 31D0     		beq	.L41
+ 151:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         return BAD_FUNC_ARG;
+ 1148              		.loc 1 151 5 is_stmt 1 view .LVU380
+ 151:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         return BAD_FUNC_ARG;
+ 1149              		.loc 1 151 8 is_stmt 0 view .LVU381
+ 1150 0010 102A     		cmp	r2, #16
+ 1151 0012 01D0     		beq	.L37
+ 151:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         return BAD_FUNC_ARG;
+ 1152              		.loc 1 151 40 discriminator 1 view .LVU382
+ 1153 0014 202A     		cmp	r2, #32
+ 1154 0016 30D1     		bne	.L42
+ 1155              	.L37:
+ 155:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         WOLFSSL_MSG("wc_ChachaSetKey unaligned key");
+ 1156              		.loc 1 155 5 is_stmt 1 view .LVU383
+ 155:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         WOLFSSL_MSG("wc_ChachaSetKey unaligned key");
+ 1157              		.loc 1 155 8 is_stmt 0 view .LVU384
+ 1158 0018 11F0030F 		tst	r1, #3
+ 1159 001c 1ED1     		bne	.L48
+ 1160              	.LVL110:
+ 1161              	.L38:
+ 178:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->X[5] = U8TO32_LITTLE(k +  4);
+ 1162              		.loc 1 178 5 is_stmt 1 view .LVU385
+ 178:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->X[5] = U8TO32_LITTLE(k +  4);
+ 1163              		.loc 1 178 17 is_stmt 0 view .LVU386
+ 1164 001e 0B68     		ldr	r3, [r1]
+ 178:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->X[5] = U8TO32_LITTLE(k +  4);
+ 1165              		.loc 1 178 15 view .LVU387
+ 1166 0020 2361     		str	r3, [r4, #16]
+ 179:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->X[6] = U8TO32_LITTLE(k +  8);
+ 1167              		.loc 1 179 5 is_stmt 1 view .LVU388
+ 179:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->X[6] = U8TO32_LITTLE(k +  8);
+ 1168              		.loc 1 179 15 is_stmt 0 view .LVU389
+ 1169 0022 4B68     		ldr	r3, [r1, #4]
+ 1170 0024 6361     		str	r3, [r4, #20]
+ 180:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->X[7] = U8TO32_LITTLE(k + 12);
+ 1171              		.loc 1 180 5 is_stmt 1 view .LVU390
+ 180:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->X[7] = U8TO32_LITTLE(k + 12);
+ 1172              		.loc 1 180 15 is_stmt 0 view .LVU391
+ 1173 0026 8B68     		ldr	r3, [r1, #8]
+ 1174 0028 A361     		str	r3, [r4, #24]
+ 181:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     if (keySz == CHACHA_MAX_KEY_SZ) {
+ 1175              		.loc 1 181 5 is_stmt 1 view .LVU392
+ARM GAS  /tmp/ccSRLI0x.s 			page 32
+
+
+ 181:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     if (keySz == CHACHA_MAX_KEY_SZ) {
+ 1176              		.loc 1 181 15 is_stmt 0 view .LVU393
+ 1177 002a CB68     		ldr	r3, [r1, #12]
+ 1178 002c E361     		str	r3, [r4, #28]
+ 182:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         k += 16;
+ 1179              		.loc 1 182 5 is_stmt 1 view .LVU394
+ 182:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         k += 16;
+ 1180              		.loc 1 182 8 is_stmt 0 view .LVU395
+ 1181 002e 202D     		cmp	r5, #32
+ 1182 0030 1AD0     		beq	.L49
+ 187:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     }
+ 1183              		.loc 1 187 19 view .LVU396
+ 1184 0032 134B     		ldr	r3, .L50
+ 1185              	.L39:
+ 1186              	.LVL111:
+ 189:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->X[ 9] = U8TO32_LITTLE(k +  4);
+ 1187              		.loc 1 189 5 is_stmt 1 view .LVU397
+ 189:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->X[ 9] = U8TO32_LITTLE(k +  4);
+ 1188              		.loc 1 189 18 is_stmt 0 view .LVU398
+ 1189 0034 0A68     		ldr	r2, [r1]
+ 189:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->X[ 9] = U8TO32_LITTLE(k +  4);
+ 1190              		.loc 1 189 16 view .LVU399
+ 1191 0036 2262     		str	r2, [r4, #32]
+ 190:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->X[10] = U8TO32_LITTLE(k +  8);
+ 1192              		.loc 1 190 5 is_stmt 1 view .LVU400
+ 190:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->X[10] = U8TO32_LITTLE(k +  8);
+ 1193              		.loc 1 190 16 is_stmt 0 view .LVU401
+ 1194 0038 4A68     		ldr	r2, [r1, #4]
+ 1195 003a 6262     		str	r2, [r4, #36]
+ 191:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->X[11] = U8TO32_LITTLE(k + 12);
+ 1196              		.loc 1 191 5 is_stmt 1 view .LVU402
+ 191:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->X[11] = U8TO32_LITTLE(k + 12);
+ 1197              		.loc 1 191 16 is_stmt 0 view .LVU403
+ 1198 003c 8A68     		ldr	r2, [r1, #8]
+ 1199 003e A262     		str	r2, [r4, #40]
+ 192:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->X[ 0] = constants[0];
+ 1200              		.loc 1 192 5 is_stmt 1 view .LVU404
+ 192:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->X[ 0] = constants[0];
+ 1201              		.loc 1 192 16 is_stmt 0 view .LVU405
+ 1202 0040 CA68     		ldr	r2, [r1, #12]
+ 1203 0042 E262     		str	r2, [r4, #44]
+ 193:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->X[ 1] = constants[1];
+ 1204              		.loc 1 193 5 is_stmt 1 view .LVU406
+ 193:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->X[ 1] = constants[1];
+ 1205              		.loc 1 193 27 is_stmt 0 view .LVU407
+ 1206 0044 1A68     		ldr	r2, [r3]
+ 193:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->X[ 1] = constants[1];
+ 1207              		.loc 1 193 16 view .LVU408
+ 1208 0046 2260     		str	r2, [r4]
+ 194:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->X[ 2] = constants[2];
+ 1209              		.loc 1 194 5 is_stmt 1 view .LVU409
+ 194:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->X[ 2] = constants[2];
+ 1210              		.loc 1 194 16 is_stmt 0 view .LVU410
+ 1211 0048 5A68     		ldr	r2, [r3, #4]
+ 1212 004a 6260     		str	r2, [r4, #4]
+ 195:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->X[ 3] = constants[3];
+ 1213              		.loc 1 195 5 is_stmt 1 view .LVU411
+ARM GAS  /tmp/ccSRLI0x.s 			page 33
+
+
+ 195:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->X[ 3] = constants[3];
+ 1214              		.loc 1 195 16 is_stmt 0 view .LVU412
+ 1215 004c 9A68     		ldr	r2, [r3, #8]
+ 1216 004e A260     		str	r2, [r4, #8]
+ 196:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->left = 0; /* resets state */
+ 1217              		.loc 1 196 5 is_stmt 1 view .LVU413
+ 196:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->left = 0; /* resets state */
+ 1218              		.loc 1 196 16 is_stmt 0 view .LVU414
+ 1219 0050 DB68     		ldr	r3, [r3, #12]
+ 1220              	.LVL112:
+ 196:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     ctx->left = 0; /* resets state */
+ 1221              		.loc 1 196 16 view .LVU415
+ 1222 0052 E360     		str	r3, [r4, #12]
+ 197:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 1223              		.loc 1 197 5 is_stmt 1 view .LVU416
+ 197:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 1224              		.loc 1 197 15 is_stmt 0 view .LVU417
+ 1225 0054 0020     		movs	r0, #0
+ 1226 0056 2064     		str	r0, [r4, #64]
+ 199:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** }
+ 1227              		.loc 1 199 5 is_stmt 1 view .LVU418
+ 1228              	.LVL113:
+ 1229              	.L35:
+ 200:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 1230              		.loc 1 200 1 is_stmt 0 view .LVU419
+ 1231 0058 09B0     		add	sp, sp, #36
+ 1232              	.LCFI14:
+ 1233              		.cfi_remember_state
+ 1234              		.cfi_def_cfa_offset 12
+ 1235              		@ sp needed
+ 1236 005a 30BD     		pop	{r4, r5, pc}
+ 1237              	.LVL114:
+ 1238              	.L48:
+ 1239              	.LCFI15:
+ 1240              		.cfi_restore_state
+ 156:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         XMEMCPY(alignKey, key, keySz);
+ 1241              		.loc 1 156 53 is_stmt 1 view .LVU420
+ 157:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         k = (byte*)alignKey;
+ 1242              		.loc 1 157 9 view .LVU421
+ 1243 005c 2A46     		mov	r2, r5
+ 1244              	.LVL115:
+ 157:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         k = (byte*)alignKey;
+ 1245              		.loc 1 157 9 is_stmt 0 view .LVU422
+ 1246 005e 6846     		mov	r0, sp
+ 1247              	.LVL116:
+ 157:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         k = (byte*)alignKey;
+ 1248              		.loc 1 157 9 view .LVU423
+ 1249 0060 FFF7FEFF 		bl	memcpy
+ 1250              	.LVL117:
+ 158:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     }
+ 1251              		.loc 1 158 9 is_stmt 1 view .LVU424
+ 158:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     }
+ 1252              		.loc 1 158 11 is_stmt 0 view .LVU425
+ 1253 0064 6946     		mov	r1, sp
+ 1254 0066 DAE7     		b	.L38
+ 1255              	.LVL118:
+ 1256              	.L49:
+ARM GAS  /tmp/ccSRLI0x.s 			page 34
+
+
+ 183:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         constants = sigma;
+ 1257              		.loc 1 183 9 is_stmt 1 view .LVU426
+ 183:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         constants = sigma;
+ 1258              		.loc 1 183 11 is_stmt 0 view .LVU427
+ 1259 0068 1031     		adds	r1, r1, #16
+ 1260              	.LVL119:
+ 184:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     }
+ 1261              		.loc 1 184 9 is_stmt 1 view .LVU428
+ 184:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     }
+ 1262              		.loc 1 184 19 is_stmt 0 view .LVU429
+ 1263 006a 064B     		ldr	r3, .L50+4
+ 1264 006c E2E7     		b	.L39
+ 1265              	.LVL120:
+ 1266              	.L40:
+ 1267              	.LCFI16:
+ 1268              		.cfi_def_cfa_offset 0
+ 1269              		.cfi_restore 4
+ 1270              		.cfi_restore 5
+ 1271              		.cfi_restore 14
+ 149:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 1272              		.loc 1 149 16 view .LVU430
+ 1273 006e 6FF0AC00 		mvn	r0, #172
+ 1274              	.LVL121:
+ 200:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 1275              		.loc 1 200 1 view .LVU431
+ 1276 0072 7047     		bx	lr
+ 1277              	.LVL122:
+ 1278              	.L41:
+ 1279              	.LCFI17:
+ 1280              		.cfi_def_cfa_offset 48
+ 1281              		.cfi_offset 4, -12
+ 1282              		.cfi_offset 5, -8
+ 1283              		.cfi_offset 14, -4
+ 149:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 1284              		.loc 1 149 16 view .LVU432
+ 1285 0074 6FF0AC00 		mvn	r0, #172
+ 1286              	.LVL123:
+ 149:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 1287              		.loc 1 149 16 view .LVU433
+ 1288 0078 EEE7     		b	.L35
+ 1289              	.LVL124:
+ 1290              	.L42:
+ 152:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 1291              		.loc 1 152 16 view .LVU434
+ 1292 007a 6FF0AC00 		mvn	r0, #172
+ 1293              	.LVL125:
+ 152:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 1294              		.loc 1 152 16 view .LVU435
+ 1295 007e EBE7     		b	.L35
+ 1296              	.L51:
+ 1297              		.align	2
+ 1298              	.L50:
+ 1299 0080 00000000 		.word	.LANCHOR1
+ 1300 0084 00000000 		.word	.LANCHOR0
+ 1301              		.cfi_endproc
+ 1302              	.LFE176:
+ 1304              		.section	.text.wc_Chacha_Process,"ax",%progbits
+ARM GAS  /tmp/ccSRLI0x.s 			page 35
+
+
+ 1305              		.align	1
+ 1306              		.global	wc_Chacha_Process
+ 1307              		.syntax unified
+ 1308              		.thumb
+ 1309              		.thumb_func
+ 1310              		.fpu fpv4-sp-d16
+ 1312              	wc_Chacha_Process:
+ 1313              	.LVL126:
+ 1314              	.LFB179:
+ 383:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 384:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** /**
+ 385:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****   * API to encrypt/decrypt a message of any size.
+ 386:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****   */
+ 387:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** int wc_Chacha_Process(ChaCha* ctx, byte* output, const byte* input,
+ 388:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****                       word32 msglen)
+ 389:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** {
+ 1315              		.loc 1 389 1 is_stmt 1 view -0
+ 1316              		.cfi_startproc
+ 1317              		@ args = 0, pretend = 0, frame = 0
+ 1318              		@ frame_needed = 0, uses_anonymous_args = 0
+ 390:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     if (ctx == NULL || input == NULL || output == NULL)
+ 1319              		.loc 1 390 5 view .LVU437
+ 1320              		.loc 1 390 8 is_stmt 0 view .LVU438
+ 1321 0000 48B1     		cbz	r0, .L54
+ 389:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     if (ctx == NULL || input == NULL || output == NULL)
+ 1322              		.loc 1 389 1 discriminator 1 view .LVU439
+ 1323 0002 10B5     		push	{r4, lr}
+ 1324              	.LCFI18:
+ 1325              		.cfi_def_cfa_offset 8
+ 1326              		.cfi_offset 4, -8
+ 1327              		.cfi_offset 14, -4
+ 1328 0004 0C46     		mov	r4, r1
+ 1329 0006 1146     		mov	r1, r2
+ 1330              	.LVL127:
+ 1331              		.loc 1 390 21 discriminator 1 view .LVU440
+ 1332 0008 42B1     		cbz	r2, .L55
+ 1333              		.loc 1 390 38 discriminator 2 view .LVU441
+ 1334 000a 54B1     		cbz	r4, .L56
+ 391:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         return BAD_FUNC_ARG;
+ 392:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 393:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** #ifdef USE_INTEL_CHACHA_SPEEDUP
+ 394:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     /* handle left overs */
+ 395:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     if (msglen > 0 && ctx->left > 0) {
+ 396:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         byte*  out;
+ 397:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         word32 i;
+ 398:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 399:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         out = (byte*)ctx->over + CHACHA_CHUNK_BYTES - ctx->left;
+ 400:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         for (i = 0; i < msglen && i < ctx->left; i++) {
+ 401:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****             output[i] = (byte)(input[i] ^ out[i]);
+ 402:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         }
+ 403:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         ctx->left -= i;
+ 404:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 405:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         msglen -= i;
+ 406:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         output += i;
+ 407:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         input += i;
+ 408:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     }
+ 409:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ARM GAS  /tmp/ccSRLI0x.s 			page 36
+
+
+ 410:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     if (msglen == 0) {
+ 411:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         return 0;
+ 412:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     }
+ 413:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 414:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     if (!cpuidFlagsSet) {
+ 415:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         cpuidFlags = cpuid_get_flags();
+ 416:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         cpuidFlagsSet = 1;
+ 417:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     }
+ 418:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 419:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     #ifdef HAVE_INTEL_AVX2
+ 420:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     if (IS_INTEL_AVX2(cpuidFlags)) {
+ 421:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         SAVE_VECTOR_REGISTERS();
+ 422:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         chacha_encrypt_avx2(ctx, input, output, msglen);
+ 423:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         RESTORE_VECTOR_REGISTERS();
+ 424:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         return 0;
+ 425:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     }
+ 426:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     #endif
+ 427:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     if (IS_INTEL_AVX1(cpuidFlags)) {
+ 428:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         SAVE_VECTOR_REGISTERS();
+ 429:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         chacha_encrypt_avx1(ctx, input, output, msglen);
+ 430:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         RESTORE_VECTOR_REGISTERS();
+ 431:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         return 0;
+ 432:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     }
+ 433:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     else {
+ 434:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         chacha_encrypt_x64(ctx, input, output, msglen);
+ 435:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         return 0;
+ 436:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     }
+ 437:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** #endif
+ 438:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     wc_Chacha_encrypt_bytes(ctx, input, output, msglen);
+ 1335              		.loc 1 438 5 is_stmt 1 view .LVU442
+ 1336 000c 2246     		mov	r2, r4
+ 1337              	.LVL128:
+ 1338              		.loc 1 438 5 is_stmt 0 view .LVU443
+ 1339 000e FFF7FEFF 		bl	wc_Chacha_encrypt_bytes
+ 1340              	.LVL129:
+ 439:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 440:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     return 0;
+ 1341              		.loc 1 440 5 is_stmt 1 view .LVU444
+ 1342              		.loc 1 440 12 is_stmt 0 view .LVU445
+ 1343 0012 0020     		movs	r0, #0
+ 1344              	.L52:
+ 441:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** }
+ 1345              		.loc 1 441 1 view .LVU446
+ 1346 0014 10BD     		pop	{r4, pc}
+ 1347              	.LVL130:
+ 1348              	.L54:
+ 1349              	.LCFI19:
+ 1350              		.cfi_def_cfa_offset 0
+ 1351              		.cfi_restore 4
+ 1352              		.cfi_restore 14
+ 391:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         return BAD_FUNC_ARG;
+ 1353              		.loc 1 391 16 view .LVU447
+ 1354 0016 6FF0AC00 		mvn	r0, #172
+ 1355              	.LVL131:
+ 1356              		.loc 1 441 1 view .LVU448
+ 1357 001a 7047     		bx	lr
+ 1358              	.LVL132:
+ARM GAS  /tmp/ccSRLI0x.s 			page 37
+
+
+ 1359              	.L55:
+ 1360              	.LCFI20:
+ 1361              		.cfi_def_cfa_offset 8
+ 1362              		.cfi_offset 4, -8
+ 1363              		.cfi_offset 14, -4
+ 391:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         return BAD_FUNC_ARG;
+ 1364              		.loc 1 391 16 view .LVU449
+ 1365 001c 6FF0AC00 		mvn	r0, #172
+ 1366              	.LVL133:
+ 391:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         return BAD_FUNC_ARG;
+ 1367              		.loc 1 391 16 view .LVU450
+ 1368 0020 F8E7     		b	.L52
+ 1369              	.LVL134:
+ 1370              	.L56:
+ 391:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         return BAD_FUNC_ARG;
+ 1371              		.loc 1 391 16 view .LVU451
+ 1372 0022 6FF0AC00 		mvn	r0, #172
+ 1373              	.LVL135:
+ 391:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         return BAD_FUNC_ARG;
+ 1374              		.loc 1 391 16 view .LVU452
+ 1375 0026 F5E7     		b	.L52
+ 1376              		.cfi_endproc
+ 1377              	.LFE179:
+ 1379              		.section	.text.wc_Chacha_purge_current_block,"ax",%progbits
+ 1380              		.align	1
+ 1381              		.global	wc_Chacha_purge_current_block
+ 1382              		.syntax unified
+ 1383              		.thumb
+ 1384              		.thumb_func
+ 1385              		.fpu fpv4-sp-d16
+ 1387              	wc_Chacha_purge_current_block:
+ 1388              	.LVL136:
+ 1389              	.LFB180:
+ 442:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** 
+ 443:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** void wc_Chacha_purge_current_block(ChaCha* ctx) {
+ 1390              		.loc 1 443 49 is_stmt 1 view -0
+ 1391              		.cfi_startproc
+ 1392              		@ args = 0, pretend = 0, frame = 64
+ 1393              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1394              		.loc 1 443 49 is_stmt 0 view .LVU454
+ 1395 0000 30B5     		push	{r4, r5, lr}
+ 1396              	.LCFI21:
+ 1397              		.cfi_def_cfa_offset 12
+ 1398              		.cfi_offset 4, -12
+ 1399              		.cfi_offset 5, -8
+ 1400              		.cfi_offset 14, -4
+ 1401 0002 91B0     		sub	sp, sp, #68
+ 1402              	.LCFI22:
+ 1403              		.cfi_def_cfa_offset 80
+ 444:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     if (ctx->left > 0) {
+ 1404              		.loc 1 444 5 is_stmt 1 view .LVU455
+ 1405              		.loc 1 444 12 is_stmt 0 view .LVU456
+ 1406 0004 056C     		ldr	r5, [r0, #64]
+ 1407              		.loc 1 444 8 view .LVU457
+ 1408 0006 0DB9     		cbnz	r5, .L64
+ 1409              	.LVL137:
+ 1410              	.L61:
+ARM GAS  /tmp/ccSRLI0x.s 			page 38
+
+
+ 445:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         byte scratch[CHACHA_CHUNK_BYTES];
+ 446:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         XMEMSET(scratch, 0, sizeof(scratch));
+ 447:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         (void)wc_Chacha_Process(ctx, scratch, scratch, CHACHA_CHUNK_BYTES - ctx->left);
+ 448:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     }
+ 449:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c **** }
+ 1411              		.loc 1 449 1 view .LVU458
+ 1412 0008 11B0     		add	sp, sp, #68
+ 1413              	.LCFI23:
+ 1414              		.cfi_remember_state
+ 1415              		.cfi_def_cfa_offset 12
+ 1416              		@ sp needed
+ 1417 000a 30BD     		pop	{r4, r5, pc}
+ 1418              	.LVL138:
+ 1419              	.L64:
+ 1420              	.LCFI24:
+ 1421              		.cfi_restore_state
+ 1422              		.loc 1 449 1 view .LVU459
+ 1423 000c 0446     		mov	r4, r0
+ 1424              	.LBB130:
+ 445:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         byte scratch[CHACHA_CHUNK_BYTES];
+ 1425              		.loc 1 445 9 is_stmt 1 view .LVU460
+ 446:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         (void)wc_Chacha_Process(ctx, scratch, scratch, CHACHA_CHUNK_BYTES - ctx->left);
+ 1426              		.loc 1 446 9 view .LVU461
+ 1427 000e 4022     		movs	r2, #64
+ 1428 0010 0021     		movs	r1, #0
+ 1429 0012 6846     		mov	r0, sp
+ 1430              	.LVL139:
+ 446:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****         (void)wc_Chacha_Process(ctx, scratch, scratch, CHACHA_CHUNK_BYTES - ctx->left);
+ 1431              		.loc 1 446 9 is_stmt 0 view .LVU462
+ 1432 0014 FFF7FEFF 		bl	memset
+ 1433              	.LVL140:
+ 447:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     }
+ 1434              		.loc 1 447 9 is_stmt 1 view .LVU463
+ 447:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/chacha.c ****     }
+ 1435              		.loc 1 447 15 is_stmt 0 view .LVU464
+ 1436 0018 C5F14003 		rsb	r3, r5, #64
+ 1437 001c 6A46     		mov	r2, sp
+ 1438 001e 6946     		mov	r1, sp
+ 1439 0020 2046     		mov	r0, r4
+ 1440 0022 FFF7FEFF 		bl	wc_Chacha_Process
+ 1441              	.LVL141:
+ 1442              	.LBE130:
+ 1443              		.loc 1 449 1 view .LVU465
+ 1444 0026 EFE7     		b	.L61
+ 1445              		.cfi_endproc
+ 1446              	.LFE180:
+ 1448              		.section	.rodata.sigma,"a"
+ 1449              		.align	2
+ 1450              		.set	.LANCHOR0,. + 0
+ 1453              	sigma:
+ 1454 0000 65787061 		.word	1634760805
+ 1455 0004 6E642033 		.word	857760878
+ 1456 0008 322D6279 		.word	2036477234
+ 1457 000c 7465206B 		.word	1797285236
+ 1458              		.section	.rodata.tau,"a"
+ 1459              		.align	2
+ 1460              		.set	.LANCHOR1,. + 0
+ARM GAS  /tmp/ccSRLI0x.s 			page 39
+
+
+ 1463              	tau:
+ 1464 0000 65787061 		.word	1634760805
+ 1465 0004 6E642031 		.word	824206446
+ 1466 0008 362D6279 		.word	2036477238
+ 1467 000c 7465206B 		.word	1797285236
+ 1468              		.text
+ 1469              	.Letext0:
+ 1470              		.file 3 "Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfssl/wolfcrypt/types.h"
+ 1471              		.file 4 "Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfssl/wolfcrypt/chacha.h"
+ 1472              		.file 5 "Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfssl/wolfcrypt/error-crypt.h"
+ 1473              		.file 6 "<built-in>"
+ARM GAS  /tmp/ccSRLI0x.s 			page 40
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 chacha.c
+     /tmp/ccSRLI0x.s:18     .text.wc_Chacha_wordtobyte:0000000000000000 $t
+     /tmp/ccSRLI0x.s:25     .text.wc_Chacha_wordtobyte:0000000000000000 wc_Chacha_wordtobyte
+     /tmp/ccSRLI0x.s:784    .text.wc_Chacha_encrypt_bytes:0000000000000000 $t
+     /tmp/ccSRLI0x.s:790    .text.wc_Chacha_encrypt_bytes:0000000000000000 wc_Chacha_encrypt_bytes
+     /tmp/ccSRLI0x.s:1015   .text.wc_Chacha_SetIV:0000000000000000 $t
+     /tmp/ccSRLI0x.s:1022   .text.wc_Chacha_SetIV:0000000000000000 wc_Chacha_SetIV
+     /tmp/ccSRLI0x.s:1112   .text.wc_Chacha_SetKey:0000000000000000 $t
+     /tmp/ccSRLI0x.s:1119   .text.wc_Chacha_SetKey:0000000000000000 wc_Chacha_SetKey
+     /tmp/ccSRLI0x.s:1299   .text.wc_Chacha_SetKey:0000000000000080 $d
+     /tmp/ccSRLI0x.s:1305   .text.wc_Chacha_Process:0000000000000000 $t
+     /tmp/ccSRLI0x.s:1312   .text.wc_Chacha_Process:0000000000000000 wc_Chacha_Process
+     /tmp/ccSRLI0x.s:1380   .text.wc_Chacha_purge_current_block:0000000000000000 $t
+     /tmp/ccSRLI0x.s:1387   .text.wc_Chacha_purge_current_block:0000000000000000 wc_Chacha_purge_current_block
+     /tmp/ccSRLI0x.s:1449   .rodata.sigma:0000000000000000 $d
+     /tmp/ccSRLI0x.s:1453   .rodata.sigma:0000000000000000 sigma
+     /tmp/ccSRLI0x.s:1459   .rodata.tau:0000000000000000 $d
+     /tmp/ccSRLI0x.s:1463   .rodata.tau:0000000000000000 tau
+
+UNDEFINED SYMBOLS
+memcpy
+memset

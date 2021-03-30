@@ -1,0 +1,480 @@
+ARM GAS  /tmp/ccZZt9n0.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"wc_encrypt.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.wc_AesCbcDecryptWithKey,"ax",%progbits
+  18              		.align	1
+  19              		.global	wc_AesCbcDecryptWithKey
+  20              		.arch armv7e-m
+  21              		.syntax unified
+  22              		.thumb
+  23              		.thumb_func
+  24              		.fpu fpv4-sp-d16
+  26              	wc_AesCbcDecryptWithKey:
+  27              	.LVL0:
+  28              	.LFB175:
+  29              		.file 1 "Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c"
+   1:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** /* wc_encrypt.c
+   2:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****  *
+   3:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****  * Copyright (C) 2006-2020 wolfSSL Inc.
+   4:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****  *
+   5:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****  * This file is part of wolfSSL.
+   6:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****  *
+   7:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****  * wolfSSL is free software; you can redistribute it and/or modify
+   8:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****  * it under the terms of the GNU General Public License as published by
+   9:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****  * the Free Software Foundation; either version 2 of the License, or
+  10:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****  * (at your option) any later version.
+  11:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****  *
+  12:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****  * wolfSSL is distributed in the hope that it will be useful,
+  13:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+  14:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  15:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****  * GNU General Public License for more details.
+  16:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****  *
+  17:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****  * You should have received a copy of the GNU General Public License
+  18:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****  * along with this program; if not, write to the Free Software
+  19:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335, USA
+  20:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****  */
+  21:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** 
+  22:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** 
+  23:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** #ifdef HAVE_CONFIG_H
+  24:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****     #include <config.h>
+  25:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** #endif
+  26:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** 
+  27:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** #include <wolfssl/wolfcrypt/settings.h>
+  28:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** #include <wolfssl/wolfcrypt/aes.h>
+  29:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** #include <wolfssl/wolfcrypt/des3.h>
+ARM GAS  /tmp/ccZZt9n0.s 			page 2
+
+
+  30:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** #include <wolfssl/wolfcrypt/hash.h>
+  31:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** #include <wolfssl/wolfcrypt/rc2.h>
+  32:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** #include <wolfssl/wolfcrypt/arc4.h>
+  33:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** #include <wolfssl/wolfcrypt/wc_encrypt.h>
+  34:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** #include <wolfssl/wolfcrypt/error-crypt.h>
+  35:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** #include <wolfssl/wolfcrypt/asn.h>
+  36:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** #include <wolfssl/wolfcrypt/coding.h>
+  37:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** #include <wolfssl/wolfcrypt/pwdbased.h>
+  38:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** #include <wolfssl/wolfcrypt/logging.h>
+  39:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** 
+  40:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** #ifdef NO_INLINE
+  41:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****     #include <wolfssl/wolfcrypt/misc.h>
+  42:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** #else
+  43:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****     #define WOLFSSL_MISC_INCLUDED
+  44:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****     #include <wolfcrypt/src/misc.c>
+  45:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** #endif
+  46:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** 
+  47:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** #if !defined(NO_AES) && defined(HAVE_AES_CBC)
+  48:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** #ifdef HAVE_AES_DECRYPT
+  49:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** int wc_AesCbcDecryptWithKey(byte* out, const byte* in, word32 inSz,
+  50:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****                                   const byte* key, word32 keySz, const byte* iv)
+  51:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** {
+  30              		.loc 1 51 1 view -0
+  31              		.cfi_startproc
+  32              		@ args = 8, pretend = 0, frame = 0
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              		.loc 1 51 1 is_stmt 0 view .LVU1
+  35 0000 2DE9F047 		push	{r4, r5, r6, r7, r8, r9, r10, lr}
+  36              	.LCFI0:
+  37              		.cfi_def_cfa_offset 32
+  38              		.cfi_offset 4, -32
+  39              		.cfi_offset 5, -28
+  40              		.cfi_offset 6, -24
+  41              		.cfi_offset 7, -20
+  42              		.cfi_offset 8, -16
+  43              		.cfi_offset 9, -12
+  44              		.cfi_offset 10, -8
+  45              		.cfi_offset 14, -4
+  46 0004 82B0     		sub	sp, sp, #8
+  47              	.LCFI1:
+  48              		.cfi_def_cfa_offset 40
+  49 0006 0B9F     		ldr	r7, [sp, #44]
+  52:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****     int  ret = 0;
+  50              		.loc 1 52 5 is_stmt 1 view .LVU2
+  51              	.LVL1:
+  53:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** #ifdef WOLFSSL_SMALL_STACK
+  54:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****     Aes* aes = NULL;
+  52              		.loc 1 54 5 view .LVU3
+  55:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** #else
+  56:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****     Aes  aes[1];
+  57:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** #endif
+  58:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** 
+  59:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****     if (out == NULL || in == NULL || key == NULL || iv == NULL) {
+  53              		.loc 1 59 5 view .LVU4
+  54              		.loc 1 59 8 is_stmt 0 view .LVU5
+  55 0008 80B3     		cbz	r0, .L5
+  56 000a 0D46     		mov	r5, r1
+ARM GAS  /tmp/ccZZt9n0.s 			page 3
+
+
+  57 000c 9046     		mov	r8, r2
+  58 000e 1C46     		mov	r4, r3
+  59 0010 8146     		mov	r9, r0
+  60              		.loc 1 59 21 discriminator 1 view .LVU6
+  61 0012 71B3     		cbz	r1, .L6
+  62              		.loc 1 59 35 discriminator 2 view .LVU7
+  63 0014 83B3     		cbz	r3, .L7
+  64              		.loc 1 59 50 discriminator 3 view .LVU8
+  65 0016 97B3     		cbz	r7, .L8
+  60:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****         return BAD_FUNC_ARG;
+  61:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****     }
+  62:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** 
+  63:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** #ifdef WOLFSSL_SMALL_STACK
+  64:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****     aes = (Aes*)XMALLOC(sizeof(Aes), NULL, DYNAMIC_TYPE_TMP_BUFFER);
+  66              		.loc 1 64 5 is_stmt 1 view .LVU9
+  67              		.loc 1 64 17 is_stmt 0 view .LVU10
+  68 0018 4FF49C70 		mov	r0, #312
+  69              	.LVL2:
+  70              		.loc 1 64 17 view .LVU11
+  71 001c FFF7FEFF 		bl	pvPortMalloc
+  72              	.LVL3:
+  65:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****     if (aes == NULL)
+  73              		.loc 1 65 5 is_stmt 1 view .LVU12
+  74              		.loc 1 65 8 is_stmt 0 view .LVU13
+  75 0020 0646     		mov	r6, r0
+  76 0022 78B3     		cbz	r0, .L9
+  66:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****         return MEMORY_E;
+  67:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** #endif
+  68:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** 
+  69:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****     ret = wc_AesInit(aes, NULL, INVALID_DEVID);
+  77              		.loc 1 69 5 is_stmt 1 view .LVU14
+  78              		.loc 1 69 11 is_stmt 0 view .LVU15
+  79 0024 6FF00102 		mvn	r2, #1
+  80 0028 0021     		movs	r1, #0
+  81 002a FFF7FEFF 		bl	wc_AesInit
+  82              	.LVL4:
+  70:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****     if (ret == 0) {
+  83              		.loc 1 70 5 is_stmt 1 view .LVU16
+  84              		.loc 1 70 8 is_stmt 0 view .LVU17
+  85 002e 8246     		mov	r10, r0
+  86 0030 30B1     		cbz	r0, .L11
+  87              	.LVL5:
+  88              	.L3:
+  71:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****         ret = wc_AesSetKey(aes, key, keySz, iv, AES_DECRYPTION);
+  72:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****         if (ret == 0)
+  73:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****             ret = wc_AesCbcDecrypt(aes, out, in, inSz);
+  74:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** 
+  75:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****         wc_AesFree(aes);
+  76:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****     }
+  77:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** 
+  78:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** #ifdef WOLFSSL_SMALL_STACK
+  79:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****     XFREE(aes, NULL, DYNAMIC_TYPE_TMP_BUFFER);
+  89              		.loc 1 79 5 is_stmt 1 view .LVU18
+  90 0032 3046     		mov	r0, r6
+  91 0034 FFF7FEFF 		bl	vPortFree
+  92              	.LVL6:
+  80:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** #endif
+ARM GAS  /tmp/ccZZt9n0.s 			page 4
+
+
+  81:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** 
+  82:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****     return ret;
+  93              		.loc 1 82 5 view .LVU19
+  94              	.L1:
+  83:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** }
+  95              		.loc 1 83 1 is_stmt 0 view .LVU20
+  96 0038 5046     		mov	r0, r10
+  97 003a 02B0     		add	sp, sp, #8
+  98              	.LCFI2:
+  99              		.cfi_remember_state
+ 100              		.cfi_def_cfa_offset 32
+ 101              		@ sp needed
+ 102 003c BDE8F087 		pop	{r4, r5, r6, r7, r8, r9, r10, pc}
+ 103              	.LVL7:
+ 104              	.L11:
+ 105              	.LCFI3:
+ 106              		.cfi_restore_state
+  71:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****         ret = wc_AesSetKey(aes, key, keySz, iv, AES_DECRYPTION);
+ 107              		.loc 1 71 9 is_stmt 1 view .LVU21
+  71:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****         ret = wc_AesSetKey(aes, key, keySz, iv, AES_DECRYPTION);
+ 108              		.loc 1 71 15 is_stmt 0 view .LVU22
+ 109 0040 0123     		movs	r3, #1
+ 110 0042 0093     		str	r3, [sp]
+ 111 0044 3B46     		mov	r3, r7
+ 112 0046 0A9A     		ldr	r2, [sp, #40]
+ 113 0048 2146     		mov	r1, r4
+ 114 004a 3046     		mov	r0, r6
+ 115              	.LVL8:
+  71:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****         ret = wc_AesSetKey(aes, key, keySz, iv, AES_DECRYPTION);
+ 116              		.loc 1 71 15 view .LVU23
+ 117 004c FFF7FEFF 		bl	wc_AesSetKey
+ 118              	.LVL9:
+  72:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****             ret = wc_AesCbcDecrypt(aes, out, in, inSz);
+ 119              		.loc 1 72 9 is_stmt 1 view .LVU24
+  72:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****             ret = wc_AesCbcDecrypt(aes, out, in, inSz);
+ 120              		.loc 1 72 12 is_stmt 0 view .LVU25
+ 121 0050 8246     		mov	r10, r0
+ 122 0052 18B1     		cbz	r0, .L12
+ 123              	.L4:
+  75:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****     }
+ 124              		.loc 1 75 9 is_stmt 1 view .LVU26
+ 125 0054 3046     		mov	r0, r6
+ 126              	.LVL10:
+  75:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****     }
+ 127              		.loc 1 75 9 is_stmt 0 view .LVU27
+ 128 0056 FFF7FEFF 		bl	wc_AesFree
+ 129              	.LVL11:
+ 130 005a EAE7     		b	.L3
+ 131              	.LVL12:
+ 132              	.L12:
+  73:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** 
+ 133              		.loc 1 73 13 is_stmt 1 view .LVU28
+  73:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** 
+ 134              		.loc 1 73 19 is_stmt 0 view .LVU29
+ 135 005c 4346     		mov	r3, r8
+ 136 005e 2A46     		mov	r2, r5
+ 137 0060 4946     		mov	r1, r9
+ARM GAS  /tmp/ccZZt9n0.s 			page 5
+
+
+ 138 0062 3046     		mov	r0, r6
+ 139              	.LVL13:
+  73:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** 
+ 140              		.loc 1 73 19 view .LVU30
+ 141 0064 FFF7FEFF 		bl	wc_AesCbcDecrypt
+ 142              	.LVL14:
+ 143 0068 8246     		mov	r10, r0
+ 144              	.LVL15:
+  73:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** 
+ 145              		.loc 1 73 19 view .LVU31
+ 146 006a F3E7     		b	.L4
+ 147              	.LVL16:
+ 148              	.L5:
+  60:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****     }
+ 149              		.loc 1 60 16 view .LVU32
+ 150 006c 6FF0AC0A 		mvn	r10, #172
+ 151 0070 E2E7     		b	.L1
+ 152              	.L6:
+  60:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****     }
+ 153              		.loc 1 60 16 view .LVU33
+ 154 0072 6FF0AC0A 		mvn	r10, #172
+ 155 0076 DFE7     		b	.L1
+ 156              	.L7:
+ 157 0078 6FF0AC0A 		mvn	r10, #172
+ 158 007c DCE7     		b	.L1
+ 159              	.L8:
+ 160 007e 6FF0AC0A 		mvn	r10, #172
+ 161 0082 D9E7     		b	.L1
+ 162              	.LVL17:
+ 163              	.L9:
+  66:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** #endif
+ 164              		.loc 1 66 16 view .LVU34
+ 165 0084 6FF07C0A 		mvn	r10, #124
+ 166 0088 D6E7     		b	.L1
+ 167              		.cfi_endproc
+ 168              	.LFE175:
+ 170              		.section	.text.wc_AesCbcEncryptWithKey,"ax",%progbits
+ 171              		.align	1
+ 172              		.global	wc_AesCbcEncryptWithKey
+ 173              		.syntax unified
+ 174              		.thumb
+ 175              		.thumb_func
+ 176              		.fpu fpv4-sp-d16
+ 178              	wc_AesCbcEncryptWithKey:
+ 179              	.LVL18:
+ 180              	.LFB176:
+  84:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** #endif /* HAVE_AES_DECRYPT */
+  85:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** 
+  86:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** int wc_AesCbcEncryptWithKey(byte* out, const byte* in, word32 inSz,
+  87:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****                             const byte* key, word32 keySz, const byte* iv)
+  88:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** {
+ 181              		.loc 1 88 1 is_stmt 1 view -0
+ 182              		.cfi_startproc
+ 183              		@ args = 8, pretend = 0, frame = 0
+ 184              		@ frame_needed = 0, uses_anonymous_args = 0
+ 185              		.loc 1 88 1 is_stmt 0 view .LVU36
+ 186 0000 2DE9F043 		push	{r4, r5, r6, r7, r8, r9, lr}
+ARM GAS  /tmp/ccZZt9n0.s 			page 6
+
+
+ 187              	.LCFI4:
+ 188              		.cfi_def_cfa_offset 28
+ 189              		.cfi_offset 4, -28
+ 190              		.cfi_offset 5, -24
+ 191              		.cfi_offset 6, -20
+ 192              		.cfi_offset 7, -16
+ 193              		.cfi_offset 8, -12
+ 194              		.cfi_offset 9, -8
+ 195              		.cfi_offset 14, -4
+ 196 0004 83B0     		sub	sp, sp, #12
+ 197              	.LCFI5:
+ 198              		.cfi_def_cfa_offset 40
+ 199 0006 0646     		mov	r6, r0
+ 200 0008 0F46     		mov	r7, r1
+ 201 000a 9046     		mov	r8, r2
+ 202 000c 9946     		mov	r9, r3
+  89:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****     int  ret = 0;
+ 203              		.loc 1 89 5 is_stmt 1 view .LVU37
+ 204              	.LVL19:
+  90:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** #ifdef WOLFSSL_SMALL_STACK
+  91:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****     Aes* aes;
+ 205              		.loc 1 91 5 view .LVU38
+  92:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** #else
+  93:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****     Aes  aes[1];
+  94:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** #endif
+  95:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** 
+  96:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** #ifdef WOLFSSL_SMALL_STACK
+  97:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****     aes = (Aes*)XMALLOC(sizeof(Aes), NULL, DYNAMIC_TYPE_TMP_BUFFER);
+ 206              		.loc 1 97 5 view .LVU39
+ 207              		.loc 1 97 17 is_stmt 0 view .LVU40
+ 208 000e 4FF49C70 		mov	r0, #312
+ 209              	.LVL20:
+ 210              		.loc 1 97 17 view .LVU41
+ 211 0012 FFF7FEFF 		bl	pvPortMalloc
+ 212              	.LVL21:
+  98:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****     if (aes == NULL)
+ 213              		.loc 1 98 5 is_stmt 1 view .LVU42
+ 214              		.loc 1 98 8 is_stmt 0 view .LVU43
+ 215 0016 20B3     		cbz	r0, .L17
+ 216 0018 0446     		mov	r4, r0
+  99:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****         return MEMORY_E;
+ 100:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** #endif
+ 101:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** 
+ 102:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****     ret = wc_AesInit(aes, NULL, INVALID_DEVID);
+ 217              		.loc 1 102 5 is_stmt 1 view .LVU44
+ 218              		.loc 1 102 11 is_stmt 0 view .LVU45
+ 219 001a 6FF00102 		mvn	r2, #1
+ 220 001e 0021     		movs	r1, #0
+ 221 0020 FFF7FEFF 		bl	wc_AesInit
+ 222              	.LVL22:
+ 103:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****     if (ret == 0) {
+ 223              		.loc 1 103 5 is_stmt 1 view .LVU46
+ 224              		.loc 1 103 8 is_stmt 0 view .LVU47
+ 225 0024 0546     		mov	r5, r0
+ 226 0026 30B1     		cbz	r0, .L19
+ 227              	.LVL23:
+ 228              	.L15:
+ARM GAS  /tmp/ccZZt9n0.s 			page 7
+
+
+ 104:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****         ret = wc_AesSetKey(aes, key, keySz, iv, AES_ENCRYPTION);
+ 105:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****         if (ret == 0)
+ 106:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****             ret = wc_AesCbcEncrypt(aes, out, in, inSz);
+ 107:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** 
+ 108:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****         wc_AesFree(aes);
+ 109:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****     }
+ 110:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** 
+ 111:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** #ifdef WOLFSSL_SMALL_STACK
+ 112:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****     XFREE(aes, NULL, DYNAMIC_TYPE_TMP_BUFFER);
+ 229              		.loc 1 112 5 is_stmt 1 view .LVU48
+ 230 0028 2046     		mov	r0, r4
+ 231 002a FFF7FEFF 		bl	vPortFree
+ 232              	.LVL24:
+ 113:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** #endif
+ 114:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** 
+ 115:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****     return ret;
+ 233              		.loc 1 115 5 view .LVU49
+ 234              	.L13:
+ 116:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** }
+ 235              		.loc 1 116 1 is_stmt 0 view .LVU50
+ 236 002e 2846     		mov	r0, r5
+ 237 0030 03B0     		add	sp, sp, #12
+ 238              	.LCFI6:
+ 239              		.cfi_remember_state
+ 240              		.cfi_def_cfa_offset 28
+ 241              		@ sp needed
+ 242 0032 BDE8F083 		pop	{r4, r5, r6, r7, r8, r9, pc}
+ 243              	.LVL25:
+ 244              	.L19:
+ 245              	.LCFI7:
+ 246              		.cfi_restore_state
+ 104:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****         ret = wc_AesSetKey(aes, key, keySz, iv, AES_ENCRYPTION);
+ 247              		.loc 1 104 9 is_stmt 1 view .LVU51
+ 104:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****         ret = wc_AesSetKey(aes, key, keySz, iv, AES_ENCRYPTION);
+ 248              		.loc 1 104 15 is_stmt 0 view .LVU52
+ 249 0036 0023     		movs	r3, #0
+ 250 0038 0093     		str	r3, [sp]
+ 251 003a 0B9B     		ldr	r3, [sp, #44]
+ 252 003c 0A9A     		ldr	r2, [sp, #40]
+ 253 003e 4946     		mov	r1, r9
+ 254 0040 2046     		mov	r0, r4
+ 255              	.LVL26:
+ 104:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****         ret = wc_AesSetKey(aes, key, keySz, iv, AES_ENCRYPTION);
+ 256              		.loc 1 104 15 view .LVU53
+ 257 0042 FFF7FEFF 		bl	wc_AesSetKey
+ 258              	.LVL27:
+ 105:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****             ret = wc_AesCbcEncrypt(aes, out, in, inSz);
+ 259              		.loc 1 105 9 is_stmt 1 view .LVU54
+ 105:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****             ret = wc_AesCbcEncrypt(aes, out, in, inSz);
+ 260              		.loc 1 105 12 is_stmt 0 view .LVU55
+ 261 0046 0546     		mov	r5, r0
+ 262 0048 18B1     		cbz	r0, .L20
+ 263              	.L16:
+ 108:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****     }
+ 264              		.loc 1 108 9 is_stmt 1 view .LVU56
+ 265 004a 2046     		mov	r0, r4
+ 266              	.LVL28:
+ARM GAS  /tmp/ccZZt9n0.s 			page 8
+
+
+ 108:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c ****     }
+ 267              		.loc 1 108 9 is_stmt 0 view .LVU57
+ 268 004c FFF7FEFF 		bl	wc_AesFree
+ 269              	.LVL29:
+ 270 0050 EAE7     		b	.L15
+ 271              	.LVL30:
+ 272              	.L20:
+ 106:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** 
+ 273              		.loc 1 106 13 is_stmt 1 view .LVU58
+ 106:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** 
+ 274              		.loc 1 106 19 is_stmt 0 view .LVU59
+ 275 0052 4346     		mov	r3, r8
+ 276 0054 3A46     		mov	r2, r7
+ 277 0056 3146     		mov	r1, r6
+ 278 0058 2046     		mov	r0, r4
+ 279              	.LVL31:
+ 106:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** 
+ 280              		.loc 1 106 19 view .LVU60
+ 281 005a FFF7FEFF 		bl	wc_AesCbcEncrypt
+ 282              	.LVL32:
+ 283 005e 0546     		mov	r5, r0
+ 284              	.LVL33:
+ 106:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** 
+ 285              		.loc 1 106 19 view .LVU61
+ 286 0060 F3E7     		b	.L16
+ 287              	.LVL34:
+ 288              	.L17:
+  99:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wc_encrypt.c **** #endif
+ 289              		.loc 1 99 16 view .LVU62
+ 290 0062 6FF07C05 		mvn	r5, #124
+ 291 0066 E2E7     		b	.L13
+ 292              		.cfi_endproc
+ 293              	.LFE176:
+ 295              		.text
+ 296              	.Letext0:
+ 297              		.file 2 "Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfssl/wolfcrypt/types.h"
+ 298              		.file 3 "Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfssl/wolfcrypt/aes.h"
+ 299              		.file 4 "Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfssl/wolfcrypt/error-crypt.h"
+ 300              		.file 5 "Middlewares/Third_Party/FreeRTOS/Source/include/portable.h"
+ARM GAS  /tmp/ccZZt9n0.s 			page 9
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 wc_encrypt.c
+     /tmp/ccZZt9n0.s:18     .text.wc_AesCbcDecryptWithKey:0000000000000000 $t
+     /tmp/ccZZt9n0.s:26     .text.wc_AesCbcDecryptWithKey:0000000000000000 wc_AesCbcDecryptWithKey
+     /tmp/ccZZt9n0.s:171    .text.wc_AesCbcEncryptWithKey:0000000000000000 $t
+     /tmp/ccZZt9n0.s:178    .text.wc_AesCbcEncryptWithKey:0000000000000000 wc_AesCbcEncryptWithKey
+
+UNDEFINED SYMBOLS
+pvPortMalloc
+wc_AesInit
+vPortFree
+wc_AesSetKey
+wc_AesFree
+wc_AesCbcDecrypt
+wc_AesCbcEncrypt

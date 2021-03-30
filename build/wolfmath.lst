@@ -1,0 +1,939 @@
+ARM GAS  /tmp/cck0dYHc.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.eabi_attribute 27, 1
+   3              		.eabi_attribute 28, 1
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"wolfmath.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.get_digit_count,"ax",%progbits
+  18              		.align	1
+  19              		.global	get_digit_count
+  20              		.arch armv7e-m
+  21              		.syntax unified
+  22              		.thumb
+  23              		.thumb_func
+  24              		.fpu fpv4-sp-d16
+  26              	get_digit_count:
+  27              	.LVL0:
+  28              	.LFB175:
+  29              		.file 1 "Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c"
+   1:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** /* wolfmath.c
+   2:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****  *
+   3:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****  * Copyright (C) 2006-2020 wolfSSL Inc.
+   4:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****  *
+   5:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****  * This file is part of wolfSSL.
+   6:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****  *
+   7:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****  * wolfSSL is free software; you can redistribute it and/or modify
+   8:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****  * it under the terms of the GNU General Public License as published by
+   9:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****  * the Free Software Foundation; either version 2 of the License, or
+  10:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****  * (at your option) any later version.
+  11:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****  *
+  12:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****  * wolfSSL is distributed in the hope that it will be useful,
+  13:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+  14:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  15:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****  * GNU General Public License for more details.
+  16:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****  *
+  17:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****  * You should have received a copy of the GNU General Public License
+  18:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****  * along with this program; if not, write to the Free Software
+  19:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335, USA
+  20:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****  */
+  21:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** 
+  22:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** 
+  23:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** /* common functions for either math library */
+  24:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** 
+  25:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** #ifdef HAVE_CONFIG_H
+  26:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     #include <config.h>
+  27:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** #endif
+  28:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** 
+  29:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** /* in case user set USE_FAST_MATH there */
+ARM GAS  /tmp/cck0dYHc.s 			page 2
+
+
+  30:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** #include <wolfssl/wolfcrypt/settings.h>
+  31:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** 
+  32:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** #include <wolfssl/wolfcrypt/integer.h>
+  33:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** 
+  34:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** #include <wolfssl/wolfcrypt/error-crypt.h>
+  35:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** #include <wolfssl/wolfcrypt/logging.h>
+  36:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** 
+  37:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** #if defined(USE_FAST_MATH) || !defined(NO_BIG_INT)
+  38:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** 
+  39:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** #ifdef WOLFSSL_ASYNC_CRYPT
+  40:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     #include <wolfssl/wolfcrypt/async.h>
+  41:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** #endif
+  42:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** 
+  43:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** #ifdef NO_INLINE
+  44:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     #include <wolfssl/wolfcrypt/misc.h>
+  45:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** #else
+  46:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     #define WOLFSSL_MISC_INCLUDED
+  47:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     #include <wolfcrypt/src/misc.c>
+  48:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** #endif
+  49:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** 
+  50:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** 
+  51:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** #if !defined(WC_NO_CACHE_RESISTANT) && \
+  52:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     ((defined(HAVE_ECC) && defined(ECC_TIMING_RESISTANT)) || \
+  53:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****      (defined(USE_FAST_MATH) && defined(TFM_TIMING_RESISTANT)))
+  54:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** 
+  55:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     /* all off / all on pointer addresses for constant calculations */
+  56:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     /* ecc.c uses same table */
+  57:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     const wolfssl_word wc_off_on_addr[2] =
+  58:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     {
+  59:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     #if defined(WC_64BIT_CPU)
+  60:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         W64LIT(0x0000000000000000),
+  61:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         W64LIT(0xffffffffffffffff)
+  62:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     #elif defined(WC_16BIT_CPU)
+  63:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         0x0000U,
+  64:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         0xffffU
+  65:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     #else
+  66:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         /* 32 bit */
+  67:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         0x00000000U,
+  68:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         0xffffffffU
+  69:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     #endif
+  70:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     };
+  71:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** #endif
+  72:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** 
+  73:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** 
+  74:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** int get_digit_count(mp_int* a)
+  75:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** {
+  30              		.loc 1 75 1 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 0
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              		@ link register save eliminated.
+  76:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     if (a == NULL)
+  35              		.loc 1 76 5 view .LVU1
+  36              		.loc 1 76 8 is_stmt 0 view .LVU2
+  37 0000 08B1     		cbz	r0, .L3
+  77:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         return 0;
+  78:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** 
+ARM GAS  /tmp/cck0dYHc.s 			page 3
+
+
+  79:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     return a->used;
+  38              		.loc 1 79 5 is_stmt 1 view .LVU3
+  39              		.loc 1 79 13 is_stmt 0 view .LVU4
+  40 0002 0068     		ldr	r0, [r0]
+  41              	.LVL1:
+  42              		.loc 1 79 13 view .LVU5
+  43 0004 7047     		bx	lr
+  44              	.LVL2:
+  45              	.L3:
+  77:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         return 0;
+  46              		.loc 1 77 16 view .LVU6
+  47 0006 0020     		movs	r0, #0
+  48              	.LVL3:
+  80:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** }
+  49              		.loc 1 80 1 view .LVU7
+  50 0008 7047     		bx	lr
+  51              		.cfi_endproc
+  52              	.LFE175:
+  54              		.section	.text.get_digit,"ax",%progbits
+  55              		.align	1
+  56              		.global	get_digit
+  57              		.syntax unified
+  58              		.thumb
+  59              		.thumb_func
+  60              		.fpu fpv4-sp-d16
+  62              	get_digit:
+  63              	.LVL4:
+  64              	.LFB176:
+  81:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** 
+  82:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** mp_digit get_digit(mp_int* a, int n)
+  83:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** {
+  65              		.loc 1 83 1 is_stmt 1 view -0
+  66              		.cfi_startproc
+  67              		@ args = 0, pretend = 0, frame = 0
+  68              		@ frame_needed = 0, uses_anonymous_args = 0
+  69              		@ link register save eliminated.
+  84:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     if (a == NULL)
+  70              		.loc 1 84 5 view .LVU9
+  71              		.loc 1 84 8 is_stmt 0 view .LVU10
+  72 0000 40B1     		cbz	r0, .L6
+  85:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         return 0;
+  86:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** 
+  87:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     return (n >= a->used || n < 0) ? 0 : a->dp[n];
+  73              		.loc 1 87 5 is_stmt 1 view .LVU11
+  74              		.loc 1 87 19 is_stmt 0 view .LVU12
+  75 0002 0268     		ldr	r2, [r0]
+  76              		.loc 1 87 40 view .LVU13
+  77 0004 8A42     		cmp	r2, r1
+  78 0006 07DD     		ble	.L7
+  79              		.loc 1 87 26 discriminator 1 view .LVU14
+  80 0008 0029     		cmp	r1, #0
+  81 000a 07DB     		blt	.L8
+  82              		.loc 1 87 40 discriminator 3 view .LVU15
+  83 000c 0231     		adds	r1, r1, #2
+  84              	.LVL5:
+  85              		.loc 1 87 40 discriminator 3 view .LVU16
+  86 000e 50F82100 		ldr	r0, [r0, r1, lsl #2]
+ARM GAS  /tmp/cck0dYHc.s 			page 4
+
+
+  87              	.LVL6:
+  88              		.loc 1 87 40 discriminator 3 view .LVU17
+  89 0012 7047     		bx	lr
+  90              	.LVL7:
+  91              	.L6:
+  85:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         return 0;
+  92              		.loc 1 85 16 view .LVU18
+  93 0014 0020     		movs	r0, #0
+  94              	.LVL8:
+  85:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         return 0;
+  95              		.loc 1 85 16 view .LVU19
+  96 0016 7047     		bx	lr
+  97              	.LVL9:
+  98              	.L7:
+  99              		.loc 1 87 40 view .LVU20
+ 100 0018 0020     		movs	r0, #0
+ 101              	.LVL10:
+ 102              		.loc 1 87 40 view .LVU21
+ 103 001a 7047     		bx	lr
+ 104              	.LVL11:
+ 105              	.L8:
+ 106              		.loc 1 87 40 view .LVU22
+ 107 001c 0020     		movs	r0, #0
+ 108              	.LVL12:
+  88:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** }
+ 109              		.loc 1 88 1 view .LVU23
+ 110 001e 7047     		bx	lr
+ 111              		.cfi_endproc
+ 112              	.LFE176:
+ 114              		.section	.text.mp_cond_copy,"ax",%progbits
+ 115              		.align	1
+ 116              		.global	mp_cond_copy
+ 117              		.syntax unified
+ 118              		.thumb
+ 119              		.thumb_func
+ 120              		.fpu fpv4-sp-d16
+ 122              	mp_cond_copy:
+ 123              	.LVL13:
+ 124              	.LFB177:
+  89:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** 
+  90:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** #if defined(HAVE_ECC) || defined(WOLFSSL_MP_COND_COPY)
+  91:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** /* Conditionally copy a into b. Performed in constant time.
+  92:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****  *
+  93:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****  * a     MP integer to copy.
+  94:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****  * copy  On 1, copy a into b. on 0 leave b unchanged.
+  95:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****  * b     MP integer to copy into.
+  96:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****  * returns BAD_FUNC_ARG when a or b is NULL, MEMORY_E when growing b fails and
+  97:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****  *         MP_OKAY otherwise.
+  98:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****  */
+  99:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** int mp_cond_copy(mp_int* a, int copy, mp_int* b)
+ 100:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** {
+ 125              		.loc 1 100 1 is_stmt 1 view -0
+ 126              		.cfi_startproc
+ 127              		@ args = 0, pretend = 0, frame = 0
+ 128              		@ frame_needed = 0, uses_anonymous_args = 0
+ 129              		.loc 1 100 1 is_stmt 0 view .LVU25
+ 130 0000 2DE9F843 		push	{r3, r4, r5, r6, r7, r8, r9, lr}
+ARM GAS  /tmp/cck0dYHc.s 			page 5
+
+
+ 131              	.LCFI0:
+ 132              		.cfi_def_cfa_offset 32
+ 133              		.cfi_offset 3, -32
+ 134              		.cfi_offset 4, -28
+ 135              		.cfi_offset 5, -24
+ 136              		.cfi_offset 6, -20
+ 137              		.cfi_offset 7, -16
+ 138              		.cfi_offset 8, -12
+ 139              		.cfi_offset 9, -8
+ 140              		.cfi_offset 14, -4
+ 141 0004 1546     		mov	r5, r2
+ 101:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     int err = MP_OKAY;
+ 142              		.loc 1 101 5 is_stmt 1 view .LVU26
+ 143              	.LVL14:
+ 102:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     int i;
+ 144              		.loc 1 102 5 view .LVU27
+ 103:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** #if defined(SP_WORD_SIZE) && SP_WORD_SIZE == 8
+ 104:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     unsigned int mask = (unsigned int)0 - copy;
+ 105:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** #else
+ 106:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     mp_digit mask = (mp_digit)0 - copy;
+ 145              		.loc 1 106 5 view .LVU28
+ 146              		.loc 1 106 14 is_stmt 0 view .LVU29
+ 147 0006 C1F10008 		rsb	r8, r1, #0
+ 148              	.LVL15:
+ 107:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** #endif
+ 108:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** 
+ 109:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     if (a == NULL || b == NULL)
+ 149              		.loc 1 109 5 is_stmt 1 view .LVU30
+ 150              		.loc 1 109 8 is_stmt 0 view .LVU31
+ 151 000a 0746     		mov	r7, r0
+ 152 000c 60B1     		cbz	r0, .L16
+ 153              		.loc 1 109 19 discriminator 1 view .LVU32
+ 154 000e 72B1     		cbz	r2, .L17
+ 110:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         err = BAD_FUNC_ARG;
+ 111:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** 
+ 112:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     /* Ensure b has enough space to copy a into */
+ 113:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     if (err == MP_OKAY)
+ 155              		.loc 1 113 5 is_stmt 1 view .LVU33
+ 114:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         err = mp_grow(b, a->used + 1);
+ 156              		.loc 1 114 9 view .LVU34
+ 157              		.loc 1 114 27 is_stmt 0 view .LVU35
+ 158 0010 0168     		ldr	r1, [r0]
+ 159              	.LVL16:
+ 160              		.loc 1 114 15 view .LVU36
+ 161 0012 0131     		adds	r1, r1, #1
+ 162 0014 1046     		mov	r0, r2
+ 163              	.LVL17:
+ 164              		.loc 1 114 15 view .LVU37
+ 165 0016 FFF7FEFF 		bl	sp_grow
+ 166              	.LVL18:
+ 167              		.loc 1 114 15 view .LVU38
+ 168 001a 8146     		mov	r9, r0
+ 169              	.LVL19:
+ 170              	.L10:
+ 115:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     if (err == MP_OKAY) {
+ 171              		.loc 1 115 5 is_stmt 1 view .LVU39
+ 172              		.loc 1 115 8 is_stmt 0 view .LVU40
+ARM GAS  /tmp/cck0dYHc.s 			page 6
+
+
+ 173 001c B9F1000F 		cmp	r9, #0
+ 174 0020 1FD0     		beq	.L18
+ 175              	.LVL20:
+ 176              	.L9:
+ 116:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         /* When mask 0, b is unchanged2
+ 117:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****          * When mask all set, b ^ b ^ a = a
+ 118:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****          */
+ 119:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         /* Conditionaly copy all digits and then number of used diigits.
+ 120:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****          * get_digit() returns 0 when index greater than available digit.
+ 121:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****          */
+ 122:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         for (i = 0; i < a->used; i++) {
+ 123:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****             b->dp[i] ^= (get_digit(a, i) ^ get_digit(b, i)) & mask;
+ 124:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         }
+ 125:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         for (; i < b->used; i++) {
+ 126:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****             b->dp[i] ^= (get_digit(a, i) ^ get_digit(b, i)) & mask;
+ 127:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         }
+ 128:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         b->used ^= (a->used ^ b->used) & (int)mask;
+ 129:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** #if (!defined(WOLFSSL_SP_MATH) && !defined(WOLFSSL_SP_MATH_ALL)) || \
+ 130:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     defined(WOLFSSL_SP_INT_NEGATIVE)
+ 131:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         b->sign ^= (a->sign ^ b->sign) & (int)mask;
+ 132:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** #endif
+ 133:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     }
+ 134:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** 
+ 135:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     return err;
+ 136:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** }
+ 177              		.loc 1 136 1 view .LVU41
+ 178 0022 4846     		mov	r0, r9
+ 179 0024 BDE8F883 		pop	{r3, r4, r5, r6, r7, r8, r9, pc}
+ 180              	.LVL21:
+ 181              	.L16:
+ 110:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** 
+ 182              		.loc 1 110 13 view .LVU42
+ 183 0028 6FF0AC09 		mvn	r9, #172
+ 184 002c F6E7     		b	.L10
+ 185              	.L17:
+ 186 002e 6FF0AC09 		mvn	r9, #172
+ 187 0032 F3E7     		b	.L10
+ 188              	.LVL22:
+ 189              	.L13:
+ 123:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         }
+ 190              		.loc 1 123 13 is_stmt 1 discriminator 3 view .LVU43
+ 123:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         }
+ 191              		.loc 1 123 26 is_stmt 0 discriminator 3 view .LVU44
+ 192 0034 2146     		mov	r1, r4
+ 193 0036 3846     		mov	r0, r7
+ 194 0038 FFF7FEFF 		bl	get_digit
+ 195              	.LVL23:
+ 196 003c 0646     		mov	r6, r0
+ 123:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         }
+ 197              		.loc 1 123 44 discriminator 3 view .LVU45
+ 198 003e 2146     		mov	r1, r4
+ 199 0040 2846     		mov	r0, r5
+ 200 0042 FFF7FEFF 		bl	get_digit
+ 201              	.LVL24:
+ 123:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         }
+ 202              		.loc 1 123 42 discriminator 3 view .LVU46
+ 203 0046 4640     		eors	r6, r6, r0
+ARM GAS  /tmp/cck0dYHc.s 			page 7
+
+
+ 123:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         }
+ 204              		.loc 1 123 61 discriminator 3 view .LVU47
+ 205 0048 06EA0806 		and	r6, r6, r8
+ 123:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         }
+ 206              		.loc 1 123 22 discriminator 3 view .LVU48
+ 207 004c A21C     		adds	r2, r4, #2
+ 208 004e 55F82230 		ldr	r3, [r5, r2, lsl #2]
+ 209 0052 5E40     		eors	r6, r6, r3
+ 210 0054 45F82260 		str	r6, [r5, r2, lsl #2]
+ 122:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****             b->dp[i] ^= (get_digit(a, i) ^ get_digit(b, i)) & mask;
+ 211              		.loc 1 122 34 is_stmt 1 discriminator 3 view .LVU49
+ 122:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****             b->dp[i] ^= (get_digit(a, i) ^ get_digit(b, i)) & mask;
+ 212              		.loc 1 122 35 is_stmt 0 discriminator 3 view .LVU50
+ 213 0058 0134     		adds	r4, r4, #1
+ 214              	.LVL25:
+ 215              	.L11:
+ 122:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****             b->dp[i] ^= (get_digit(a, i) ^ get_digit(b, i)) & mask;
+ 216              		.loc 1 122 21 is_stmt 1 discriminator 1 view .LVU51
+ 122:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****             b->dp[i] ^= (get_digit(a, i) ^ get_digit(b, i)) & mask;
+ 217              		.loc 1 122 26 is_stmt 0 discriminator 1 view .LVU52
+ 218 005a 3B68     		ldr	r3, [r7]
+ 122:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****             b->dp[i] ^= (get_digit(a, i) ^ get_digit(b, i)) & mask;
+ 219              		.loc 1 122 9 discriminator 1 view .LVU53
+ 220 005c A342     		cmp	r3, r4
+ 221 005e E9DC     		bgt	.L13
+ 222 0060 14E0     		b	.L14
+ 223              	.LVL26:
+ 224              	.L18:
+ 122:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****             b->dp[i] ^= (get_digit(a, i) ^ get_digit(b, i)) & mask;
+ 225              		.loc 1 122 16 view .LVU54
+ 226 0062 4C46     		mov	r4, r9
+ 227 0064 F9E7     		b	.L11
+ 228              	.LVL27:
+ 229              	.L15:
+ 126:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         }
+ 230              		.loc 1 126 13 is_stmt 1 discriminator 2 view .LVU55
+ 126:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         }
+ 231              		.loc 1 126 26 is_stmt 0 discriminator 2 view .LVU56
+ 232 0066 2146     		mov	r1, r4
+ 233 0068 3846     		mov	r0, r7
+ 234 006a FFF7FEFF 		bl	get_digit
+ 235              	.LVL28:
+ 236 006e 0646     		mov	r6, r0
+ 126:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         }
+ 237              		.loc 1 126 44 discriminator 2 view .LVU57
+ 238 0070 2146     		mov	r1, r4
+ 239 0072 2846     		mov	r0, r5
+ 240 0074 FFF7FEFF 		bl	get_digit
+ 241              	.LVL29:
+ 126:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         }
+ 242              		.loc 1 126 42 discriminator 2 view .LVU58
+ 243 0078 4640     		eors	r6, r6, r0
+ 126:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         }
+ 244              		.loc 1 126 61 discriminator 2 view .LVU59
+ 245 007a 06EA0806 		and	r6, r6, r8
+ 126:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         }
+ 246              		.loc 1 126 22 discriminator 2 view .LVU60
+ARM GAS  /tmp/cck0dYHc.s 			page 8
+
+
+ 247 007e A21C     		adds	r2, r4, #2
+ 248 0080 55F82230 		ldr	r3, [r5, r2, lsl #2]
+ 249 0084 5E40     		eors	r6, r6, r3
+ 250 0086 45F82260 		str	r6, [r5, r2, lsl #2]
+ 125:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****             b->dp[i] ^= (get_digit(a, i) ^ get_digit(b, i)) & mask;
+ 251              		.loc 1 125 29 is_stmt 1 discriminator 2 view .LVU61
+ 125:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****             b->dp[i] ^= (get_digit(a, i) ^ get_digit(b, i)) & mask;
+ 252              		.loc 1 125 30 is_stmt 0 discriminator 2 view .LVU62
+ 253 008a 0134     		adds	r4, r4, #1
+ 254              	.LVL30:
+ 255              	.L14:
+ 125:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****             b->dp[i] ^= (get_digit(a, i) ^ get_digit(b, i)) & mask;
+ 256              		.loc 1 125 16 is_stmt 1 discriminator 1 view .LVU63
+ 125:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****             b->dp[i] ^= (get_digit(a, i) ^ get_digit(b, i)) & mask;
+ 257              		.loc 1 125 21 is_stmt 0 discriminator 1 view .LVU64
+ 258 008c 2B68     		ldr	r3, [r5]
+ 125:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****             b->dp[i] ^= (get_digit(a, i) ^ get_digit(b, i)) & mask;
+ 259              		.loc 1 125 9 discriminator 1 view .LVU65
+ 260 008e A342     		cmp	r3, r4
+ 261 0090 E9DC     		bgt	.L15
+ 128:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** #if (!defined(WOLFSSL_SP_MATH) && !defined(WOLFSSL_SP_MATH_ALL)) || \
+ 262              		.loc 1 128 9 is_stmt 1 view .LVU66
+ 128:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** #if (!defined(WOLFSSL_SP_MATH) && !defined(WOLFSSL_SP_MATH_ALL)) || \
+ 263              		.loc 1 128 22 is_stmt 0 view .LVU67
+ 264 0092 3968     		ldr	r1, [r7]
+ 128:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** #if (!defined(WOLFSSL_SP_MATH) && !defined(WOLFSSL_SP_MATH_ALL)) || \
+ 265              		.loc 1 128 29 view .LVU68
+ 266 0094 5940     		eors	r1, r1, r3
+ 128:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** #if (!defined(WOLFSSL_SP_MATH) && !defined(WOLFSSL_SP_MATH_ALL)) || \
+ 267              		.loc 1 128 40 view .LVU69
+ 268 0096 01EA0808 		and	r8, r1, r8
+ 269              	.LVL31:
+ 128:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** #if (!defined(WOLFSSL_SP_MATH) && !defined(WOLFSSL_SP_MATH_ALL)) || \
+ 270              		.loc 1 128 17 view .LVU70
+ 271 009a 83EA0803 		eor	r3, r3, r8
+ 272 009e 2B60     		str	r3, [r5]
+ 135:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** }
+ 273              		.loc 1 135 5 is_stmt 1 view .LVU71
+ 135:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** }
+ 274              		.loc 1 135 12 is_stmt 0 view .LVU72
+ 275 00a0 BFE7     		b	.L9
+ 276              		.cfi_endproc
+ 277              	.LFE177:
+ 279              		.section	.text.get_rand_digit,"ax",%progbits
+ 280              		.align	1
+ 281              		.global	get_rand_digit
+ 282              		.syntax unified
+ 283              		.thumb
+ 284              		.thumb_func
+ 285              		.fpu fpv4-sp-d16
+ 287              	get_rand_digit:
+ 288              	.LVL32:
+ 289              	.LFB178:
+ 137:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** #endif
+ 138:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** 
+ 139:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** #ifndef WC_NO_RNG
+ 140:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** int get_rand_digit(WC_RNG* rng, mp_digit* d)
+ARM GAS  /tmp/cck0dYHc.s 			page 9
+
+
+ 141:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** {
+ 290              		.loc 1 141 1 is_stmt 1 view -0
+ 291              		.cfi_startproc
+ 292              		@ args = 0, pretend = 0, frame = 0
+ 293              		@ frame_needed = 0, uses_anonymous_args = 0
+ 294              		.loc 1 141 1 is_stmt 0 view .LVU74
+ 295 0000 08B5     		push	{r3, lr}
+ 296              	.LCFI1:
+ 297              		.cfi_def_cfa_offset 8
+ 298              		.cfi_offset 3, -8
+ 299              		.cfi_offset 14, -4
+ 142:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     return wc_RNG_GenerateBlock(rng, (byte*)d, sizeof(mp_digit));
+ 300              		.loc 1 142 5 is_stmt 1 view .LVU75
+ 301              		.loc 1 142 12 is_stmt 0 view .LVU76
+ 302 0002 0422     		movs	r2, #4
+ 303 0004 FFF7FEFF 		bl	wc_RNG_GenerateBlock
+ 304              	.LVL33:
+ 143:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** }
+ 305              		.loc 1 143 1 view .LVU77
+ 306 0008 08BD     		pop	{r3, pc}
+ 307              		.cfi_endproc
+ 308              	.LFE178:
+ 310              		.section	.text.mp_rand,"ax",%progbits
+ 311              		.align	1
+ 312              		.global	mp_rand
+ 313              		.syntax unified
+ 314              		.thumb
+ 315              		.thumb_func
+ 316              		.fpu fpv4-sp-d16
+ 318              	mp_rand:
+ 319              	.LVL34:
+ 320              	.LFB179:
+ 144:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** 
+ 145:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** #ifdef WC_RSA_BLINDING
+ 146:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** int mp_rand(mp_int* a, int digits, WC_RNG* rng)
+ 147:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** {
+ 321              		.loc 1 147 1 is_stmt 1 view -0
+ 322              		.cfi_startproc
+ 323              		@ args = 0, pretend = 0, frame = 0
+ 324              		@ frame_needed = 0, uses_anonymous_args = 0
+ 325              		.loc 1 147 1 is_stmt 0 view .LVU79
+ 326 0000 38B5     		push	{r3, r4, r5, lr}
+ 327              	.LCFI2:
+ 328              		.cfi_def_cfa_offset 16
+ 329              		.cfi_offset 3, -16
+ 330              		.cfi_offset 4, -12
+ 331              		.cfi_offset 5, -8
+ 332              		.cfi_offset 14, -4
+ 333 0002 0446     		mov	r4, r0
+ 148:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     int ret = 0;
+ 334              		.loc 1 148 5 is_stmt 1 view .LVU80
+ 335              	.LVL35:
+ 149:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     int cnt = digits * sizeof(mp_digit);
+ 336              		.loc 1 149 5 view .LVU81
+ 337              		.loc 1 149 22 is_stmt 0 view .LVU82
+ 338 0004 8B00     		lsls	r3, r1, #2
+ 339              	.LVL36:
+ARM GAS  /tmp/cck0dYHc.s 			page 10
+
+
+ 150:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** #if !defined(USE_FAST_MATH) && !defined(WOLFSSL_SP_MATH)
+ 151:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     int i;
+ 152:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** #endif
+ 153:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** 
+ 154:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     if (rng == NULL) {
+ 340              		.loc 1 154 5 is_stmt 1 view .LVU83
+ 341              		.loc 1 154 8 is_stmt 0 view .LVU84
+ 342 0006 1546     		mov	r5, r2
+ 343 0008 2AB1     		cbz	r2, .L29
+ 155:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         ret = MISSING_RNG_E;
+ 156:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     }
+ 157:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     else if (a == NULL || digits == 0) {
+ 344              		.loc 1 157 10 is_stmt 1 view .LVU85
+ 345              		.loc 1 157 13 is_stmt 0 view .LVU86
+ 346 000a 58B1     		cbz	r0, .L30
+ 347              		.loc 1 157 24 discriminator 1 view .LVU87
+ 348 000c 69B1     		cbz	r1, .L31
+ 158:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         ret = BAD_FUNC_ARG;
+ 159:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     }
+ 160:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** 
+ 161:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** #if !defined(USE_FAST_MATH) && !defined(WOLFSSL_SP_MATH)
+ 162:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     /* allocate space for digits */
+ 163:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     if (ret == MP_OKAY) {
+ 164:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         ret = mp_set_bit(a, digits * DIGIT_BIT - 1);
+ 165:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     }
+ 166:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** #else
+ 167:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** #if defined(WOLFSSL_SP_MATH) || defined(WOLFSSL_SP_MATH_ALL)
+ 168:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     if ((ret == MP_OKAY) && (digits > SP_INT_DIGITS))
+ 349              		.loc 1 168 5 is_stmt 1 view .LVU88
+ 350              		.loc 1 168 26 is_stmt 0 view .LVU89
+ 351 000e C229     		cmp	r1, #194
+ 352 0010 0EDC     		bgt	.L32
+ 148:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     int cnt = digits * sizeof(mp_digit);
+ 353              		.loc 1 148 9 view .LVU90
+ 354 0012 0020     		movs	r0, #0
+ 355              	.LVL37:
+ 148:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     int cnt = digits * sizeof(mp_digit);
+ 356              		.loc 1 148 9 view .LVU91
+ 357 0014 01E0     		b	.L23
+ 358              	.LVL38:
+ 359              	.L29:
+ 155:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         ret = MISSING_RNG_E;
+ 360              		.loc 1 155 13 view .LVU92
+ 361 0016 6FF0EB00 		mvn	r0, #235
+ 362              	.LVL39:
+ 363              	.L23:
+ 169:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** #else
+ 170:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     if ((ret == MP_OKAY) && (digits > FP_SIZE))
+ 171:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** #endif
+ 172:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     {
+ 173:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         ret = BAD_FUNC_ARG;
+ 174:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     }
+ 175:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     if (ret == MP_OKAY) {
+ 364              		.loc 1 175 5 is_stmt 1 view .LVU93
+ 365              		.loc 1 175 8 is_stmt 0 view .LVU94
+ 366 001a 00B9     		cbnz	r0, .L24
+ 176:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         a->used = digits;
+ARM GAS  /tmp/cck0dYHc.s 			page 11
+
+
+ 367              		.loc 1 176 9 is_stmt 1 view .LVU95
+ 368              		.loc 1 176 17 is_stmt 0 view .LVU96
+ 369 001c 2160     		str	r1, [r4]
+ 370              	.LVL40:
+ 371              	.L24:
+ 177:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     }
+ 178:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** #endif
+ 179:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     /* fill the data with random bytes */
+ 180:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     if (ret == MP_OKAY) {
+ 372              		.loc 1 180 5 is_stmt 1 view .LVU97
+ 373              		.loc 1 180 8 is_stmt 0 view .LVU98
+ 374 001e 50B1     		cbz	r0, .L34
+ 375              	.LVL41:
+ 376              	.L25:
+ 181:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         ret = wc_RNG_GenerateBlock(rng, (byte*)a->dp, cnt);
+ 182:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     }
+ 183:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     if (ret == MP_OKAY) {
+ 377              		.loc 1 183 5 is_stmt 1 view .LVU99
+ 378              		.loc 1 183 8 is_stmt 0 view .LVU100
+ 379 0020 B0B1     		cbz	r0, .L26
+ 380              	.L22:
+ 184:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** #if !defined(USE_FAST_MATH) && !defined(WOLFSSL_SP_MATH)
+ 185:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         /* Mask down each digit to only bits used */
+ 186:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         for (i = 0; i < a->used; i++) {
+ 187:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****             a->dp[i] &= MP_MASK;
+ 188:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         }
+ 189:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** #endif
+ 190:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         /* ensure top digit is not zero */
+ 191:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         while ((ret == MP_OKAY) && (a->dp[a->used - 1] == 0)) {
+ 192:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****             ret = get_rand_digit(rng, &a->dp[a->used - 1]);
+ 193:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** #if !defined(USE_FAST_MATH) && !defined(WOLFSSL_SP_MATH)
+ 194:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****             a->dp[a->used - 1] &= MP_MASK;
+ 195:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** #endif
+ 196:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         }
+ 197:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     }
+ 198:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** 
+ 199:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     return ret;
+ 200:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** }
+ 381              		.loc 1 200 1 view .LVU101
+ 382 0022 38BD     		pop	{r3, r4, r5, pc}
+ 383              	.LVL42:
+ 384              	.L30:
+ 158:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     }
+ 385              		.loc 1 158 13 view .LVU102
+ 386 0024 6FF0AC00 		mvn	r0, #172
+ 387              	.LVL43:
+ 158:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     }
+ 388              		.loc 1 158 13 view .LVU103
+ 389 0028 F7E7     		b	.L23
+ 390              	.LVL44:
+ 391              	.L31:
+ 158:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     }
+ 392              		.loc 1 158 13 view .LVU104
+ 393 002a 6FF0AC00 		mvn	r0, #172
+ 394              	.LVL45:
+ 158:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     }
+ 395              		.loc 1 158 13 view .LVU105
+ARM GAS  /tmp/cck0dYHc.s 			page 12
+
+
+ 396 002e F4E7     		b	.L23
+ 397              	.LVL46:
+ 398              	.L32:
+ 173:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     }
+ 399              		.loc 1 173 13 view .LVU106
+ 400 0030 6FF0AC00 		mvn	r0, #172
+ 401              	.LVL47:
+ 173:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     }
+ 402              		.loc 1 173 13 view .LVU107
+ 403 0034 F3E7     		b	.L24
+ 404              	.LVL48:
+ 405              	.L34:
+ 181:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     }
+ 406              		.loc 1 181 9 is_stmt 1 view .LVU108
+ 181:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     }
+ 407              		.loc 1 181 15 is_stmt 0 view .LVU109
+ 408 0036 1A46     		mov	r2, r3
+ 409              	.LVL49:
+ 181:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     }
+ 410              		.loc 1 181 15 view .LVU110
+ 411 0038 04F10801 		add	r1, r4, #8
+ 412              	.LVL50:
+ 181:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     }
+ 413              		.loc 1 181 15 view .LVU111
+ 414 003c 2846     		mov	r0, r5
+ 415 003e FFF7FEFF 		bl	wc_RNG_GenerateBlock
+ 416              	.LVL51:
+ 181:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     }
+ 417              		.loc 1 181 15 view .LVU112
+ 418 0042 EDE7     		b	.L25
+ 419              	.L28:
+ 192:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** #if !defined(USE_FAST_MATH) && !defined(WOLFSSL_SP_MATH)
+ 420              		.loc 1 192 13 is_stmt 1 view .LVU113
+ 192:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** #if !defined(USE_FAST_MATH) && !defined(WOLFSSL_SP_MATH)
+ 421              		.loc 1 192 39 is_stmt 0 view .LVU114
+ 422 0044 0231     		adds	r1, r1, #2
+ 192:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** #if !defined(USE_FAST_MATH) && !defined(WOLFSSL_SP_MATH)
+ 423              		.loc 1 192 19 view .LVU115
+ 424 0046 04EB8101 		add	r1, r4, r1, lsl #2
+ 425 004a 2846     		mov	r0, r5
+ 426              	.LVL52:
+ 192:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** #if !defined(USE_FAST_MATH) && !defined(WOLFSSL_SP_MATH)
+ 427              		.loc 1 192 19 view .LVU116
+ 428 004c FFF7FEFF 		bl	get_rand_digit
+ 429              	.LVL53:
+ 430              	.L26:
+ 191:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****             ret = get_rand_digit(rng, &a->dp[a->used - 1]);
+ 431              		.loc 1 191 15 is_stmt 1 view .LVU117
+ 432 0050 0028     		cmp	r0, #0
+ 433 0052 E6D1     		bne	.L22
+ 191:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****             ret = get_rand_digit(rng, &a->dp[a->used - 1]);
+ 434              		.loc 1 191 44 is_stmt 0 discriminator 1 view .LVU118
+ 435 0054 2368     		ldr	r3, [r4]
+ 191:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****             ret = get_rand_digit(rng, &a->dp[a->used - 1]);
+ 436              		.loc 1 191 51 discriminator 1 view .LVU119
+ 437 0056 591E     		subs	r1, r3, #1
+ 191:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****             ret = get_rand_digit(rng, &a->dp[a->used - 1]);
+ARM GAS  /tmp/cck0dYHc.s 			page 13
+
+
+ 438              		.loc 1 191 42 discriminator 1 view .LVU120
+ 439 0058 0133     		adds	r3, r3, #1
+ 440 005a 54F82330 		ldr	r3, [r4, r3, lsl #2]
+ 191:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****             ret = get_rand_digit(rng, &a->dp[a->used - 1]);
+ 441              		.loc 1 191 33 discriminator 1 view .LVU121
+ 442 005e 002B     		cmp	r3, #0
+ 443 0060 F0D0     		beq	.L28
+ 444 0062 DEE7     		b	.L22
+ 445              		.cfi_endproc
+ 446              	.LFE179:
+ 448              		.section	.text.wc_export_int,"ax",%progbits
+ 449              		.align	1
+ 450              		.global	wc_export_int
+ 451              		.syntax unified
+ 452              		.thumb
+ 453              		.thumb_func
+ 454              		.fpu fpv4-sp-d16
+ 456              	wc_export_int:
+ 457              	.LVL54:
+ 458              	.LFB180:
+ 201:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** #endif /* WC_RSA_BLINDING */
+ 202:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** #endif
+ 203:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** 
+ 204:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** #if defined(HAVE_ECC) || defined(WOLFSSL_EXPORT_INT)
+ 205:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** /* export an mp_int as unsigned char or hex string
+ 206:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****  * encType is WC_TYPE_UNSIGNED_BIN or WC_TYPE_HEX_STR
+ 207:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****  * return MP_OKAY on success */
+ 208:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** int wc_export_int(mp_int* mp, byte* buf, word32* len, word32 keySz,
+ 209:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     int encType)
+ 210:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** {
+ 459              		.loc 1 210 1 is_stmt 1 view -0
+ 460              		.cfi_startproc
+ 461              		@ args = 4, pretend = 0, frame = 0
+ 462              		@ frame_needed = 0, uses_anonymous_args = 0
+ 211:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     int err;
+ 463              		.loc 1 211 5 view .LVU123
+ 212:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** 
+ 213:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     if (mp == NULL)
+ 464              		.loc 1 213 5 view .LVU124
+ 465              		.loc 1 213 8 is_stmt 0 view .LVU125
+ 466 0000 08B3     		cbz	r0, .L39
+ 210:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     int err;
+ 467              		.loc 1 210 1 view .LVU126
+ 468 0002 70B5     		push	{r4, r5, r6, lr}
+ 469              	.LCFI3:
+ 470              		.cfi_def_cfa_offset 16
+ 471              		.cfi_offset 4, -16
+ 472              		.cfi_offset 5, -12
+ 473              		.cfi_offset 6, -8
+ 474              		.cfi_offset 14, -4
+ 475 0004 0D46     		mov	r5, r1
+ 476 0006 1C46     		mov	r4, r3
+ 477 0008 0646     		mov	r6, r0
+ 214:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         return BAD_FUNC_ARG;
+ 215:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** 
+ 216:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     /* check buffer size */
+ 217:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     if (*len < keySz) {
+ARM GAS  /tmp/cck0dYHc.s 			page 14
+
+
+ 478              		.loc 1 217 5 is_stmt 1 view .LVU127
+ 479              		.loc 1 217 9 is_stmt 0 view .LVU128
+ 480 000a 1368     		ldr	r3, [r2]
+ 481              	.LVL55:
+ 482              		.loc 1 217 8 view .LVU129
+ 483 000c A342     		cmp	r3, r4
+ 484 000e 11D3     		bcc	.L44
+ 218:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         *len = keySz;
+ 219:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         return BUFFER_E;
+ 220:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     }
+ 221:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** 
+ 222:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     *len = keySz;
+ 485              		.loc 1 222 5 is_stmt 1 view .LVU130
+ 486              		.loc 1 222 10 is_stmt 0 view .LVU131
+ 487 0010 1460     		str	r4, [r2]
+ 223:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     XMEMSET(buf, 0, *len);
+ 488              		.loc 1 223 5 is_stmt 1 view .LVU132
+ 489 0012 2246     		mov	r2, r4
+ 490              	.LVL56:
+ 491              		.loc 1 223 5 is_stmt 0 view .LVU133
+ 492 0014 0021     		movs	r1, #0
+ 493              	.LVL57:
+ 494              		.loc 1 223 5 view .LVU134
+ 495 0016 2846     		mov	r0, r5
+ 496              	.LVL58:
+ 497              		.loc 1 223 5 view .LVU135
+ 498 0018 FFF7FEFF 		bl	memset
+ 499              	.LVL59:
+ 224:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** 
+ 225:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     if (encType == WC_TYPE_HEX_STR) {
+ 500              		.loc 1 225 5 is_stmt 1 view .LVU136
+ 501              		.loc 1 225 8 is_stmt 0 view .LVU137
+ 502 001c 049B     		ldr	r3, [sp, #16]
+ 503 001e 012B     		cmp	r3, #1
+ 504 0020 0CD0     		beq	.L45
+ 226:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     #ifdef WC_MP_TO_RADIX
+ 227:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         err = mp_tohex(mp, (char*)buf);
+ 228:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     #else
+ 229:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         err = NOT_COMPILED_IN;
+ 230:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     #endif
+ 231:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     }
+ 232:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     else {
+ 233:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         err = mp_to_unsigned_bin(mp, buf + (keySz - mp_unsigned_bin_size(mp)));
+ 505              		.loc 1 233 9 is_stmt 1 view .LVU138
+ 506              		.loc 1 233 53 is_stmt 0 view .LVU139
+ 507 0022 3046     		mov	r0, r6
+ 508 0024 FFF7FEFF 		bl	sp_unsigned_bin_size
+ 509              	.LVL60:
+ 510              		.loc 1 233 51 view .LVU140
+ 511 0028 241A     		subs	r4, r4, r0
+ 512              	.LVL61:
+ 513              		.loc 1 233 15 view .LVU141
+ 514 002a 2919     		adds	r1, r5, r4
+ 515 002c 3046     		mov	r0, r6
+ 516 002e FFF7FEFF 		bl	sp_to_unsigned_bin
+ 517              	.LVL62:
+ 518              	.L35:
+ARM GAS  /tmp/cck0dYHc.s 			page 15
+
+
+ 234:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     }
+ 235:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** 
+ 236:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     return err;
+ 237:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** }
+ 519              		.loc 1 237 1 view .LVU142
+ 520 0032 70BD     		pop	{r4, r5, r6, pc}
+ 521              	.LVL63:
+ 522              	.L44:
+ 218:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         return BUFFER_E;
+ 523              		.loc 1 218 9 is_stmt 1 view .LVU143
+ 218:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****         return BUFFER_E;
+ 524              		.loc 1 218 14 is_stmt 0 view .LVU144
+ 525 0034 1460     		str	r4, [r2]
+ 219:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     }
+ 526              		.loc 1 219 9 is_stmt 1 view .LVU145
+ 219:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     }
+ 527              		.loc 1 219 16 is_stmt 0 view .LVU146
+ 528 0036 6FF08300 		mvn	r0, #131
+ 529              	.LVL64:
+ 219:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     }
+ 530              		.loc 1 219 16 view .LVU147
+ 531 003a FAE7     		b	.L35
+ 532              	.LVL65:
+ 533              	.L45:
+ 227:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     #else
+ 534              		.loc 1 227 9 is_stmt 1 view .LVU148
+ 227:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     #else
+ 535              		.loc 1 227 15 is_stmt 0 view .LVU149
+ 536 003c 2946     		mov	r1, r5
+ 537 003e 3046     		mov	r0, r6
+ 538 0040 FFF7FEFF 		bl	sp_tohex
+ 539              	.LVL66:
+ 227:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c ****     #else
+ 540              		.loc 1 227 15 view .LVU150
+ 541 0044 F5E7     		b	.L35
+ 542              	.LVL67:
+ 543              	.L39:
+ 544              	.LCFI4:
+ 545              		.cfi_def_cfa_offset 0
+ 546              		.cfi_restore 4
+ 547              		.cfi_restore 5
+ 548              		.cfi_restore 6
+ 549              		.cfi_restore 14
+ 214:Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfcrypt/src/wolfmath.c **** 
+ 550              		.loc 1 214 16 view .LVU151
+ 551 0046 6FF0AC00 		mvn	r0, #172
+ 552              	.LVL68:
+ 553              		.loc 1 237 1 view .LVU152
+ 554 004a 7047     		bx	lr
+ 555              		.cfi_endproc
+ 556              	.LFE180:
+ 558              		.global	wc_off_on_addr
+ 559              		.section	.rodata.wc_off_on_addr,"a"
+ 560              		.align	2
+ 563              	wc_off_on_addr:
+ 564 0000 00000000 		.word	0
+ 565 0004 FFFFFFFF 		.word	-1
+ARM GAS  /tmp/cck0dYHc.s 			page 16
+
+
+ 566              		.text
+ 567              	.Letext0:
+ 568              		.file 2 "Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfssl/wolfcrypt/types.h"
+ 569              		.file 3 "Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfssl/wolfcrypt/sp_int.h"
+ 570              		.file 4 "Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfssl/wolfcrypt/random.h"
+ 571              		.file 5 "Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfssl/wolfcrypt/sha256.h"
+ 572              		.file 6 "Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfssl/wolfcrypt/wolfmath.h"
+ 573              		.file 7 "Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfssl/wolfcrypt/error-crypt.h"
+ 574              		.file 8 "<built-in>"
+ARM GAS  /tmp/cck0dYHc.s 			page 17
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 wolfmath.c
+     /tmp/cck0dYHc.s:18     .text.get_digit_count:0000000000000000 $t
+     /tmp/cck0dYHc.s:26     .text.get_digit_count:0000000000000000 get_digit_count
+     /tmp/cck0dYHc.s:55     .text.get_digit:0000000000000000 $t
+     /tmp/cck0dYHc.s:62     .text.get_digit:0000000000000000 get_digit
+     /tmp/cck0dYHc.s:115    .text.mp_cond_copy:0000000000000000 $t
+     /tmp/cck0dYHc.s:122    .text.mp_cond_copy:0000000000000000 mp_cond_copy
+     /tmp/cck0dYHc.s:280    .text.get_rand_digit:0000000000000000 $t
+     /tmp/cck0dYHc.s:287    .text.get_rand_digit:0000000000000000 get_rand_digit
+     /tmp/cck0dYHc.s:311    .text.mp_rand:0000000000000000 $t
+     /tmp/cck0dYHc.s:318    .text.mp_rand:0000000000000000 mp_rand
+     /tmp/cck0dYHc.s:449    .text.wc_export_int:0000000000000000 $t
+     /tmp/cck0dYHc.s:456    .text.wc_export_int:0000000000000000 wc_export_int
+     /tmp/cck0dYHc.s:563    .rodata.wc_off_on_addr:0000000000000000 wc_off_on_addr
+     /tmp/cck0dYHc.s:560    .rodata.wc_off_on_addr:0000000000000000 $d
+
+UNDEFINED SYMBOLS
+sp_grow
+wc_RNG_GenerateBlock
+memset
+sp_unsigned_bin_size
+sp_to_unsigned_bin
+sp_tohex
